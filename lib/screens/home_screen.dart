@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../app_state.dart';
 import '../config.dart';
 import 'lesson_screen.dart';
+import '../widgets/transitions.dart';
 
 enum NodeState { done, current, locked }
 
@@ -179,7 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
               final bool done = appState.isCompleted(l.id);
               return InkWell(
                 onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => LessonScreen(lesson: l)),
+                  ratelRoute(LessonScreen(lesson: l)),
                 ),
                 borderRadius: BorderRadius.circular(14),
                 child: Container(
@@ -468,8 +469,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 6),
               GestureDetector(
                 onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                      builder: (_) => LessonScreen(lesson: lesson)),
+                  ratelRoute(LessonScreen(lesson: lesson)),
                 ),
                 child: Container(
                   width: 66,

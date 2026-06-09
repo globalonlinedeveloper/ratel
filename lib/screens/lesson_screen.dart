@@ -113,11 +113,16 @@ class _LessonScreenState extends State<LessonScreen>
                   Expanded(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        minHeight: 12,
-                        backgroundColor: const Color(0xFFE6E6E6),
-                        color: RatelColors.teal,
+                      child: TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0, end: progress),
+                        duration: const Duration(milliseconds: 450),
+                        curve: Curves.easeOutCubic,
+                        builder: (context, value, _) => LinearProgressIndicator(
+                          value: value,
+                          minHeight: 12,
+                          backgroundColor: const Color(0xFFE6E6E6),
+                          color: RatelColors.teal,
+                        ),
                       ),
                     ),
                   ),
@@ -396,6 +401,24 @@ class _LessonScreenState extends State<LessonScreen>
                               color: RatelColors.textMuted, fontSize: 16),
                         ),
                       ),
+                      const SizedBox(height: 18),
+                      SizedBox(
+                        width: 240,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: TweenAnimationBuilder<double>(
+                            tween: Tween(begin: 0.0, end: 1.0),
+                            duration: const Duration(milliseconds: 900),
+                            curve: Curves.easeOutBack,
+                            builder: (context, v, _) => LinearProgressIndicator(
+                              value: v.clamp(0.0, 1.0),
+                              minHeight: 10,
+                              backgroundColor: const Color(0xFFE6E6E6),
+                              color: RatelColors.honey,
+                            ),
+                          ),
+                        ),
+                      ),
                       const SizedBox(height: 28),
                       _wideButton(
                           'Continue', () => Navigator.of(context).maybePop()),
@@ -404,7 +427,7 @@ class _LessonScreenState extends State<LessonScreen>
                 ),
               ),
             ),
-            const Positioned.fill(child: ConfettiBurst()),
+            const Positioned.fill(child: ConfettiBurst(count: 140)),
           ],
         ),
       ),
