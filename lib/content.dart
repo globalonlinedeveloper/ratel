@@ -514,3 +514,13 @@ Exercise? exerciseForKey(String key) {
   }
   return null;
 }
+
+/// Lesson title for a lesson id (active course), or null if unknown.
+String? lessonTitleForId(String id) {
+  for (final unit in course) {
+    for (final lesson in unit.lessons) {
+      if (lesson.id == id) return lesson.title;
+    }
+  }
+  return null;
+}

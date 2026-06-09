@@ -12,6 +12,7 @@ import '../widgets/transitions.dart';
 import '../widgets/rolling_number.dart';
 import '../widgets/streak_flame.dart';
 import '../widgets/mistakes_review.dart';
+import '../widgets/weak_areas_summary.dart';
 
 enum NodeState { done, current, locked }
 
@@ -264,6 +265,8 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
+          const SizedBox(height: 12),
+          const WeakAreasSummary(),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),

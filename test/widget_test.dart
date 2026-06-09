@@ -176,4 +176,9 @@ void main() {
     expect(exerciseForKey('nope:0'), isNull);
     expect(exerciseForKey('garbage'), isNull);
   });
+
+  test('lessonTitleForId resolves titles and rejects unknown ids', () {
+    expect(lessonTitleForId('u1l1'), course[0].lessons[0].title);
+    expect(lessonTitleForId('nope'), isNull);
+  });
 }
