@@ -287,5 +287,159 @@ const Unit unit2 = Unit(
   ],
 );
 
+/// Sample Unit 3 content (English immersion, A2). Replaced by Supabase later.
+const Unit unit3 = Unit(
+  title: 'Unit 3',
+  subtitle: 'Getting things done',
+  lessons: [
+    Lesson(id: 'u3l1', title: 'Directions', exercises: [
+      Exercise.choice(
+        prompt: 'Which word gives a direction?',
+        options: ['Apple', 'Left', 'Happy', 'Slowly'],
+        correctIndex: 1,
+      ),
+      Exercise.choice(
+        prompt: 'Complete the sentence',
+        sentence: 'Turn ___ at the corner.',
+        options: ['red', 'right', 'ride', 'road'],
+        correctIndex: 1,
+      ),
+      Exercise.wordBank(
+        prompt: 'Build the sentence',
+        options: ['station', 'to', 'Go', 'the'],
+        correctOrder: ['Go', 'to', 'the', 'station'],
+      ),
+      Exercise.choice(
+        prompt: 'The opposite of "left" is ___.',
+        options: ['up', 'near', 'right', 'here'],
+        correctIndex: 2,
+      ),
+      Exercise.choice(
+        prompt: 'Complete the sentence',
+        sentence: 'The bank is ___ to the school.',
+        options: ['far', 'next', 'behind', 'under'],
+        correctIndex: 1,
+      ),
+    ]),
+    Lesson(id: 'u3l2', title: 'Health & body', exercises: [
+      Exercise.choice(
+        prompt: 'Which is a part of the body?',
+        options: ['Chair', 'Cloud', 'Arm', 'Spoon'],
+        correctIndex: 2,
+      ),
+      Exercise.choice(
+        prompt: 'Complete the sentence',
+        sentence: 'I have a ___, I need to rest.',
+        options: ['headache', 'homework', 'window', 'holiday'],
+        correctIndex: 0,
+      ),
+      Exercise.wordBank(
+        prompt: 'Build the sentence',
+        options: ['well', 'I', 'feel', 'not', 'do'],
+        correctOrder: ['I', 'do', 'not', 'feel', 'well'],
+      ),
+      Exercise.choice(
+        prompt: 'Complete the sentence',
+        sentence: 'You should see a ___ when you are sick.',
+        options: ['teacher', 'doctor', 'driver', 'waiter'],
+        correctIndex: 1,
+      ),
+      Exercise.choice(
+        prompt: 'What should you do when you are tired?',
+        options: ['Shout', 'Jump', 'Run', 'Rest'],
+        correctIndex: 3,
+      ),
+    ]),
+    Lesson(id: 'u3l3', title: 'Work & jobs', exercises: [
+      Exercise.choice(
+        prompt: 'Which word is a job?',
+        options: ['Yellow', 'Engineer', 'Quickly', 'Under'],
+        correctIndex: 1,
+      ),
+      Exercise.choice(
+        prompt: 'Complete the sentence',
+        sentence: 'A ___ teaches students.',
+        options: ['farmer', 'pilot', 'teacher', 'chef'],
+        correctIndex: 2,
+      ),
+      Exercise.wordBank(
+        prompt: 'Build the sentence',
+        options: ['office', 'works', 'an', 'She', 'in'],
+        correctOrder: ['She', 'works', 'in', 'an', 'office'],
+      ),
+      Exercise.choice(
+        prompt: 'Complete the sentence',
+        sentence: 'He ___ to work by bus.',
+        options: ['goes', 'go', 'going', 'gone'],
+        correctIndex: 0,
+      ),
+      Exercise.choice(
+        prompt: 'Where does a chef work?',
+        options: ['Garden', 'Kitchen', 'Airport', 'Library'],
+        correctIndex: 1,
+      ),
+    ]),
+    Lesson(id: 'u3l4', title: 'Free time', exercises: [
+      Exercise.choice(
+        prompt: 'Which is a hobby?',
+        options: ['Monday', 'Yellow', 'Painting', 'Quickly'],
+        correctIndex: 2,
+      ),
+      Exercise.choice(
+        prompt: 'Complete the sentence',
+        sentence: 'I like ___ football on weekends.',
+        options: ['play', 'playing', 'played', 'plays'],
+        correctIndex: 1,
+      ),
+      Exercise.wordBank(
+        prompt: 'Build the sentence',
+        options: ['books', 'She', 'reading', 'loves'],
+        correctOrder: ['She', 'loves', 'reading', 'books'],
+      ),
+      Exercise.choice(
+        prompt: 'Complete the sentence',
+        sentence: 'They go ___ in the river in summer.',
+        options: ['swimming', 'swim', 'swam', 'swims'],
+        correctIndex: 0,
+      ),
+      Exercise.choice(
+        prompt: 'What do you use to take photos?',
+        options: ['Spoon', 'Camera', 'Pillow', 'Hammer'],
+        correctIndex: 1,
+      ),
+    ]),
+    Lesson(id: 'u3l5', title: 'Yesterday', exercises: [
+      Exercise.choice(
+        prompt: 'Complete the sentence',
+        sentence: 'Yesterday I ___ to the market.',
+        options: ['go', 'went', 'goes', 'going'],
+        correctIndex: 1,
+      ),
+      Exercise.choice(
+        prompt: 'Complete the sentence',
+        sentence: 'She ___ a film last night.',
+        options: ['watches', 'watched', 'watch', 'watching'],
+        correctIndex: 1,
+      ),
+      Exercise.wordBank(
+        prompt: 'Build the sentence',
+        options: ['lunch', 'We', 'ate', 'together'],
+        correctOrder: ['We', 'ate', 'lunch', 'together'],
+      ),
+      Exercise.choice(
+        prompt: 'Complete the sentence',
+        sentence: 'They ___ happy at the party.',
+        options: ['was', 'were', 'are', 'is'],
+        correctIndex: 1,
+      ),
+      Exercise.choice(
+        prompt: 'What is the past tense of "see"?',
+        options: ['seen', 'saw', 'sees', 'seeing'],
+        correctIndex: 1,
+      ),
+    ]),
+  ],
+);
+
 /// The full course, in order. Lessons unlock sequentially across all units.
-const List<Unit> course = [unit1, unit2];
+const List<Unit> course = [unit1, unit2, unit3];

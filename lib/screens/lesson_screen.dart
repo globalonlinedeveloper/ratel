@@ -1,9 +1,12 @@
+import 'dart:math';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
+import '../widgets/confetti.dart';
 import '../models.dart';
 import '../app_state.dart';
+import '../sfx.dart';
 
 /// Runs a learner through every exercise in a [Lesson], then shows a
 /// completion summary. Handles multiple-choice and word-bank exercises.
@@ -15,7 +18,8 @@ class LessonScreen extends StatefulWidget {
   State<LessonScreen> createState() => _LessonScreenState();
 }
 
-class _LessonScreenState extends State<LessonScreen> {
+class _LessonScreenState extends State<LessonScreen>
+    with SingleTickerProviderStateMixin {
   int _index = 0;
   int _correctCount = 0;
   bool _answered = false;
@@ -24,6 +28,21 @@ class _LessonScreenState extends State<LessonScreen> {
 
   int? _selected; // choice
   final List<int> _picked = []; // word-bank: option indices in chosen order
+
+  late final AnimationController _fb; // answer feedback: pop on right, shake on wrong
+
+  @override
+  void initState() {
+    super.initState();
+    _fb = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 420));
+  }
+
+  @override
+  void dispose() {
+    _fb.dispose();
+    super.dispose();
+  }
 
   Exercise get _ex => widget.lesson.exercises[_index];
   bool get _isLast => _index == widget.lesson.exercises.length - 1;
@@ -45,6 +64,12 @@ class _LessonScreenState extends State<LessonScreen> {
         appState.loseHeart();
       }
     });
+    if (correct) {
+      Sfx.instance.correct();
+    } else {
+      Sfx.instance.wrong();
+    }
+    _fb.forward(from: 0);
   }
 
   void _next() {
@@ -58,6 +83,7 @@ class _LessonScreenState extends State<LessonScreen> {
       });
     } else {
       appState.completeLesson(widget.lesson.id, _correctCount * 10);
+      Sfx.instance.complete();
       setState(() => _finished = true);
     }
   }
@@ -125,10 +151,14 @@ class _LessonScreenState extends State<LessonScreen> {
                 const SizedBox(height: 16),
               ],
               Expanded(
-                child: SingleChildScrollView(
-                  child: _ex.type == ExerciseType.choice
-                      ? _choiceBody()
-                      : _wordBankBody(),
+                child: AnimatedBuilder(
+                  animation: _fb,
+                  builder: (context, child) => _feedbackWrap(child!),
+                  child: SingleChildScrollView(
+                    child: _ex.type == ExerciseType.choice
+                        ? _choiceBody()
+                        : _wordBankBody(),
+                  ),
                 ),
               ),
               _bottom(),
@@ -137,6 +167,17 @@ class _LessonScreenState extends State<LessonScreen> {
         ),
       ),
     );
+  }
+
+  /// Brief pop on a correct answer, a quick horizontal shake on a wrong one.
+  Widget _feedbackWrap(Widget child) {
+    final v = _fb.value;
+    if (v == 0) return child;
+    if (_isCorrect) {
+      return Transform.scale(scale: 1 + 0.06 * sin(pi * v), child: child);
+    }
+    return Transform.translate(
+        offset: Offset(sin(v * pi * 4) * 8 * (1 - v), 0), child: child);
   }
 
   RatelPose _pose() {
@@ -183,7 +224,12 @@ class _LessonScreenState extends State<LessonScreen> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: InkWell(
-        onTap: _answered ? null : () => setState(() => _selected = i),
+        onTap: _answered
+            ? null
+            : () {
+                Sfx.instance.tap();
+                setState(() => _selected = i);
+              },
         borderRadius: BorderRadius.circular(12),
         child: Container(
           width: double.infinity,
@@ -314,32 +360,48 @@ class _LessonScreenState extends State<LessonScreen> {
     final int total = widget.lesson.exercises.length;
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const RatelMascot(pose: RatelPose.celebrate, size: 170),
-                const SizedBox(height: 16),
-                const Text('Lesson complete!',
-                    style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
-                const SizedBox(height: 8),
-                TweenAnimationBuilder<int>(
-                  tween: IntTween(begin: 0, end: earned),
-                  duration: const Duration(milliseconds: 700),
-                  builder: (context, value, _) => Text(
-                    '+$value XP   ·   $_correctCount / $total correct',
-                    style: const TextStyle(
-                        color: RatelColors.textMuted, fontSize: 16),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      TweenAnimationBuilder<double>(
+                        tween: Tween(begin: 0.6, end: 1.0),
+                        duration: const Duration(milliseconds: 700),
+                        curve: Curves.elasticOut,
+                        builder: (context, s, child) =>
+                            Transform.scale(scale: s, child: child),
+                        child: const RatelMascot(
+                            pose: RatelPose.celebrate, size: 170),
+                      ),
+                      const SizedBox(height: 16),
+                      const Text('Lesson complete!',
+                          style: TextStyle(
+                              fontSize: 24, fontWeight: FontWeight.w700)),
+                      const SizedBox(height: 8),
+                      TweenAnimationBuilder<int>(
+                        tween: IntTween(begin: 0, end: earned),
+                        duration: const Duration(milliseconds: 700),
+                        builder: (context, value, _) => Text(
+                          '+$value XP   ·   $_correctCount / $total correct',
+                          style: const TextStyle(
+                              color: RatelColors.textMuted, fontSize: 16),
+                        ),
+                      ),
+                      const SizedBox(height: 28),
+                      _wideButton(
+                          'Continue', () => Navigator.of(context).maybePop()),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 28),
-                _wideButton('Continue', () => Navigator.of(context).maybePop()),
-              ],
+              ),
             ),
-          ),
+            const Positioned.fill(child: ConfettiBurst()),
+          ],
         ),
       ),
     );
