@@ -48,15 +48,23 @@ try{
   await tap(page,'meet',{exact:true});await tap(page,'Check');await tap(page,'Finish');
   await page.waitForTimeout(1200);
   if(await page.getByText('Lesson complete!',{exact:false}).count()<1) problems.push('completion screen missing');
-  if(await page.getByText('+50 XP',{exact:false}).count()<1) problems.push('+50 XP missing');
+  if(await page.getByText('5 / 5 correct',{exact:false}).count()<1) problems.push('completion correct-count missing');
   phase='persistence';
   await tap(page,'Continue');
   await page.reload({waitUntil:'load'});await page.waitForTimeout(7000);
-  await page.mouse.click(420,862);await page.waitForTimeout(1000);
-  let persisted=false, pdl=Date.now()+15000;
-  while(Date.now()<pdl){ await sem(page); await page.waitForTimeout(600); if(await page.getByText('50',{exact:false}).count()>=1){persisted=true;break;} }
+  await page.mouse.click(420,862);await page.waitForTimeout(1500);
+  await sem(page);
   await page.screenshot({path:'e2e-full.png'});
-  if(!persisted) problems.push('XP not persisted after reload (profile not showing 50)');
+  // Persistence checked at the DB (robust to the variable completion bonus).
+  if(token){
+    try{
+      const pr=await fetch(`${SUPA_URL}/rest/v1/profiles?select=total_xp`,{headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`}});
+      const pj=await pr.json().catch(()=>[]);
+      const xp=Array.isArray(pj)&&pj[0]?(pj[0].total_xp||0):0;
+      if(xp<50) problems.push(`XP not persisted (total_xp=${xp}, expected >=50)`);
+      else console.log('persisted total_xp:', xp);
+    }catch(e){ problems.push('persistence query failed: '+e.message); }
+  } else { problems.push('no token for persistence check'); }
   // The Sound/Haptics settings live in SwitchListTiles, whose title is merged
   // into one accessible node -> match the aria-label/semantics text, not a
   // standalone text node, and scroll-retry until it renders into the tree.
