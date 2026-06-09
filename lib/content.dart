@@ -441,5 +441,48 @@ const Unit unit3 = Unit(
   ],
 );
 
+/// Sample Unit 4 content (English immersion, A2->B1). Replaced by Supabase later.
+const Unit unit4 = Unit(
+  title: 'Unit 4',
+  subtitle: 'Plans & connections',
+  lessons: [
+    Lesson(id: 'u4l1', title: 'Future plans', exercises: [
+      Exercise.choice(prompt: 'Which word talks about the future?', options: ['Yesterday', 'Tomorrow', 'Now', 'Ago'], correctIndex: 1),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'I ___ going to visit my friend.', options: ['is', 'am', 'are', 'be'], correctIndex: 1),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['will', 'We', 'tomorrow', 'travel'], correctOrder: ['We', 'will', 'travel', 'tomorrow']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'She is going to ___ a new job.', options: ['started', 'start', 'starts', 'starting'], correctIndex: 1),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'What are your plans for the ___?', options: ['ago', 'weekend', 'yesterday', 'last'], correctIndex: 1),
+    ]),
+    Lesson(id: 'u4l2', title: 'Comparisons', exercises: [
+      Exercise.choice(prompt: 'Which word compares two things?', options: ['Big', 'Bigger', 'Run', 'Blue'], correctIndex: 1),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'An elephant is ___ than a cat.', options: ['big', 'bigger', 'biggest', 'bigly'], correctIndex: 1),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['than', 'She', 'taller', 'is', 'me'], correctOrder: ['She', 'is', 'taller', 'than', 'me']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'This book is ___ interesting than that one.', options: ['most', 'more', 'much', 'many'], correctIndex: 1),
+      Exercise.choice(prompt: 'The opposite of "faster" is ___.', options: ['fastest', 'slow', 'slower', 'quick'], correctIndex: 2),
+    ]),
+    Lesson(id: 'u4l3', title: 'Feelings & opinions', exercises: [
+      Exercise.choice(prompt: 'Which word is a feeling?', options: ['Table', 'Happy', 'Quickly', 'Green'], correctIndex: 1),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'I ___ that English is fun.', options: ['thinks', 'think', 'thinking', 'thought'], correctIndex: 1),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['with', 'I', 'you', 'agree'], correctOrder: ['I', 'agree', 'with', 'you']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'She feels ___ because she passed the test.', options: ['sadly', 'happy', 'quickly', 'table'], correctIndex: 1),
+      Exercise.choice(prompt: 'What do you say to agree?', options: ['Go away', 'You are right', 'No way', 'Be quiet'], correctIndex: 1),
+    ]),
+    Lesson(id: 'u4l4', title: 'On the phone', exercises: [
+      Exercise.choice(prompt: 'What do you say to answer a phone?', options: ['Goodbye', 'Hello', 'Sleep', 'Run'], correctIndex: 1),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'Can I ___ to Maria, please?', options: ['speaks', 'speak', 'spoke', 'speaking'], correctIndex: 1),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['I', 'message', 'Can', 'leave', 'a'], correctOrder: ['Can', 'I', 'leave', 'a', 'message']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'Sorry, she is not ___ right now.', options: ['apple', 'available', 'angry', 'asleep'], correctIndex: 1),
+      Exercise.choice(prompt: 'How do you end a call politely?', options: ['Get lost', 'Talk soon, bye', 'Be quiet', 'Go away'], correctIndex: 1),
+    ]),
+    Lesson(id: 'u4l5', title: 'Travel', exercises: [
+      Exercise.choice(prompt: 'Where do you catch a train?', options: ['Kitchen', 'Station', 'Garden', 'Bedroom'], correctIndex: 1),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'I would like a ___ ticket to London.', options: ['returns', 'return', 'returning', 'returned'], correctIndex: 1),
+      Exercise.wordBank(prompt: 'Build the question', options: ['does', 'What', 'it', 'time', 'leave'], correctOrder: ['What', 'time', 'does', 'it', 'leave']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'The train ___ at platform two.', options: ['arrive', 'arrives', 'arriving', 'arrived'], correctIndex: 1),
+      Exercise.choice(prompt: 'What do you need to fly abroad?', options: ['Spoon', 'Passport', 'Pillow', 'Hammer'], correctIndex: 1),
+    ]),
+  ],
+);
+
 /// The full course, in order. Lessons unlock sequentially across all units.
-const List<Unit> course = [unit1, unit2, unit3];
+const List<Unit> course = [unit1, unit2, unit3, unit4];

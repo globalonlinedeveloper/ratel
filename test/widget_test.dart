@@ -26,10 +26,10 @@ void main() {
     expect(state.completedCount, 0);
   });
 
-  test('course has three units with fifteen unique lesson ids', () {
-    expect(course.length, 3);
+  test('course has four units with twenty unique lesson ids', () {
+    expect(course.length, 4);
     final ids = [for (final u in course) ...u.lessons.map((l) => l.id)];
-    expect(ids.length, 15);
+    expect(ids.length, 20);
     expect(ids.toSet().length, ids.length); // no duplicate ids
   });
 

@@ -56,15 +56,18 @@ jobs:
           npm i playwright@1.60.0
           npx playwright install --with-deps chromium
 
-      - name: E2E smoke test (Playwright against the fresh build)
-        run: node test/e2e/smoke.mjs
+      - name: E2E regression (signup -> lesson -> persistence, Playwright)
+        env:
+          SUPABASE_URL: https://fkbmodjtxatrqcghhfba.supabase.co
+          SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
+        run: node test/e2e/full.mjs
 
       - name: Upload e2e screenshot
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-smoke-screenshot
-          path: e2e-smoke.png
+          name: e2e-screenshot
+          path: e2e-full.png
           if-no-files-found: ignore
 
       - name: Upload Pages artifact
