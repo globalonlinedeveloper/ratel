@@ -11,6 +11,8 @@ import '../app_state.dart';
 import '../sfx.dart';
 import '../analytics.dart';
 import '../explain_store.dart';
+import '../config.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Runs a learner through every exercise in a [Lesson], then shows a
 /// completion summary. Handles multiple-choice and word-bank exercises.
@@ -40,7 +42,8 @@ class _LessonScreenState extends State<LessonScreen>
   int? _selected; // choice
   final List<int> _picked = []; // word-bank: option indices in chosen order
   int _combo = 0; // in-lesson correct streak -> drives the escalation glow
-  String? _explanation; // pre-authored explanation for a wrong answer (local)
+  String? _explanation; // explanation for a wrong answer (local bundle, then on-demand)
+  bool _explaining = false;
 
   late final AnimationController _fb; // answer feedback: pop on right, shake on wrong
 
@@ -111,6 +114,7 @@ class _LessonScreenState extends State<LessonScreen>
         _selected = null;
         _picked.clear();
         _explanation = null;
+        _explaining = false;
       });
     } else {
       if (!widget.reviewMode) {
@@ -248,17 +252,53 @@ class _LessonScreenState extends State<LessonScreen>
     return _picked.map((i) => _ex.options[i]).join(' ');
   }
 
-  /// Show the pre-authored explanation for this wrong answer. Looked up from
-  /// the bundled asset — no network, no API, no cost. Key matches the
-  /// generator in tool/gen_explanations.py.
-  void _explain() {
+  /// Explain a wrong answer: the bundled asset first (free/offline), then a
+  /// one-time server generate-and-cache for content not in the bundle.
+  Future<void> _explain() async {
     final key = _ex.type == ExerciseType.choice
         ? '${widget.lesson.id}:$_index:$_selected'
         : '${widget.lesson.id}:$_index:wb';
-    setState(() {
-      _explanation = ExplainStore.instance.lookup(key) ??
-          'The correct answer is "${_correctText()}".';
-    });
+    // Bundled seed first: free, instant, offline; covers all current content.
+    final local = ExplainStore.instance.lookup(key);
+    if (local != null) {
+      setState(() => _explanation = local);
+      return;
+    }
+    // New content such as a DB-added lesson: generate-on-demand, cached
+    //    server-side so it costs at most one LLM call ever for that exercise.
+    if (!Config.hasSupabase) {
+      setState(() => _explanation = 'The correct answer is "${_correctText()}".');
+      return;
+    }
+    setState(() => _explaining = true);
+    try {
+      final res = await Supabase.instance.client.functions.invoke(
+        'explain-answer',
+        body: {
+          'key': key,
+          'prompt': _ex.prompt,
+          'userAnswer': _userText(),
+          'correctAnswer': _correctText(),
+        },
+      );
+      final data = res.data;
+      final text = (data is Map && data['explanation'] is String)
+          ? (data['explanation'] as String).trim()
+          : '';
+      if (!mounted) return;
+      setState(() {
+        _explanation = text.isNotEmpty
+            ? text
+            : 'The correct answer is "${_correctText()}".';
+        _explaining = false;
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        _explanation = 'The correct answer is "${_correctText()}".';
+        _explaining = false;
+      });
+    }
   }
 
   Widget _explainBlock() {
@@ -277,6 +317,22 @@ class _LessonScreenState extends State<LessonScreen>
             const Icon(Icons.auto_awesome, color: RatelColors.honey, size: 18),
             const SizedBox(width: 8),
             Expanded(child: Text(_explanation!)),
+          ],
+        ),
+      );
+    }
+    if (_explaining) {
+      return const Padding(
+        padding: EdgeInsets.only(bottom: 10),
+        child: Row(
+          children: [
+            SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(strokeWidth: 2)),
+            SizedBox(width: 10),
+            Text('Ratel is thinking…',
+                style: TextStyle(color: RatelColors.textMuted)),
           ],
         ),
       );
