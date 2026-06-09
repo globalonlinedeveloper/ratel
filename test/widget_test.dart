@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
 import 'package:ratel/content.dart';
+import 'package:ratel/achievements.dart';
 import 'package:ratel/models.dart';
 import 'package:ratel/sfx.dart';
 import 'package:ratel/widgets/rolling_number.dart';
@@ -180,5 +181,17 @@ void main() {
   test('lessonTitleForId resolves titles and rejects unknown ids', () {
     expect(lessonTitleForId('u1l1'), course[0].lessons[0].title);
     expect(lessonTitleForId('nope'), isNull);
+  });
+
+  test('achievements unlock at their thresholds', () {
+    final s = AppState();
+    expect(isEarned(achievements.first, s), isFalse); // 0 lessons
+    s.completeLesson('u1l1', 100); // 1 lesson, 100 xp
+    expect(isEarned(achievements.firstWhere((a) => a.title == 'First steps'), s),
+        isTrue);
+    expect(isEarned(achievements.firstWhere((a) => a.title == 'Centurion'), s),
+        isTrue);
+    expect(isEarned(achievements.firstWhere((a) => a.title == 'XP hunter'), s),
+        isFalse);
   });
 }
