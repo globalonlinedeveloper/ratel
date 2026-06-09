@@ -13,6 +13,7 @@ class AppState extends ChangeNotifier {
   int streak = 0;
   int dailyGoalXp = 50;
   int todayXp = 0;
+  int lessonsToday = 0;
   int longestStreak = 0;
   int streakFreezes = 2;
   String displayName = '';
@@ -86,13 +87,16 @@ class AppState extends ChangeNotifier {
           DateTime(now.year, now.month, now.day).toUtc().toIso8601String();
       final rows = await client
           .from('xp_events')
-          .select('amount')
+          .select('amount, reason')
           .gte('created_at', start);
       var sum = 0;
+      var lessons = 0;
       for (final r in List<Map<String, dynamic>>.from(rows)) {
         sum += (r['amount'] as num?)?.toInt() ?? 0;
+        if ((r['reason'] ?? '').toString() == 'lesson') lessons++;
       }
       todayXp = sum;
+      lessonsToday = lessons;
     } catch (_) {
       // leave todayXp as-is
     }
@@ -221,6 +225,7 @@ class AppState extends ChangeNotifier {
     longestStreak = 0;
     streakFreezes = 2;
     todayXp = 0;
+    lessonsToday = 0;
     displayName = '';
     email = '';
     loaded = false;
@@ -234,6 +239,7 @@ class AppState extends ChangeNotifier {
     _completed.add(lessonId);
     xp += earnedXp;
     todayXp += earnedXp;
+    lessonsToday += 1;
     notifyListeners();
     _persist();
     _logXpEvent(earnedXp, 'lesson');

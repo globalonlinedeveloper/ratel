@@ -18,6 +18,7 @@ import '../widgets/weak_areas_summary.dart';
 import '../widgets/leagues_board.dart';
 import '../widgets/daily_nudge.dart';
 import '../widgets/review_card.dart';
+import '../widgets/daily_quests_card.dart';
 import '../widgets/achievements_view.dart';
 import '../widgets/daily_goal_card.dart';
 
@@ -386,6 +387,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _header(),
         const DailyNudge(),
         const ReviewCard(),
+        const DailyQuestsCard(),
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.only(top: 12, bottom: 16),

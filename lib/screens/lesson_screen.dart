@@ -44,6 +44,7 @@ class _LessonScreenState extends State<LessonScreen>
   int _combo = 0; // in-lesson correct streak -> drives the escalation glow
   String? _explanation; // explanation for a wrong answer (local bundle, then on-demand)
   bool _explaining = false;
+  int _bonusXp = 0; // occasional surprise bonus on completion
 
   late final AnimationController _fb; // answer feedback: pop on right, shake on wrong
 
@@ -119,9 +120,11 @@ class _LessonScreenState extends State<LessonScreen>
       });
     } else {
       if (!widget.reviewMode) {
-        appState.completeLesson(widget.lesson.id, _correctCount * 10);
-        Analytics.lessonComplete(widget.lesson.id, _correctCount * 10,
-            _correctCount, widget.lesson.exercises.length);
+        _bonusXp = Random().nextInt(5) == 0 ? (5 + Random().nextInt(16)) : 0;
+        final total = _correctCount * 10 + _bonusXp;
+        appState.completeLesson(widget.lesson.id, total);
+        Analytics.lessonComplete(widget.lesson.id, total, _correctCount,
+            widget.lesson.exercises.length);
       }
       Sfx.instance.complete();
       setState(() => _finished = true);
@@ -510,7 +513,7 @@ class _LessonScreenState extends State<LessonScreen>
 
   // ---- completion ----
   Widget _completion(BuildContext context) {
-    final int earned = _correctCount * 10;
+    final int earned = _correctCount * 10 + _bonusXp;
     final int total = widget.lesson.exercises.length;
     return Scaffold(
       body: SafeArea(
@@ -551,6 +554,13 @@ class _LessonScreenState extends State<LessonScreen>
                                     color: RatelColors.textMuted, fontSize: 16),
                               ),
                             ),
+                      if (_bonusXp > 0) ...[
+                        const SizedBox(height: 6),
+                        Text('🎁 Surprise bonus +$_bonusXp XP!',
+                            style: const TextStyle(
+                                color: RatelColors.coral,
+                                fontWeight: FontWeight.w700)),
+                      ],
                       const SizedBox(height: 18),
                       SizedBox(
                         width: 240,

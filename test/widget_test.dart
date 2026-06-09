@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
 import 'package:ratel/content.dart';
 import 'package:ratel/achievements.dart';
+import 'package:ratel/daily_quests.dart';
 import 'package:ratel/models.dart';
 import 'package:ratel/sfx.dart';
 import 'package:ratel/widgets/rolling_number.dart';
@@ -209,5 +210,18 @@ void main() {
         const MaterialApp(home: Scaffold(body: DailyNudge())));
     expect(find.textContaining('streak alive'), findsNothing);
     appState.reset();
+  });
+
+  test('daily quests: two quests, stable within a day, completion detected', () {
+    final a = questsForToday();
+    final b = questsForToday();
+    expect(a.length, 2);
+    expect(a[0].target, b[0].target); // stable within the same day
+    expect(a[1].target, b[1].target);
+    final full = AppState()
+      ..todayXp = 999
+      ..lessonsToday = 99;
+    expect(a.every((q) => questDone(q, full)), isTrue);
+    expect(a.any((q) => questDone(q, AppState())), isFalse);
   });
 }
