@@ -26,9 +26,8 @@ class RatelApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ratelTheme(),
       builder: (context, child) {
-        // Phone-width frame, centered with gutters on wide screens.
-        return ColoredBox(
-          color: const Color(0xFFE6E4DC),
+        // Phone-width frame, centered on a slowly-shifting gradient backdrop.
+        return _AnimatedBackdrop(
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 480),
@@ -39,6 +38,50 @@ class RatelApp extends StatelessWidget {
       },
       // With config present, require login; otherwise run straight to Home.
       home: Config.hasSupabase ? const AuthGate() : const HomeScreen(),
+    );
+  }
+}
+
+
+/// A subtle, slowly-shifting gradient backdrop behind the app frame.
+class _AnimatedBackdrop extends StatefulWidget {
+  final Widget child;
+  const _AnimatedBackdrop({required this.child});
+
+  @override
+  State<_AnimatedBackdrop> createState() => _AnimatedBackdropState();
+}
+
+class _AnimatedBackdropState extends State<_AnimatedBackdrop>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(
+      vsync: this, duration: const Duration(seconds: 16))
+    ..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _c,
+      builder: (context, child) {
+        final t = _c.value;
+        return DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment(-1 + 2 * t, -1),
+              end: Alignment(1, 1 - 2 * t),
+              colors: const [Color(0xFFEDEAE0), Color(0xFFE4E8E3), Color(0xFFEBE6DD)],
+            ),
+          ),
+          child: child,
+        );
+      },
+      child: widget.child,
     );
   }
 }
