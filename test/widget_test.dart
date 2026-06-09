@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
@@ -124,5 +126,37 @@ void main() {
         home: Scaffold(body: ComboGlow(combo: 5))));
     await tester.pumpAndSettle();
     expect(find.byType(CustomPaint), findsWidgets);
+  });
+
+  test('every fixed wrong-answer has a pre-authored explanation (no API at runtime)', () {
+    final f = File('assets/explanations.json');
+    expect(f.existsSync(), isTrue, reason: 'assets/explanations.json missing');
+    final map = json.decode(f.readAsStringSync()) as Map<String, dynamic>;
+    final missing = <String>[];
+    for (final unit in course) {
+      for (final lesson in unit.lessons) {
+        for (var i = 0; i < lesson.exercises.length; i++) {
+          final ex = lesson.exercises[i];
+          if (ex.type == ExerciseType.choice) {
+            for (var j = 0; j < ex.options.length; j++) {
+              if (j == ex.correctIndex) continue;
+              final key = '${lesson.id}:$i:$j';
+              if (!map.containsKey(key) ||
+                  (map[key] as String).trim().isEmpty) {
+                missing.add(key);
+              }
+            }
+          } else {
+            final key = '${lesson.id}:$i:wb';
+            if (!map.containsKey(key) ||
+                (map[key] as String).trim().isEmpty) {
+              missing.add(key);
+            }
+          }
+        }
+      }
+    }
+    expect(missing, isEmpty,
+        reason: 'Missing explanations for $missing — run tool/gen_explanations.py');
   });
 }

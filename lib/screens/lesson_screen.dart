@@ -10,8 +10,7 @@ import '../models.dart';
 import '../app_state.dart';
 import '../sfx.dart';
 import '../analytics.dart';
-import '../config.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import '../explain_store.dart';
 
 /// Runs a learner through every exercise in a [Lesson], then shows a
 /// completion summary. Handles multiple-choice and word-bank exercises.
@@ -34,8 +33,7 @@ class _LessonScreenState extends State<LessonScreen>
   int? _selected; // choice
   final List<int> _picked = []; // word-bank: option indices in chosen order
   int _combo = 0; // in-lesson correct streak -> drives the escalation glow
-  String? _explanation; // AI 'explain my answer' result (server-side LLM)
-  bool _explaining = false;
+  String? _explanation; // pre-authored explanation for a wrong answer (local)
 
   late final AnimationController _fb; // answer feedback: pop on right, shake on wrong
 
@@ -93,7 +91,6 @@ class _LessonScreenState extends State<LessonScreen>
         _selected = null;
         _picked.clear();
         _explanation = null;
-        _explaining = false;
       });
     } else {
       appState.completeLesson(widget.lesson.id, _correctCount * 10);
@@ -222,46 +219,17 @@ class _LessonScreenState extends State<LessonScreen>
     return _ex.correctOrder.join(' ');
   }
 
-  String _userText() {
-    if (_ex.type == ExerciseType.choice) {
-      return _selected != null ? _ex.options[_selected!] : '(no answer)';
-    }
-    return _picked.map((i) => _ex.options[i]).join(' ');
-  }
-
-  /// Ask the server-side LLM (Supabase Edge Function) to explain the miss.
-  /// The API key lives only on the server; the client just invokes the function
-  /// with the user's session. Always degrades gracefully.
-  Future<void> _explain() async {
-    setState(() => _explaining = true);
-    try {
-      final res = await Supabase.instance.client.functions.invoke(
-        'explain-answer',
-        body: {
-          'prompt': _ex.prompt,
-          'userAnswer': _userText(),
-          'correctAnswer': _correctText(),
-        },
-      );
-      final data = res.data;
-      final text = (data is Map && data['explanation'] is String)
-          ? (data['explanation'] as String).trim()
-          : '';
-      if (!mounted) return;
-      setState(() {
-        _explanation = text.isNotEmpty
-            ? text
-            : 'Take another look — the correct answer is shown above.';
-        _explaining = false;
-      });
-    } catch (_) {
-      if (!mounted) return;
-      setState(() {
-        _explanation =
-            'Could not load an explanation right now — the correct answer is shown above.';
-        _explaining = false;
-      });
-    }
+  /// Show the pre-authored explanation for this wrong answer. Looked up from
+  /// the bundled asset — no network, no API, no cost. Key matches the
+  /// generator in tool/gen_explanations.py.
+  void _explain() {
+    final key = _ex.type == ExerciseType.choice
+        ? '${widget.lesson.id}:$_index:$_selected'
+        : '${widget.lesson.id}:$_index:wb';
+    setState(() {
+      _explanation = ExplainStore.instance.lookup(key) ??
+          'The correct answer is "${_correctText()}".';
+    });
   }
 
   Widget _explainBlock() {
@@ -280,22 +248,6 @@ class _LessonScreenState extends State<LessonScreen>
             const Icon(Icons.auto_awesome, color: RatelColors.honey, size: 18),
             const SizedBox(width: 8),
             Expanded(child: Text(_explanation!)),
-          ],
-        ),
-      );
-    }
-    if (_explaining) {
-      return const Padding(
-        padding: EdgeInsets.only(bottom: 10),
-        child: Row(
-          children: [
-            SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2)),
-            SizedBox(width: 10),
-            Text('Ratel is thinking…',
-                style: TextStyle(color: RatelColors.textMuted)),
           ],
         ),
       );
@@ -450,7 +402,7 @@ class _LessonScreenState extends State<LessonScreen>
           ],
         ),
         const SizedBox(height: 10),
-        if (!_isCorrect && Config.hasSupabase) _explainBlock(),
+        if (!_isCorrect) _explainBlock(),
         _wideButton(_isLast ? 'Finish' : 'Continue', _next),
       ],
     );
