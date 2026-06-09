@@ -9,6 +9,7 @@ import '../config.dart';
 import '../sfx.dart';
 import 'lesson_screen.dart';
 import 'admin_screen.dart';
+import 'paywall_screen.dart';
 import '../widgets/transitions.dart';
 import '../widgets/rolling_number.dart';
 import '../widgets/streak_flame.dart';
@@ -173,6 +174,37 @@ class _HomeScreenState extends State<HomeScreen> {
               style: const TextStyle(color: RatelColors.textMuted)),
           const SizedBox(height: 20),
           const DailyGoalCard(),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const PaywallScreen())),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                      colors: [RatelColors.honey, RatelColors.coral]),
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.workspace_premium, color: Colors.white),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                          appState.isPro
+                              ? 'Ratel Pro is active ✨'
+                              : 'Ratel Pro — unlimited hearts & more',
+                          style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.w700)),
+                    ),
+                    const Icon(Icons.chevron_right, color: Colors.white),
+                  ],
+                ),
+              ),
+            ),
+          ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GridView.count(
@@ -383,7 +415,17 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(width: 12),
           _numStat(Icons.bolt, appState.xp, RatelColors.honey),
           const SizedBox(width: 12),
-          _numStat(Icons.favorite, appState.hearts, RatelColors.hearts),
+          appState.isPro
+              ? Row(mainAxisSize: MainAxisSize.min, children: const [
+                  Icon(Icons.favorite, color: RatelColors.hearts, size: 18),
+                  SizedBox(width: 3),
+                  Text('∞',
+                      style: TextStyle(
+                          color: RatelColors.hearts,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16)),
+                ])
+              : _numStat(Icons.favorite, appState.hearts, RatelColors.hearts),
         ],
       ),
     );

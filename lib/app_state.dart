@@ -19,6 +19,7 @@ class AppState extends ChangeNotifier {
   String email = '';
   bool loaded = false;
   bool isAdmin = false;
+  bool isPro = false;
   final Set<String> _completed = <String>{};
 
   bool isCompleted(String lessonId) => _completed.contains(lessonId);
@@ -69,6 +70,7 @@ class AppState extends ChangeNotifier {
       // Keep current values if the read fails (e.g., column not migrated yet).
     }
     await _loadTodayXp(client);
+    await _loadPro(client);
     loaded = true;
     notifyListeners();
   }
@@ -91,6 +93,48 @@ class AppState extends ChangeNotifier {
     } catch (_) {
       // leave todayXp as-is
     }
+  }
+
+  /// Read the user's subscription; Pro = an active/trialing, unexpired row.
+  Future<void> _loadPro(SupabaseClient client) async {
+    try {
+      final rows = await client
+          .from('subscriptions')
+          .select('status, expires_at');
+      isPro = false;
+      for (final r in List<Map<String, dynamic>>.from(rows)) {
+        final status = (r['status'] ?? '').toString();
+        final active = status == 'active' || status == 'trialing';
+        final exp = r['expires_at'];
+        final notExpired = exp == null ||
+            (DateTime.tryParse(exp.toString())?.isAfter(DateTime.now()) ?? false);
+        if (active && notExpired) {
+          isPro = true;
+          break;
+        }
+      }
+    } catch (_) {}
+  }
+
+  /// Start the 7-day Pro trial (test mode — real billing replaces the RPC).
+  Future<void> startProTrial() async {
+    final client = _client;
+    if (client == null) return;
+    try {
+      await client.rpc('start_pro_trial');
+      isPro = true;
+      notifyListeners();
+    } catch (_) {}
+  }
+
+  Future<void> cancelPro() async {
+    final client = _client;
+    if (client == null) return;
+    try {
+      await client.rpc('cancel_pro');
+      isPro = false;
+      notifyListeners();
+    } catch (_) {}
   }
 
   /// Log an XP event (fire-and-forget) — powers the daily goal + history.
@@ -124,6 +168,7 @@ class AppState extends ChangeNotifier {
   }
 
   void loseHeart() {
+    if (isPro) return; // Pro: unlimited hearts
     if (hearts > 0) {
       hearts -= 1;
       notifyListeners();
@@ -147,6 +192,7 @@ class AppState extends ChangeNotifier {
     email = '';
     loaded = false;
     isAdmin = false;
+    isPro = false;
     _completed.clear();
     notifyListeners();
   }
