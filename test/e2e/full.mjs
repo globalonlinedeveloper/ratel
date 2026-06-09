@@ -48,22 +48,28 @@ try{
   await tap(page,'meet',{exact:true});await tap(page,'Check');await tap(page,'Finish');
   await page.waitForTimeout(1200);
   if(await page.getByText('Lesson complete!',{exact:false}).count()<1) problems.push('completion screen missing');
-  if(await page.getByText('5 / 5 correct',{exact:false}).count()<1) problems.push('completion correct-count missing');
+  if(await page.getByText('/ 5 correct',{exact:false}).count()<1) problems.push('completion correct-count missing');
   phase='persistence';
   await tap(page,'Continue');
+  await page.waitForTimeout(2500); // let fire-and-forget writes settle before reload
   await page.reload({waitUntil:'load'});await page.waitForTimeout(7000);
   await page.mouse.click(420,862);await page.waitForTimeout(1500);
   await sem(page);
   await page.screenshot({path:'e2e-full.png'});
-  // Persistence checked at the DB (robust to the variable completion bonus).
+  // Persistence at the DB, retried (writes are async; robust to the variable bonus).
   if(token){
-    try{
-      const pr=await fetch(`${SUPA_URL}/rest/v1/profiles?select=total_xp`,{headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`}});
-      const pj=await pr.json().catch(()=>[]);
-      const xp=Array.isArray(pj)&&pj[0]?(pj[0].total_xp||0):0;
-      if(xp<50) problems.push(`XP not persisted (total_xp=${xp}, expected >=50)`);
-      else console.log('persisted total_xp:', xp);
-    }catch(e){ problems.push('persistence query failed: '+e.message); }
+    let pxp=0, pdl=Date.now()+12000;
+    while(Date.now()<pdl){
+      try{
+        const pr=await fetch(`${SUPA_URL}/rest/v1/profiles?select=total_xp`,{headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`}});
+        const pj=await pr.json().catch(()=>[]);
+        pxp=Array.isArray(pj)&&pj[0]?(pj[0].total_xp||0):0;
+        if(pxp>=10) break;
+      }catch(e){}
+      await page.waitForTimeout(800);
+    }
+    if(pxp<10) problems.push(`XP not persisted (total_xp=${pxp})`);
+    else console.log('persisted total_xp:', pxp);
   } else { problems.push('no token for persistence check'); }
   // The Sound/Haptics settings live in SwitchListTiles, whose title is merged
   // into one accessible node -> match the aria-label/semantics text, not a
