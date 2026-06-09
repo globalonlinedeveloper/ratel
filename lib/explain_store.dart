@@ -5,8 +5,8 @@ import 'package:flutter/services.dart' show rootBundle;
 /// `assets/explanations.json` and serves them by key. These are generated
 /// deterministically from the lesson content (see `tool/gen_explanations.py`) —
 /// no network, no API, no cost at runtime. Keys:
-///   choice:   '<lessonId>:<exerciseIndex>:<chosenOptionIndex>'
-///   wordBank: '<lessonId>:<exerciseIndex>:wb'
+///   choice:   `lessonId:exerciseIndex:chosenOptionIndex`
+///   wordBank: `lessonId:exerciseIndex:wb`
 class ExplainStore {
   ExplainStore._();
   static final ExplainStore instance = ExplainStore._();
