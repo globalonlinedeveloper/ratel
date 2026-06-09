@@ -155,7 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildPractice() {
-    final List<Lesson> lessons = unit1.lessons;
+    final List<Lesson> lessons = [for (final u in course) ...u.lessons];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -315,34 +315,40 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildLearn(BuildContext context) {
-    final List<Lesson> lessons = unit1.lessons;
-    final int currentIndex =
-        lessons.indexWhere((l) => !appState.isCompleted(l.id));
+    // Flatten every unit to find the single "current" lesson across the course.
+    final List<Lesson> all = [for (final u in course) ...u.lessons];
+    final int globalCurrent =
+        all.indexWhere((l) => !appState.isCompleted(l.id));
+    final String? currentId =
+        globalCurrent == -1 ? null : all[globalCurrent].id;
     const List<double> offsets = [-50.0, 10.0, 50.0, 0.0, -40.0];
+
     final List<Widget> path = [];
-    for (int i = 0; i < lessons.length; i++) {
-      final Lesson l = lessons[i];
-      final NodeState st = appState.isCompleted(l.id)
-          ? NodeState.done
-          : (i == currentIndex ? NodeState.current : NodeState.locked);
-      path.add(st == NodeState.current
-          ? _currentNode(context, l)
-          : _node(state: st, dx: offsets[i % offsets.length]));
-      path.add(const SizedBox(height: 18));
+    for (final unit in course) {
+      path.add(_unitBanner(unit));
+      path.add(const SizedBox(height: 14));
+      for (int i = 0; i < unit.lessons.length; i++) {
+        final Lesson l = unit.lessons[i];
+        final NodeState st = appState.isCompleted(l.id)
+            ? NodeState.done
+            : (l.id == currentId ? NodeState.current : NodeState.locked);
+        path.add(st == NodeState.current
+            ? _currentNode(context, l)
+            : _node(state: st, dx: offsets[i % offsets.length]));
+        path.add(const SizedBox(height: 18));
+      }
     }
-    final bool allDone = currentIndex == -1;
     path.add(_node(
-        state: allDone ? NodeState.done : NodeState.locked,
+        state: currentId == null ? NodeState.done : NodeState.locked,
         dx: -40,
         trophy: true));
 
     return Column(
       children: [
         _header(),
-        _unitBanner(),
         Expanded(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: const EdgeInsets.only(top: 12, bottom: 16),
             child: Column(children: path),
           ),
         ),
@@ -390,7 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _unitBanner() {
+  Widget _unitBanner(Unit unit) {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       padding: const EdgeInsets.all(14),
@@ -403,9 +409,9 @@ class _HomeScreenState extends State<HomeScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(unit1.title,
+              Text(unit.title,
                   style: const TextStyle(color: Colors.white70, fontSize: 12)),
-              Text(unit1.subtitle,
+              Text(unit.subtitle,
                   style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,

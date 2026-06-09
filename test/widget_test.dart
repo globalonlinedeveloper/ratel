@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
+import 'package:ratel/content.dart';
+import 'package:ratel/models.dart';
 
 void main() {
   test('completeLesson adds XP and marks the lesson complete', () {
@@ -22,5 +24,34 @@ void main() {
     expect(state.xp, 0);
     expect(state.isCompleted('u1l1'), isFalse);
     expect(state.completedCount, 0);
+  });
+
+  test('course has two units with ten unique lesson ids', () {
+    expect(course.length, 2);
+    final ids = [for (final u in course) ...u.lessons.map((l) => l.id)];
+    expect(ids.length, 10);
+    expect(ids.toSet().length, ids.length); // no duplicate ids
+  });
+
+  test('every exercise is well-formed', () {
+    for (final unit in course) {
+      for (final lesson in unit.lessons) {
+        expect(lesson.exercises, isNotEmpty);
+        for (final ex in lesson.exercises) {
+          if (ex.type == ExerciseType.choice) {
+            expect(ex.options.length, greaterThanOrEqualTo(2));
+            expect(ex.correctIndex, inInclusiveRange(0, ex.options.length - 1));
+          } else {
+            // wordBank: the answer must be buildable from the given tiles.
+            expect(ex.correctOrder, isNotEmpty);
+            final bank = [...ex.options];
+            for (final word in ex.correctOrder) {
+              expect(bank.remove(word), isTrue,
+                  reason: 'tile "$word" missing for "${ex.prompt}"');
+            }
+          }
+        }
+      }
+    }
   });
 }
