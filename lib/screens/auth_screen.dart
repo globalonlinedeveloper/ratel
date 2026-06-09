@@ -14,6 +14,7 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
+  final TextEditingController _name = TextEditingController();
   bool _isSignUp = false;
   bool _loading = false;
   String? _message;
@@ -32,7 +33,11 @@ class _AuthScreenState extends State<AuthScreen> {
     try {
       final auth = Supabase.instance.client.auth;
       if (_isSignUp) {
-        final res = await auth.signUp(email: email, password: password);
+        final res = await auth.signUp(
+          email: email,
+          password: password,
+          data: _name.text.trim().isEmpty ? null : {'full_name': _name.text.trim()},
+        );
         if (res.session == null && mounted) {
           setState(() =>
               _message = 'Account created. Check your email to confirm, then log in.');
@@ -53,6 +58,7 @@ class _AuthScreenState extends State<AuthScreen> {
   void dispose() {
     _email.dispose();
     _password.dispose();
+    _name.dispose();
     super.dispose();
   }
 
@@ -78,6 +84,15 @@ class _AuthScreenState extends State<AuthScreen> {
                   const Text('Learn English, fearlessly.',
                       style: TextStyle(color: RatelColors.textMuted)),
                   const SizedBox(height: 24),
+                  if (_isSignUp) ...[
+                    TextField(
+                      controller: _name,
+                      textCapitalization: TextCapitalization.words,
+                      decoration: const InputDecoration(
+                          labelText: 'Name', border: OutlineInputBorder()),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
                   TextField(
                     controller: _email,
                     keyboardType: TextInputType.emailAddress,

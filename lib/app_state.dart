@@ -11,6 +11,8 @@ class AppState extends ChangeNotifier {
   int xp = 0;
   int hearts = 5;
   int streak = 0;
+  String displayName = '';
+  String email = '';
   bool loaded = false;
   final Set<String> _completed = <String>{};
 
@@ -35,16 +37,18 @@ class AppState extends ChangeNotifier {
       notifyListeners();
       return;
     }
+    email = client.auth.currentUser?.email ?? '';
     try {
       final row = await client
           .from('profiles')
-          .select('total_xp, current_streak, hearts, completed_lessons')
+          .select('total_xp, current_streak, hearts, completed_lessons, display_name')
           .eq('id', client.auth.currentUser!.id)
           .maybeSingle();
       if (row != null) {
         xp = (row['total_xp'] as int?) ?? xp;
         streak = (row['current_streak'] as int?) ?? streak;
         hearts = (row['hearts'] as int?) ?? hearts;
+        displayName = (row['display_name'] as String?) ?? displayName;
         final dynamic cl = row['completed_lessons'];
         if (cl is List) {
           _completed
@@ -76,6 +80,8 @@ class AppState extends ChangeNotifier {
     xp = 0;
     hearts = 5;
     streak = 0;
+    displayName = '';
+    email = '';
     loaded = false;
     _completed.clear();
     notifyListeners();

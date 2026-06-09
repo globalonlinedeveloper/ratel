@@ -25,6 +25,18 @@ class RatelApp extends StatelessWidget {
       title: 'Ratel',
       debugShowCheckedModeBanner: false,
       theme: ratelTheme(),
+      builder: (context, child) {
+        // Phone-width frame, centered with gutters on wide screens.
+        return ColoredBox(
+          color: const Color(0xFFE6E4DC),
+          child: Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 480),
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
+        );
+      },
       // With config present, require login; otherwise run straight to Home.
       home: Config.hasSupabase ? const AuthGate() : const HomeScreen(),
     );
