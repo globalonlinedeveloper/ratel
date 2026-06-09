@@ -9,6 +9,8 @@ import '../config.dart';
 import '../sfx.dart';
 import 'lesson_screen.dart';
 import '../widgets/transitions.dart';
+import '../widgets/rolling_number.dart';
+import '../widgets/streak_flame.dart';
 
 enum NodeState { done, current, locked }
 
@@ -256,13 +258,13 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisSpacing: 10,
               childAspectRatio: 2.4,
               children: [
-                _statCard(Icons.local_fire_department, '${appState.streak}',
-                    'Day streak', RatelColors.coral),
-                _statCard(Icons.bolt, '${appState.xp}', 'Total XP',
+                _statCardNum(Icons.local_fire_department, appState.streak,
+                    'Day streak', RatelColors.coral, flame: true),
+                _statCardNum(Icons.bolt, appState.xp, 'Total XP',
                     RatelColors.honey),
-                _statCard(Icons.favorite, '${appState.hearts}', 'Hearts',
+                _statCardNum(Icons.favorite, appState.hearts, 'Hearts',
                     RatelColors.hearts),
-                _statCard(Icons.task_alt, '${appState.completedCount}',
+                _statCardNum(Icons.task_alt, appState.completedCount,
                     'Lessons done', RatelColors.teal),
               ],
             ),
@@ -315,7 +317,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _statCard(IconData icon, String value, String label, Color color) {
+  Widget _statCardNum(IconData icon, int value, String label, Color color,
+      {bool flame = false}) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -325,14 +328,16 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 26),
+          flame
+              ? StreakFlame(streak: value, size: 26)
+              : Icon(icon, color: color, size: 26),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(value,
+                RollingNumber(value,
                     style: const TextStyle(
                         fontSize: 19, fontWeight: FontWeight.w700)),
                 Text(label,
@@ -405,25 +410,40 @@ class _HomeScreenState extends State<HomeScreen> {
           const Text('English',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
           const Spacer(),
-          _stat(Icons.local_fire_department, '${appState.streak}', RatelColors.coral),
+          _streakStat(appState.streak),
           const SizedBox(width: 12),
-          _stat(Icons.bolt, '${appState.xp}', RatelColors.honey),
+          _numStat(Icons.bolt, appState.xp, RatelColors.honey),
           const SizedBox(width: 12),
-          _stat(Icons.favorite, '${appState.hearts}', RatelColors.hearts),
+          _numStat(Icons.favorite, appState.hearts, RatelColors.hearts),
         ],
       ),
     );
   }
 
-  Widget _stat(IconData icon, String value, Color color) {
+  Widget _numStat(IconData icon, int value, Color color) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(icon, color: color, size: 18),
         const SizedBox(width: 3),
-        Text(value,
+        RollingNumber(value,
             style: TextStyle(
                 color: color, fontWeight: FontWeight.w600, fontSize: 14)),
+      ],
+    );
+  }
+
+  Widget _streakStat(int streak) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        StreakFlame(streak: streak, size: 18),
+        const SizedBox(width: 3),
+        RollingNumber(streak,
+            style: const TextStyle(
+                color: RatelColors.coral,
+                fontWeight: FontWeight.w600,
+                fontSize: 14)),
       ],
     );
   }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/confetti.dart';
+import '../widgets/streak_flame.dart';
 import '../models.dart';
 import '../app_state.dart';
 import '../sfx.dart';
@@ -395,7 +396,8 @@ class _LessonScreenState extends State<LessonScreen>
                       const SizedBox(height: 8),
                       TweenAnimationBuilder<int>(
                         tween: IntTween(begin: 0, end: earned),
-                        duration: const Duration(milliseconds: 700),
+                        duration: const Duration(milliseconds: 1200),
+                        curve: Curves.easeOutCubic,
                         builder: (context, value, _) => Text(
                           '+$value XP   ·   $_correctCount / $total correct',
                           style: const TextStyle(
@@ -409,7 +411,7 @@ class _LessonScreenState extends State<LessonScreen>
                           borderRadius: BorderRadius.circular(8),
                           child: TweenAnimationBuilder<double>(
                             tween: Tween(begin: 0.0, end: 1.0),
-                            duration: const Duration(milliseconds: 900),
+                            duration: const Duration(milliseconds: 1400),
                             curve: Curves.easeOutBack,
                             builder: (context, v, _) => LinearProgressIndicator(
                               value: v.clamp(0.0, 1.0),
@@ -420,6 +422,21 @@ class _LessonScreenState extends State<LessonScreen>
                           ),
                         ),
                       ),
+                      if (appState.streak > 0) ...[
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            StreakFlame(streak: appState.streak, size: 24),
+                            const SizedBox(width: 6),
+                            Text('${appState.streak}-day streak',
+                                style: const TextStyle(
+                                    color: RatelColors.coral,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 15)),
+                          ],
+                        ),
+                      ],
                       const SizedBox(height: 28),
                       _wideButton(
                           'Continue', () => Navigator.of(context).maybePop()),

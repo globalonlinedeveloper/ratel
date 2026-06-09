@@ -1,8 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
 import 'package:ratel/content.dart';
 import 'package:ratel/models.dart';
 import 'package:ratel/sfx.dart';
+import 'package:ratel/widgets/rolling_number.dart';
+import 'package:ratel/widgets/streak_flame.dart';
 
 void main() {
   test('combo ladder rises then caps, resets on wrong', () {
@@ -67,5 +70,36 @@ void main() {
         }
       }
     }
+  });
+
+  testWidgets('RollingNumber settles on its target value', (tester) async {
+    await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: RollingNumber(42))));
+    await tester.pumpAndSettle();
+    expect(find.text('42'), findsOneWidget);
+  });
+
+  testWidgets('RollingNumber applies prefix and suffix', (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(body: RollingNumber(7, prefix: '+', suffix: ' XP'))));
+    await tester.pumpAndSettle();
+    expect(find.text('+7 XP'), findsOneWidget);
+  });
+
+  testWidgets('StreakFlame builds and animates without error', (tester) async {
+    await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: StreakFlame(streak: 5))));
+    // The flame repeats forever, so step time manually (never pumpAndSettle).
+    await tester.pump(const Duration(milliseconds: 120));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(StreakFlame), findsOneWidget);
+    expect(find.byType(CustomPaint), findsWidgets);
+  });
+
+  testWidgets('StreakFlame handles a zero streak (dim ember)', (tester) async {
+    await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: StreakFlame(streak: 0))));
+    await tester.pump(const Duration(milliseconds: 120));
+    expect(find.byType(StreakFlame), findsOneWidget);
   });
 }

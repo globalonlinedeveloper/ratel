@@ -51,11 +51,31 @@ class Sfx {
     } catch (_) {}
   }
 
-  /// Correct: the next rising rung of the pitch ladder + a medium tap.
+  /// Fire a haptic after [ms] milliseconds (used for choreographed ramps).
+  void _hapDelayed(Future<void> Function() fn, int ms) {
+    if (!hapticsOn) return;
+    Future<void>.delayed(Duration(milliseconds: ms), () => _hap(fn));
+  }
+
+  /// Correct: the next rising rung of the pitch ladder + a haptic whose
+  /// strength escalates with the combo, double-tapping at the top rung.
   void correct() {
     final step = combo.onCorrect();
     _play(_answer, 'audio/correct_$step.wav', 0.7);
-    _hap(HapticFeedback.mediumImpact);
+    _comboHaptic(step);
+  }
+
+  /// Haptic choreography for a correct answer: light early in a streak,
+  /// firmer as it climbs, with a celebratory double-tap once it maxes out.
+  void _comboHaptic(int step) {
+    if (step >= 4) {
+      _hap(HapticFeedback.heavyImpact);
+      _hapDelayed(HapticFeedback.lightImpact, 90);
+    } else if (step >= 2) {
+      _hap(HapticFeedback.mediumImpact);
+    } else {
+      _hap(HapticFeedback.lightImpact);
+    }
   }
 
   /// Wrong: a soft, low, non-punishing tone; resets the combo.
@@ -65,11 +85,13 @@ class Sfx {
     _hap(HapticFeedback.heavyImpact);
   }
 
-  /// Lesson complete: the resolving fanfare + a celebratory tap.
+  /// Lesson complete: the resolving fanfare + a two-stage haptic ramp
+  /// (medium, then heavy) timed to land with the fanfare's resolution.
   void complete() {
     combo.reset();
     _play(_fanfare, 'audio/complete.wav', 0.85);
-    _hap(HapticFeedback.heavyImpact);
+    _hap(HapticFeedback.mediumImpact);
+    _hapDelayed(HapticFeedback.heavyImpact, 160);
   }
 
   /// Subtle tick when selecting an option.
