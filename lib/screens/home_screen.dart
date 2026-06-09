@@ -15,6 +15,7 @@ import '../widgets/mistakes_review.dart';
 import '../widgets/weak_areas_summary.dart';
 import '../widgets/leagues_board.dart';
 import '../widgets/achievements_view.dart';
+import '../widgets/daily_goal_card.dart';
 
 enum NodeState { done, current, locked }
 
@@ -169,6 +170,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Text(appState.email.isEmpty ? 'Learning English' : appState.email,
               style: const TextStyle(color: RatelColors.textMuted)),
           const SizedBox(height: 20),
+          const DailyGoalCard(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: GridView.count(

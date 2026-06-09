@@ -11,6 +11,8 @@ class AppState extends ChangeNotifier {
   int xp = 0;
   int hearts = 5;
   int streak = 0;
+  int dailyGoalXp = 50;
+  int todayXp = 0;
   String displayName = '';
   String email = '';
   bool loaded = false;
@@ -41,7 +43,7 @@ class AppState extends ChangeNotifier {
     try {
       final row = await client
           .from('profiles')
-          .select('total_xp, current_streak, hearts, completed_lessons, display_name')
+          .select('total_xp, current_streak, hearts, completed_lessons, display_name, daily_goal_xp')
           .eq('id', client.auth.currentUser!.id)
           .maybeSingle();
       if (row != null) {
@@ -49,6 +51,7 @@ class AppState extends ChangeNotifier {
         streak = (row['current_streak'] as int?) ?? streak;
         hearts = (row['hearts'] as int?) ?? hearts;
         displayName = (row['display_name'] as String?) ?? displayName;
+        dailyGoalXp = (row['daily_goal_xp'] as int?) ?? dailyGoalXp;
         final dynamic cl = row['completed_lessons'];
         if (cl is List) {
           _completed
@@ -59,8 +62,41 @@ class AppState extends ChangeNotifier {
     } catch (_) {
       // Keep current values if the read fails (e.g., column not migrated yet).
     }
+    await _loadTodayXp(client);
     loaded = true;
     notifyListeners();
+  }
+
+  /// Sum XP earned since local midnight (for the daily goal).
+  Future<void> _loadTodayXp(SupabaseClient client) async {
+    try {
+      final now = DateTime.now();
+      final start =
+          DateTime(now.year, now.month, now.day).toUtc().toIso8601String();
+      final rows = await client
+          .from('xp_events')
+          .select('amount')
+          .gte('created_at', start);
+      var sum = 0;
+      for (final r in List<Map<String, dynamic>>.from(rows)) {
+        sum += (r['amount'] as num?)?.toInt() ?? 0;
+      }
+      todayXp = sum;
+    } catch (_) {
+      // leave todayXp as-is
+    }
+  }
+
+  /// Log an XP event (fire-and-forget) — powers the daily goal + history.
+  void _logXpEvent(int amount, String reason) {
+    final client = _client;
+    if (client == null) return;
+    final uid = client.auth.currentUser?.id;
+    if (uid == null) return;
+    try {
+      client.from('xp_events')
+          .insert({'user_id': uid, 'amount': amount, 'reason': reason});
+    } catch (_) {}
   }
 
   void loseHeart() {
@@ -80,6 +116,7 @@ class AppState extends ChangeNotifier {
     xp = 0;
     hearts = 5;
     streak = 0;
+    todayXp = 0;
     displayName = '';
     email = '';
     loaded = false;
@@ -90,8 +127,10 @@ class AppState extends ChangeNotifier {
   void completeLesson(String lessonId, int earnedXp) {
     _completed.add(lessonId);
     xp += earnedXp;
+    todayXp += earnedXp;
     notifyListeners();
     _persist();
+    _logXpEvent(earnedXp, 'lesson');
   }
 
   /// Log a single exercise attempt (fire-and-forget) for mistake analysis.
