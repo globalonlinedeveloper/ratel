@@ -45,6 +45,28 @@ jobs:
       - name: Stamp commit SHA for live verification
         run: echo "${{ github.sha }}" > build/web/commit.txt
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null 2>&1
+          npm i playwright@1.60.0
+          npx playwright install --with-deps chromium
+
+      - name: E2E smoke test (Playwright against the fresh build)
+        run: node test/e2e/smoke.mjs
+
+      - name: Upload e2e screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-smoke-screenshot
+          path: e2e-smoke.png
+          if-no-files-found: ignore
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
