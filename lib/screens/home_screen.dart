@@ -13,6 +13,7 @@ import '../widgets/rolling_number.dart';
 import '../widgets/streak_flame.dart';
 import '../widgets/mistakes_review.dart';
 import '../widgets/weak_areas_summary.dart';
+import '../widgets/leagues_board.dart';
 
 enum NodeState { done, current, locked }
 
@@ -80,84 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildLeagues() {
-    final List<({String name, int xp, bool isYou})> rows = [
-      (name: 'Aarav', xp: 980, isYou: false),
-      (name: 'Meera', xp: 870, isYou: false),
-      (name: 'Daniel', xp: 760, isYou: false),
-      (name: 'Sofia', xp: 690, isYou: false),
-      (name: 'Kenji', xp: 640, isYou: false),
-      (name: 'Liam', xp: 410, isYou: false),
-      (name: 'You', xp: appState.xp, isYou: true),
-    ];
-    rows.sort((a, b) => b.xp.compareTo(a.xp));
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(16, 16, 16, 2),
-          child: Text('Diamond League',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-        ),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 4),
-          child: Text('Top 3 advance · 5 days left',
-              style: TextStyle(color: RatelColors.textMuted)),
-        ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: rows.length,
-            itemBuilder: (context, i) {
-              final r = rows[i];
-              final rank = i + 1;
-              return Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                decoration: BoxDecoration(
-                  color: r.isYou ? const Color(0xFFFAEEDA) : RatelColors.surface,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFEAEAEA)),
-                ),
-                child: Row(
-                  children: [
-                    SizedBox(
-                      width: 24,
-                      child: Text('$rank',
-                          style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              color: rank <= 3
-                                  ? RatelColors.teal
-                                  : RatelColors.textMuted)),
-                    ),
-                    const SizedBox(width: 8),
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundColor: r.isYou
-                          ? RatelColors.honey
-                          : const Color(0xFFE0E0E0),
-                      child: Text(r.name.substring(0, 1),
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 13)),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(r.name,
-                          style: TextStyle(
-                              fontWeight: r.isYou
-                                  ? FontWeight.w700
-                                  : FontWeight.w500)),
-                    ),
-                    Text('${r.xp} XP',
-                        style: const TextStyle(color: RatelColors.textMuted)),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
+    return const LeaguesBoard();
   }
 
   Widget _buildPractice() {
