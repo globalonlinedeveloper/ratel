@@ -72,12 +72,12 @@ class ContentStore {
     final sortedUnits = [...units]..sort((a, b) => ord(a).compareTo(ord(b)));
     for (final u in sortedUnits) {
       final uid = (u['id'] ?? '').toString();
-      final uLessons = [...(lessonsByUnit[uid] ?? [])]
+      final uLessons = [...(lessonsByUnit[uid] ?? <Map<String, dynamic>>[])]
         ..sort((a, b) => ord(a).compareTo(ord(b)));
       final builtLessons = <Lesson>[];
       for (final l in uLessons) {
         final lid = (l['id'] ?? '').toString();
-        final exs = [...(exByLesson[lid] ?? [])]
+        final exs = [...(exByLesson[lid] ?? <Map<String, dynamic>>[])]
           ..sort((a, b) => ord(a).compareTo(ord(b)));
         builtLessons.add(Lesson(
           id: lid,
