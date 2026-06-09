@@ -10,7 +10,7 @@ Future<void> main() async {
   if (Config.hasSupabase) {
     await Supabase.initialize(
       url: Config.supabaseUrl,
-      anonKey: Config.supabaseAnonKey,
+      publishableKey: Config.supabaseAnonKey,
     );
   }
   runApp(const RatelApp());

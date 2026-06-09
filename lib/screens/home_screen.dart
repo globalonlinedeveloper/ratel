@@ -173,7 +173,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: ListView.separated(
             padding: const EdgeInsets.all(16),
             itemCount: lessons.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            separatorBuilder: (_, _) => const SizedBox(height: 10),
             itemBuilder: (context, i) {
               final Lesson l = lessons[i];
               final bool done = appState.isCompleted(l.id);
