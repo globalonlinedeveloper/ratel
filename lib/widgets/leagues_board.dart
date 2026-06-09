@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
-import '../app_state.dart';
 
-/// Real global leaderboard from `profiles` (public read), ranked by total XP.
-/// Highlights the signed-in learner; if they're outside the top list, a footer
-/// row shows their own XP. Falls back to a friendly note when signed out.
+/// Weekly tiered league. Ranks the learners in your tier by this week's XP
+/// (via the weekly_standings RPC); the top 5 are in the promotion zone, and
+/// promotion/relegation rolls every Monday (roll_leagues, pg_cron).
 class LeaguesBoard extends StatefulWidget {
-  const LeaguesBoard({super.key, this.top = 25});
+  const LeaguesBoard({super.key});
 
-  final int top;
+  static const int promote = 5;
 
   @override
   State<LeaguesBoard> createState() => _LeaguesBoardState();
@@ -31,13 +30,8 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
     final c = _client;
     if (c == null) return [];
     try {
-      final rows = await c
-          .from('profiles')
-          .select('id, display_name, total_xp')
-          .order('total_xp', ascending: false)
-          .order('updated_at', ascending: true)
-          .limit(widget.top);
-      return List<Map<String, dynamic>>.from(rows);
+      final res = await c.rpc('weekly_standings');
+      return List<Map<String, dynamic>>.from(res as List);
     } catch (_) {
       return [];
     }
@@ -45,119 +39,128 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
 
   @override
   Widget build(BuildContext context) {
-    final header = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Padding(
-          padding: EdgeInsets.fromLTRB(16, 16, 16, 2),
-          child: Text('Leaderboard',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-        ),
-        Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 4),
-          child: Text('Top learners by XP — climb by completing lessons.',
-              style: TextStyle(color: RatelColors.textMuted)),
-        ),
-      ],
-    );
     if (_client == null) {
-      return Column(children: [
-        header,
-        const Expanded(
-          child: Center(
-            child: Padding(
-              padding: EdgeInsets.all(24),
-              child: Text('Sign in to join the leaderboard.',
-                  style: TextStyle(color: RatelColors.textMuted)),
-            ),
-          ),
-        ),
-      ]);
+      return _scaffold('Leagues',
+          const Center(child: Text('Sign in to join a league.')));
     }
     final myId = _client?.auth.currentUser?.id;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        header,
-        Expanded(
-          child: FutureBuilder<List<Map<String, dynamic>>>(
-            future: _future,
-            builder: (context, snap) {
-              if (snap.connectionState != ConnectionState.done) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              final rows = snap.data ?? const [];
-              if (rows.isEmpty) {
-                return const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(24),
-                    child: Text('No learners yet — be the first!',
-                        style: TextStyle(color: RatelColors.textMuted)),
-                  ),
-                );
-              }
-              final meInList = rows.any((r) => r['id'] == myId);
-              return ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: rows.length + (meInList ? 0 : 1),
-                itemBuilder: (context, i) {
-                  if (i >= rows.length) {
-                    // current user is outside the top list
-                    return _row(rows.length + 1,
-                        appState.displayName.isEmpty ? 'You' : appState.displayName,
-                        appState.xp, true);
-                  }
-                  final r = rows[i];
-                  final isYou = r['id'] == myId;
-                  final name = (r['display_name'] ?? '').toString().trim();
-                  return _row(i + 1, name.isEmpty ? 'Learner' : name,
-                      (r['total_xp'] as num?)?.toInt() ?? 0, isYou);
-                },
-              );
-            },
-          ),
-        ),
-      ],
+    return FutureBuilder<List<Map<String, dynamic>>>(
+      future: _future,
+      builder: (context, snap) {
+        if (snap.connectionState != ConnectionState.done) {
+          return _scaffold(
+              'Leagues', const Center(child: CircularProgressIndicator()));
+        }
+        final rows = snap.data ?? const [];
+        final tier = rows.isNotEmpty
+            ? (rows.first['tier'] ?? 'Bronze').toString()
+            : 'Bronze';
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 2),
+              child: Text('$tier League',
+                  style: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.w700)),
+            ),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(16, 0, 16, 4),
+              child: Text('This week · top 5 advance · resets Monday',
+                  style: TextStyle(color: RatelColors.textMuted)),
+            ),
+            Expanded(
+              child: rows.isEmpty
+                  ? const Center(child: Text('No one here yet — earn XP!'))
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(16),
+                      itemCount: rows.length,
+                      itemBuilder: (context, i) {
+                        final r = rows[i];
+                        final rank = i + 1;
+                        final isYou = r['user_id'] == myId;
+                        final promo = rank <= LeaguesBoard.promote;
+                        final name =
+                            (r['display_name'] ?? '').toString().trim();
+                        final xp = (r['weekly_xp'] as num?)?.toInt() ?? 0;
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: isYou
+                                ? const Color(0xFFFAEEDA)
+                                : RatelColors.surface,
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: promo
+                                    ? RatelColors.teal.withValues(alpha: 0.5)
+                                    : const Color(0xFFEAEAEA)),
+                          ),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 24,
+                                child: Text('$rank',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w700,
+                                        color: promo
+                                            ? RatelColors.teal
+                                            : RatelColors.textMuted)),
+                              ),
+                              if (promo)
+                                const Icon(Icons.arrow_upward,
+                                    size: 14, color: RatelColors.teal),
+                              const SizedBox(width: 6),
+                              CircleAvatar(
+                                radius: 16,
+                                backgroundColor: isYou
+                                    ? RatelColors.honey
+                                    : const Color(0xFFE0E0E0),
+                                child: Text(
+                                    (name.isEmpty ? 'L' : name)
+                                        .substring(0, 1)
+                                        .toUpperCase(),
+                                    style: const TextStyle(
+                                        color: Colors.white, fontSize: 13)),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                    isYou
+                                        ? '${name.isEmpty ? 'You' : name} (you)'
+                                        : (name.isEmpty ? 'Learner' : name),
+                                    style: TextStyle(
+                                        fontWeight: isYou
+                                            ? FontWeight.w700
+                                            : FontWeight.w500)),
+                              ),
+                              Text('$xp XP',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      color: RatelColors.textMuted)),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  Widget _row(int rank, String name, int xp, bool isYou) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        color: isYou ? const Color(0xFFFAEEDA) : RatelColors.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
-      ),
-      child: Row(
+  Widget _scaffold(String title, Widget body) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 24,
-            child: Text('$rank',
-                style: TextStyle(
-                    fontWeight: FontWeight.w700,
-                    color: rank <= 3 ? RatelColors.teal : RatelColors.textMuted)),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 2),
+            child: Text(title,
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
           ),
-          const SizedBox(width: 8),
-          CircleAvatar(
-            radius: 16,
-            backgroundColor:
-                isYou ? RatelColors.honey : const Color(0xFFE0E0E0),
-            child: Text(name.substring(0, 1).toUpperCase(),
-                style: const TextStyle(color: Colors.white, fontSize: 13)),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(isYou ? '$name (you)' : name,
-                style: TextStyle(
-                    fontWeight: isYou ? FontWeight.w700 : FontWeight.w500)),
-          ),
-          Text('$xp XP',
-              style: const TextStyle(
-                  fontWeight: FontWeight.w600, color: RatelColors.textMuted)),
+          Expanded(child: body),
         ],
-      ),
-    );
-  }
+      );
 }
