@@ -14,6 +14,7 @@ import 'package:ratel/widgets/aurora_background.dart';
 import 'package:ratel/widgets/combo_glow.dart';
 import 'package:ratel/widgets/mistakes_review.dart';
 import 'package:ratel/widgets/daily_nudge.dart';
+import 'package:ratel/screens/onboarding_screen.dart';
 
 void main() {
   test('combo ladder rises then caps, resets on wrong', () {
@@ -223,5 +224,12 @@ void main() {
       ..lessonsToday = 99;
     expect(a.every((q) => questDone(q, full)), isTrue);
     expect(a.any((q) => questDone(q, AppState())), isFalse);
+  });
+
+  testWidgets('OnboardingScreen renders the welcome + start button', (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: OnboardingScreen()));
+    await tester.pump();
+    expect(find.text('Welcome to Ratel!'), findsOneWidget);
+    expect(find.text('Start learning'), findsOneWidget);
   });
 }

@@ -37,6 +37,12 @@ try{
   await page.waitForTimeout(4500);
   token=await page.evaluate(()=>{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);const r=localStorage.getItem(k);if(!r||r.indexOf('access_token')<0)continue;try{const o=JSON.parse(r);const t=o.access_token||(o.currentSession&&o.currentSession.access_token)||(o.session&&o.session.access_token);if(t)return t;}catch(e){}}return null;});
   if(!token) problems.push('no session token after signup');
+  // First-run onboarding intercepts new users — dismiss it.
+  phase='onboarding';
+  let onb=false, odl=Date.now()+12000;
+  while(Date.now()<odl){ await sem(page); if(await page.getByText('Start learning',{exact:false}).count()>=1){onb=true;break;} await page.waitForTimeout(600); }
+  if(onb){ await tap(page,'Start learning'); await page.waitForTimeout(1200); }
+  else problems.push('onboarding (Start learning) not shown to new user');
   phase='lesson';
   await sem(page);
   await page.mouse.click(180,862);await page.waitForTimeout(1300);

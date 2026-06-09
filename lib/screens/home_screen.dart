@@ -9,6 +9,7 @@ import '../config.dart';
 import '../sfx.dart';
 import 'lesson_screen.dart';
 import 'admin_screen.dart';
+import 'onboarding_screen.dart';
 import 'paywall_screen.dart';
 import '../widgets/transitions.dart';
 import '../widgets/rolling_number.dart';
@@ -44,27 +45,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: ListenableBuilder(
-          listenable: appState,
-          builder: (context, _) => _body(context),
-        ),
-      ),
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _tab,
-        onDestinationSelected: (i) => setState(() => _tab = i),
-        destinations: const [
-          NavigationDestination(
-              icon: Icon(Icons.home_outlined),
-              selectedIcon: Icon(Icons.home),
-              label: 'Learn'),
-          NavigationDestination(icon: Icon(Icons.edit_outlined), label: 'Practice'),
-          NavigationDestination(
-              icon: Icon(Icons.emoji_events_outlined), label: 'Leagues'),
-          NavigationDestination(icon: Icon(Icons.person_outline), label: 'Profile'),
-        ],
-      ),
+    return ListenableBuilder(
+      listenable: appState,
+      builder: (context, _) {
+        if (Config.hasSupabase && appState.loaded && !appState.onboarded) {
+          return const OnboardingScreen();
+        }
+        return Scaffold(
+          body: SafeArea(child: _body(context)),
+          bottomNavigationBar: NavigationBar(
+            selectedIndex: _tab,
+            onDestinationSelected: (i) => setState(() => _tab = i),
+            destinations: const [
+              NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  selectedIcon: Icon(Icons.home),
+                  label: 'Learn'),
+              NavigationDestination(
+                  icon: Icon(Icons.edit_outlined), label: 'Practice'),
+              NavigationDestination(
+                  icon: Icon(Icons.emoji_events_outlined), label: 'Leagues'),
+              NavigationDestination(
+                  icon: Icon(Icons.person_outline), label: 'Profile'),
+            ],
+          ),
+        );
+      },
     );
   }
 

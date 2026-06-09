@@ -20,6 +20,7 @@ class AppState extends ChangeNotifier {
   String email = '';
   bool loaded = false;
   bool isAdmin = false;
+  bool onboarded = true;
   bool isPro = false;
   List<String> dueKeys = [];
   final Set<String> _completed = <String>{};
@@ -62,6 +63,7 @@ class AppState extends ChangeNotifier {
         longestStreak = (row['longest_streak'] as int?) ?? longestStreak;
         streakFreezes = (row['streak_freezes'] as int?) ?? streakFreezes;
         isAdmin = (row['is_admin'] as bool?) ?? false;
+        onboarded = (row['onboarded'] as bool?) ?? true;
         final dynamic cl = row['completed_lessons'];
         if (cl is List) {
           _completed
@@ -174,6 +176,30 @@ class AppState extends ChangeNotifier {
     } catch (_) {}
   }
 
+  /// Set the daily XP goal (onboarding / settings). Persists to the profile.
+  Future<void> setDailyGoal(int xp) async {
+    dailyGoalXp = xp;
+    notifyListeners();
+    final client = _client;
+    if (client == null) return;
+    try {
+      await client.from('profiles')
+          .update({'daily_goal_xp': xp}).eq('id', client.auth.currentUser!.id);
+    } catch (_) {}
+  }
+
+  /// Mark first-run onboarding complete.
+  Future<void> markOnboarded() async {
+    onboarded = true;
+    notifyListeners();
+    final client = _client;
+    if (client == null) return;
+    try {
+      await client.from('profiles')
+          .update({'onboarded': true}).eq('id', client.auth.currentUser!.id);
+    } catch (_) {}
+  }
+
   /// Log an XP event (fire-and-forget) — powers the daily goal + history.
   void _logXpEvent(int amount, String reason) {
     final client = _client;
@@ -230,6 +256,7 @@ class AppState extends ChangeNotifier {
     email = '';
     loaded = false;
     isAdmin = false;
+    onboarded = true;
     isPro = false;
     _completed.clear();
     notifyListeners();
