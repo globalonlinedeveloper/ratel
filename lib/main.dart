@@ -1,0 +1,32 @@
+import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'theme.dart';
+import 'config.dart';
+import 'screens/auth_gate.dart';
+import 'screens/home_screen.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (Config.hasSupabase) {
+    await Supabase.initialize(
+      url: Config.supabaseUrl,
+      anonKey: Config.supabaseAnonKey,
+    );
+  }
+  runApp(const RatelApp());
+}
+
+class RatelApp extends StatelessWidget {
+  const RatelApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Ratel',
+      debugShowCheckedModeBanner: false,
+      theme: ratelTheme(),
+      // With config present, require login; otherwise run straight to Home.
+      home: Config.hasSupabase ? const AuthGate() : const HomeScreen(),
+    );
+  }
+}

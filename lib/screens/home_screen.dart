@@ -1,0 +1,484 @@
+import 'package:flutter/material.dart';
+import '../theme.dart';
+import '../widgets/ratel_mascot.dart';
+import '../models.dart';
+import '../content.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../app_state.dart';
+import '../config.dart';
+import 'lesson_screen.dart';
+
+enum NodeState { done, current, locked }
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _tab = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    if (!appState.loaded) {
+      appState.sync();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: ListenableBuilder(
+          listenable: appState,
+          builder: (context, _) => _body(context),
+        ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _tab,
+        onDestinationSelected: (i) => setState(() => _tab = i),
+        destinations: const [
+          NavigationDestination(
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home),
+              label: 'Learn'),
+          NavigationDestination(icon: Icon(Icons.edit_outlined), label: 'Practice'),
+          NavigationDestination(
+              icon: Icon(Icons.emoji_events_outlined), label: 'Leagues'),
+          NavigationDestination(icon: Icon(Icons.person_outline), label: 'Profile'),
+        ],
+      ),
+    );
+  }
+
+  Widget _placeholder() => const Center(
+        child: Text('Coming soon', style: TextStyle(color: RatelColors.textMuted)),
+      );
+
+  Widget _body(BuildContext context) {
+    switch (_tab) {
+      case 0:
+        return _buildLearn(context);
+      case 1:
+        return _buildPractice();
+      case 2:
+        return _buildLeagues();
+      case 3:
+        return _buildProfile();
+      default:
+        return _placeholder();
+    }
+  }
+
+  Widget _buildLeagues() {
+    final List<({String name, int xp, bool isYou})> rows = [
+      (name: 'Aarav', xp: 980, isYou: false),
+      (name: 'Meera', xp: 870, isYou: false),
+      (name: 'Daniel', xp: 760, isYou: false),
+      (name: 'Sofia', xp: 690, isYou: false),
+      (name: 'Kenji', xp: 640, isYou: false),
+      (name: 'Liam', xp: 410, isYou: false),
+      (name: 'You', xp: appState.xp, isYou: true),
+    ];
+    rows.sort((a, b) => b.xp.compareTo(a.xp));
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 2),
+          child: Text('Diamond League',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+        ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 4),
+          child: Text('Top 3 advance · 5 days left',
+              style: TextStyle(color: RatelColors.textMuted)),
+        ),
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: rows.length,
+            itemBuilder: (context, i) {
+              final r = rows[i];
+              final rank = i + 1;
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                decoration: BoxDecoration(
+                  color: r.isYou ? const Color(0xFFFAEEDA) : RatelColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFEAEAEA)),
+                ),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 24,
+                      child: Text('$rank',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: rank <= 3
+                                  ? RatelColors.teal
+                                  : RatelColors.textMuted)),
+                    ),
+                    const SizedBox(width: 8),
+                    CircleAvatar(
+                      radius: 16,
+                      backgroundColor: r.isYou
+                          ? RatelColors.honey
+                          : const Color(0xFFE0E0E0),
+                      child: Text(r.name.substring(0, 1),
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 13)),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(r.name,
+                          style: TextStyle(
+                              fontWeight: r.isYou
+                                  ? FontWeight.w700
+                                  : FontWeight.w500)),
+                    ),
+                    Text('${r.xp} XP',
+                        style: const TextStyle(color: RatelColors.textMuted)),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPractice() {
+    final List<Lesson> lessons = unit1.lessons;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 16, 16, 2),
+          child: Text('Practice',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+        ),
+        const Padding(
+          padding: EdgeInsets.fromLTRB(16, 0, 16, 4),
+          child: Text('Revisit any lesson to sharpen up.',
+              style: TextStyle(color: RatelColors.textMuted)),
+        ),
+        Expanded(
+          child: ListView.separated(
+            padding: const EdgeInsets.all(16),
+            itemCount: lessons.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 10),
+            itemBuilder: (context, i) {
+              final Lesson l = lessons[i];
+              final bool done = appState.isCompleted(l.id);
+              return InkWell(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => LessonScreen(lesson: l)),
+                ),
+                borderRadius: BorderRadius.circular(14),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: RatelColors.surface,
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: const Color(0xFFEAEAEA)),
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 18,
+                        backgroundColor:
+                            done ? RatelColors.teal : RatelColors.honey,
+                        child: Icon(done ? Icons.check : Icons.play_arrow,
+                            color: Colors.white, size: 20),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(l.title,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600, fontSize: 16)),
+                            Text('${l.exercises.length} exercises',
+                                style: const TextStyle(
+                                    color: RatelColors.textMuted, fontSize: 13)),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.chevron_right,
+                          color: RatelColors.textMuted),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProfile() {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 24),
+          Container(
+            width: 110,
+            height: 110,
+            decoration: const BoxDecoration(
+                color: Color(0xFFFAEEDA), shape: BoxShape.circle),
+            alignment: Alignment.center,
+            child: const RatelMascot(pose: RatelPose.idle, size: 86),
+          ),
+          const SizedBox(height: 12),
+          const Text('Rajasekar',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+          const Text('Learning English',
+              style: TextStyle(color: RatelColors.textMuted)),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 10,
+              crossAxisSpacing: 10,
+              childAspectRatio: 2.4,
+              children: [
+                _statCard(Icons.local_fire_department, '${appState.streak}',
+                    'Day streak', RatelColors.coral),
+                _statCard(Icons.bolt, '${appState.xp}', 'Total XP',
+                    RatelColors.honey),
+                _statCard(Icons.favorite, '${appState.hearts}', 'Hearts',
+                    RatelColors.hearts),
+                _statCard(Icons.task_alt, '${appState.completedCount}',
+                    'Lessons done', RatelColors.teal),
+              ],
+            ),
+          ),
+          if (Config.hasSupabase) ...[
+            const SizedBox(height: 16),
+            TextButton.icon(
+              onPressed: () async {
+                await Supabase.instance.client.auth.signOut();
+                appState.reset();
+              },
+              icon: const Icon(Icons.logout, color: RatelColors.textMuted),
+              label: const Text('Log out',
+                  style: TextStyle(color: RatelColors.textMuted)),
+            ),
+          ],
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  Widget _statCard(IconData icon, String value, String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: RatelColors.surface,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFEAEAEA)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: color, size: 26),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(value,
+                    style: const TextStyle(
+                        fontSize: 19, fontWeight: FontWeight.w700)),
+                Text(label,
+                    style: const TextStyle(
+                        color: RatelColors.textMuted, fontSize: 12)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLearn(BuildContext context) {
+    final List<Lesson> lessons = unit1.lessons;
+    final int currentIndex =
+        lessons.indexWhere((l) => !appState.isCompleted(l.id));
+    const List<double> offsets = [-50.0, 10.0, 50.0, 0.0, -40.0];
+    final List<Widget> path = [];
+    for (int i = 0; i < lessons.length; i++) {
+      final Lesson l = lessons[i];
+      final NodeState st = appState.isCompleted(l.id)
+          ? NodeState.done
+          : (i == currentIndex ? NodeState.current : NodeState.locked);
+      path.add(st == NodeState.current
+          ? _currentNode(context, l)
+          : _node(state: st, dx: offsets[i % offsets.length]));
+      path.add(const SizedBox(height: 18));
+    }
+    final bool allDone = currentIndex == -1;
+    path.add(_node(
+        state: allDone ? NodeState.done : NodeState.locked,
+        dx: -40,
+        trophy: true));
+
+    return Column(
+      children: [
+        _header(),
+        _unitBanner(),
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(children: path),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _header() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      color: RatelColors.surface,
+      child: Row(
+        children: [
+          const CircleAvatar(
+            radius: 14,
+            backgroundColor: Color(0xFF185FA5),
+            child: Text('EN',
+                style: TextStyle(
+                    color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+          ),
+          const SizedBox(width: 8),
+          const Text('English',
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+          const Spacer(),
+          _stat(Icons.local_fire_department, '${appState.streak}', RatelColors.coral),
+          const SizedBox(width: 12),
+          _stat(Icons.bolt, '${appState.xp}', RatelColors.honey),
+          const SizedBox(width: 12),
+          _stat(Icons.favorite, '${appState.hearts}', RatelColors.hearts),
+        ],
+      ),
+    );
+  }
+
+  Widget _stat(IconData icon, String value, Color color) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, color: color, size: 18),
+        const SizedBox(width: 3),
+        Text(value,
+            style: TextStyle(
+                color: color, fontWeight: FontWeight.w600, fontSize: 14)),
+      ],
+    );
+  }
+
+  Widget _unitBanner() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+          color: RatelColors.teal, borderRadius: BorderRadius.circular(14)),
+      child: Row(
+        children: [
+          const Icon(Icons.menu_book, color: Colors.white),
+          const SizedBox(width: 10),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(unit1.title,
+                  style: const TextStyle(color: Colors.white70, fontSize: 12)),
+              Text(unit1.subtitle,
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _node({required NodeState state, double dx = 0, bool trophy = false}) {
+    final (Color bg, IconData icon) = switch (state) {
+      NodeState.done => (RatelColors.teal, Icons.check),
+      NodeState.locked => (
+          const Color(0xFFD9D9D9),
+          trophy ? Icons.emoji_events : Icons.lock
+        ),
+      NodeState.current => (RatelColors.honey, Icons.star),
+    };
+    return Transform.translate(
+      offset: Offset(dx, 0),
+      child: Container(
+        width: 62,
+        height: 62,
+        decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+        child: Icon(icon,
+            color:
+                state == NodeState.locked ? RatelColors.textMuted : Colors.white,
+            size: 28),
+      ),
+    );
+  }
+
+  Widget _currentNode(BuildContext context, Lesson lesson) {
+    return Transform.translate(
+      offset: const Offset(-4, 0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+                decoration: BoxDecoration(
+                    color: RatelColors.charcoal,
+                    borderRadius: BorderRadius.circular(20)),
+                child: const Text('Start',
+                    style: TextStyle(
+                        color: RatelColors.cream,
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600)),
+              ),
+              const SizedBox(height: 6),
+              GestureDetector(
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_) => LessonScreen(lesson: lesson)),
+                ),
+                child: Container(
+                  width: 66,
+                  height: 66,
+                  decoration: const BoxDecoration(
+                      color: RatelColors.honey, shape: BoxShape.circle),
+                  child: const Icon(Icons.star, color: Colors.white, size: 30),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(width: 12),
+          const RatelMascot(pose: RatelPose.idle, size: 72),
+        ],
+      ),
+    );
+  }
+}
