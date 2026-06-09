@@ -296,6 +296,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     setState(() {});
                   },
                 ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Background music'),
+                  subtitle: const Text('Calm ambient loop while you learn'),
+                  secondary: const Icon(Icons.music_note,
+                      color: RatelColors.honey),
+                  value: Sfx.instance.musicOn,
+                  onChanged: (v) {
+                    Sfx.instance.setMusicOn(v);
+                    setState(() {});
+                  },
+                ),
               ],
             ),
           ),

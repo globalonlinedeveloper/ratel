@@ -25,15 +25,17 @@ class Sfx {
   Sfx._();
   static final Sfx instance = Sfx._();
 
-  /// Toggles (persistence + UI added in a later increment).
+  /// Toggles (persisted; surfaced in the Profile settings).
   bool soundOn = true;
   bool hapticsOn = true;
+  bool musicOn = false; // ambient music is opt-in (off by default)
 
   final ComboCounter combo = ComboCounter();
 
   final AudioPlayer _answer = AudioPlayer(playerId: 'sfx_answer');
   final AudioPlayer _ui = AudioPlayer(playerId: 'sfx_ui');
   final AudioPlayer _fanfare = AudioPlayer(playerId: 'sfx_fanfare');
+  final AudioPlayer _music = AudioPlayer(playerId: 'sfx_music');
 
   Future<void> _play(AudioPlayer p, String asset, double vol) async {
     if (!soundOn) return;
@@ -115,6 +117,29 @@ class Sfx {
       final p = await SharedPreferences.getInstance();
       soundOn = p.getBool('sound_on') ?? true;
       hapticsOn = p.getBool('haptics_on') ?? true;
+      musicOn = p.getBool('music_on') ?? false;
+      if (musicOn) _startMusic();
+    } catch (_) {}
+  }
+
+  /// Lazily begins the looping ambient bed (fetched on demand, not at boot).
+  Future<void> _startMusic() async {
+    try {
+      await _music.setReleaseMode(ReleaseMode.loop);
+      await _music.setVolume(0.22);
+      await _music.play(AssetSource('audio/ambient.mp3'));
+    } catch (_) {}
+  }
+
+  Future<void> setMusicOn(bool v) async {
+    musicOn = v;
+    try {
+      (await SharedPreferences.getInstance()).setBool('music_on', v);
+      if (v) {
+        await _startMusic();
+      } else {
+        await _music.stop();
+      }
     } catch (_) {}
   }
 

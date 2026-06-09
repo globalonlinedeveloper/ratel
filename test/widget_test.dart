@@ -6,6 +6,7 @@ import 'package:ratel/models.dart';
 import 'package:ratel/sfx.dart';
 import 'package:ratel/widgets/rolling_number.dart';
 import 'package:ratel/widgets/streak_flame.dart';
+import 'package:ratel/widgets/aurora_background.dart';
 
 void main() {
   test('combo ladder rises then caps, resets on wrong', () {
@@ -101,5 +102,15 @@ void main() {
         const MaterialApp(home: Scaffold(body: StreakFlame(streak: 0))));
     await tester.pump(const Duration(milliseconds: 120));
     expect(find.byType(StreakFlame), findsOneWidget);
+  });
+
+  testWidgets('AuroraBackground renders its child without error', (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+        home: AuroraBackground(child: Text('hi', textDirection: TextDirection.ltr))));
+    // Infinite drift controller -> step time manually, never pumpAndSettle.
+    await tester.pump(const Duration(milliseconds: 120));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('hi'), findsOneWidget);
+    expect(find.byType(CustomPaint), findsWidgets);
   });
 }

@@ -69,6 +69,12 @@ try{
   while(Date.now()<sdl){ await page.mouse.move(240,520); await page.mouse.wheel(0,360); await page.waitForTimeout(550); await sem(page); if(await hasSoundToggle()){soundToggle=true;break;} }
   await page.screenshot({path:'e2e-settings.png'});
   if(!soundToggle) problems.push('Sound settings toggle missing in Profile');
+  const hasLabel=async(txt)=>page.evaluate((t)=>{
+    const hit=(x)=>(x||'').toLowerCase().includes(t);
+    return Array.from(document.querySelectorAll('[aria-label]')).some(e=>hit(e.getAttribute('aria-label')))
+      || Array.from(document.querySelectorAll('flt-semantics')).some(e=>hit(e.textContent));
+  },txt);
+  if(soundToggle && !(await hasLabel('background music'))) problems.push('Background music toggle missing in Profile');
 }catch(e){problems.push(`crash in ${phase}: ${e.message}`);}
 let cleaned=false;
 try{ if(token){const r=await fetch(`${SUPA_URL}/rest/v1/rpc/delete_self`,{method:'POST',headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:'{}'});cleaned=(r.status===200||r.status===204);if(!cleaned)console.log('WARN cleanup status',r.status);} }catch(e){console.log('WARN cleanup error',e.message);}
