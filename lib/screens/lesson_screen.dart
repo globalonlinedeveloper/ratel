@@ -5,6 +5,7 @@ import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/confetti.dart';
 import '../widgets/streak_flame.dart';
+import '../widgets/combo_glow.dart';
 import '../models.dart';
 import '../app_state.dart';
 import '../sfx.dart';
@@ -30,6 +31,7 @@ class _LessonScreenState extends State<LessonScreen>
 
   int? _selected; // choice
   final List<int> _picked = []; // word-bank: option indices in chosen order
+  int _combo = 0; // in-lesson correct streak -> drives the escalation glow
 
   late final AnimationController _fb; // answer feedback: pop on right, shake on wrong
 
@@ -64,7 +66,9 @@ class _LessonScreenState extends State<LessonScreen>
       _isCorrect = correct;
       if (correct) {
         _correctCount++;
+        _combo++;
       } else {
+        _combo = 0;
         appState.loseHeart();
       }
     });
@@ -100,7 +104,10 @@ class _LessonScreenState extends State<LessonScreen>
     final int total = widget.lesson.exercises.length;
     final double progress = (_answered ? _index + 1 : _index) / total;
     return Scaffold(
-      body: SafeArea(
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -176,6 +183,9 @@ class _LessonScreenState extends State<LessonScreen>
             ],
           ),
         ),
+          ),
+          IgnorePointer(child: ComboGlow(combo: _combo)),
+        ],
       ),
     );
   }

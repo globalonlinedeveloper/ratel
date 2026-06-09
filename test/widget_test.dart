@@ -7,6 +7,7 @@ import 'package:ratel/sfx.dart';
 import 'package:ratel/widgets/rolling_number.dart';
 import 'package:ratel/widgets/streak_flame.dart';
 import 'package:ratel/widgets/aurora_background.dart';
+import 'package:ratel/widgets/combo_glow.dart';
 
 void main() {
   test('combo ladder rises then caps, resets on wrong', () {
@@ -111,6 +112,17 @@ void main() {
     await tester.pump(const Duration(milliseconds: 120));
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('hi'), findsOneWidget);
+    expect(find.byType(CustomPaint), findsWidgets);
+  });
+
+  testWidgets('ComboGlow builds at low and high combo', (tester) async {
+    await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(body: ComboGlow(combo: 0))));
+    await tester.pumpAndSettle();
+    expect(find.byType(ComboGlow), findsOneWidget);
+    await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(body: ComboGlow(combo: 5))));
+    await tester.pumpAndSettle();
     expect(find.byType(CustomPaint), findsWidgets);
   });
 }
