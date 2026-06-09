@@ -75,6 +75,17 @@ try{
       || Array.from(document.querySelectorAll('flt-semantics')).some(e=>hit(e.textContent));
   },txt);
   if(soundToggle && !(await hasLabel('background music'))) problems.push('Background music toggle missing in Profile');
+  // AI backend: the 'explain-answer' Edge Function must answer with the LLM
+  // (key is server-side only). Uses the throwaway user's JWT.
+  phase='ai';
+  if(token){
+    try{
+      const air=await fetch(`${SUPA_URL}/functions/v1/explain-answer`,{method:'POST',headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({prompt:'Pick the morning greeting.',userAnswer:'Good night',correctAnswer:'Good morning'})});
+      const aj=await air.json().catch(()=>({}));
+      if(air.status!==200||typeof aj.explanation!=='string'||!aj.explanation.trim().length) problems.push(`explain-answer fn unhealthy (status ${air.status})`);
+      else console.log('explain-answer ok:', aj.explanation.slice(0,60));
+    }catch(e){ problems.push('explain-answer fn unreachable: '+e.message); }
+  }
 }catch(e){problems.push(`crash in ${phase}: ${e.message}`);}
 let cleaned=false;
 try{ if(token){const r=await fetch(`${SUPA_URL}/rest/v1/rpc/delete_self`,{method:'POST',headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:'{}'});cleaned=(r.status===200||r.status===204);if(!cleaned)console.log('WARN cleanup status',r.status);} }catch(e){console.log('WARN cleanup error',e.message);}
