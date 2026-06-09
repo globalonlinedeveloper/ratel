@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'theme.dart';
 import 'config.dart';
+import 'sfx.dart';
 import 'screens/auth_gate.dart';
 import 'screens/home_screen.dart';
 
@@ -13,6 +14,7 @@ Future<void> main() async {
       publishableKey: Config.supabaseAnonKey,
     );
   }
+  await Sfx.instance.load();
   runApp(const RatelApp());
 }
 

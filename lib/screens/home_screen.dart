@@ -6,6 +6,7 @@ import '../content.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../app_state.dart';
 import '../config.dart';
+import '../sfx.dart';
 import 'lesson_screen.dart';
 import '../widgets/transitions.dart';
 
@@ -263,6 +264,36 @@ class _HomeScreenState extends State<HomeScreen> {
                     RatelColors.hearts),
                 _statCard(Icons.task_alt, '${appState.completedCount}',
                     'Lessons done', RatelColors.teal),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Sound effects'),
+                  secondary:
+                      const Icon(Icons.volume_up, color: RatelColors.honey),
+                  value: Sfx.instance.soundOn,
+                  onChanged: (v) {
+                    Sfx.instance.setSoundOn(v);
+                    setState(() {});
+                  },
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Haptics'),
+                  secondary:
+                      const Icon(Icons.vibration, color: RatelColors.teal),
+                  value: Sfx.instance.hapticsOn,
+                  onChanged: (v) {
+                    Sfx.instance.setHapticsOn(v);
+                    setState(() {});
+                  },
+                ),
               ],
             ),
           ),

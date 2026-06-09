@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Tracks the current correct-answer streak and maps it onto the 5-step
 /// rising "correct" pitch ladder (then caps). Pure logic — unit-tested.
@@ -85,4 +86,27 @@ class Sfx {
 
   /// Reset the combo at the start of a lesson.
   void resetCombo() => combo.reset();
+
+  /// Load persisted sound/haptics preferences (call once at startup).
+  Future<void> load() async {
+    try {
+      final p = await SharedPreferences.getInstance();
+      soundOn = p.getBool('sound_on') ?? true;
+      hapticsOn = p.getBool('haptics_on') ?? true;
+    } catch (_) {}
+  }
+
+  Future<void> setSoundOn(bool v) async {
+    soundOn = v;
+    try {
+      (await SharedPreferences.getInstance()).setBool('sound_on', v);
+    } catch (_) {}
+  }
+
+  Future<void> setHapticsOn(bool v) async {
+    hapticsOn = v;
+    try {
+      (await SharedPreferences.getInstance()).setBool('haptics_on', v);
+    } catch (_) {}
+  }
 }

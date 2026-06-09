@@ -57,6 +57,8 @@ try{
   while(Date.now()<pdl){ await sem(page); await page.waitForTimeout(600); if(await page.getByText('50',{exact:false}).count()>=1){persisted=true;break;} }
   await page.screenshot({path:'e2e-full.png'});
   if(!persisted) problems.push('XP not persisted after reload (profile not showing 50)');
+  await page.mouse.move(240,500); await page.mouse.wheel(0,320); await page.waitForTimeout(700); await sem(page);
+  if(await page.getByText('Sound effects',{exact:false}).count()<1) problems.push('Sound settings toggle missing in Profile');
 }catch(e){problems.push(`crash in ${phase}: ${e.message}`);}
 let cleaned=false;
 try{ if(token){const r=await fetch(`${SUPA_URL}/rest/v1/rpc/delete_self`,{method:'POST',headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:'{}'});cleaned=(r.status===200||r.status===204);if(!cleaned)console.log('WARN cleanup status',r.status);} }catch(e){console.log('WARN cleanup error',e.message);}
