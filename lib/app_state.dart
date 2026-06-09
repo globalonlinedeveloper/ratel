@@ -20,10 +20,12 @@ class AppState extends ChangeNotifier {
   bool loaded = false;
   bool isAdmin = false;
   bool isPro = false;
+  List<String> dueKeys = [];
   final Set<String> _completed = <String>{};
 
   bool isCompleted(String lessonId) => _completed.contains(lessonId);
   int get completedCount => _completed.length;
+  int get dueReviews => dueKeys.length;
 
   /// The Supabase client if initialized AND a user is signed in, else null.
   SupabaseClient? get _client {
@@ -71,6 +73,7 @@ class AppState extends ChangeNotifier {
     }
     await _loadTodayXp(client);
     await _loadPro(client);
+    await _loadDueReviews(client);
     loaded = true;
     notifyListeners();
   }
@@ -102,6 +105,7 @@ class AppState extends ChangeNotifier {
           .from('subscriptions')
           .select('status, expires_at');
       isPro = false;
+    dueKeys = [];
       for (final r in List<Map<String, dynamic>>.from(rows)) {
         final status = (r['status'] ?? '').toString();
         final active = status == 'active' || status == 'trialing';
@@ -134,6 +138,35 @@ class AppState extends ChangeNotifier {
       await client.rpc('cancel_pro');
       isPro = false;
       notifyListeners();
+    } catch (_) {}
+  }
+
+  /// Load exercises whose spaced-repetition review is due (due_on <= today).
+  Future<void> _loadDueReviews(SupabaseClient client) async {
+    try {
+      final today = DateTime.now().toIso8601String().split('T').first;
+      final rows = await client
+          .from('review_state')
+          .select('exercise_key')
+          .lte('due_on', today)
+          .order('due_on')
+          .limit(30);
+      dueKeys = List<Map<String, dynamic>>.from(rows)
+          .map((r) => (r['exercise_key'] ?? '').toString())
+          .where((k) => k.isNotEmpty)
+          .toList();
+    } catch (_) {
+      dueKeys = [];
+    }
+  }
+
+  /// Record an answer into the spaced-repetition schedule (fire-and-forget).
+  void recordReview(String exerciseKey, bool correct) {
+    final client = _client;
+    if (client == null || exerciseKey.isEmpty) return;
+    try {
+      client.rpc('review_answer',
+          params: {'p_key': exerciseKey, 'p_correct': correct});
     } catch (_) {}
   }
 

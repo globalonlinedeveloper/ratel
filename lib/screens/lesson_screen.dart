@@ -103,6 +103,7 @@ class _LessonScreenState extends State<LessonScreen>
       correctAnswer: _correctText(),
       isCorrect: correct,
     );
+    appState.recordReview(srcKey, correct);
   }
 
   void _next() {
