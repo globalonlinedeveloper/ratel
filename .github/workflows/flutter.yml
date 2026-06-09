@@ -37,7 +37,10 @@ jobs:
         run: flutter test
 
       - name: Build web
-        run: flutter build web --release --base-href "/ratel/"
+        run: |
+          flutter build web --release --base-href "/ratel/" \
+            --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co \
+            --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
 
       - name: Stamp commit SHA for live verification
         run: echo "${{ github.sha }}" > build/web/commit.txt
