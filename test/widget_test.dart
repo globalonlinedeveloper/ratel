@@ -2,8 +2,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
 import 'package:ratel/content.dart';
 import 'package:ratel/models.dart';
+import 'package:ratel/sfx.dart';
 
 void main() {
+  test('combo ladder rises then caps, resets on wrong', () {
+    final c = ComboCounter();
+    expect(c.onCorrect(), 0);
+    expect(c.onCorrect(), 1);
+    expect(c.onCorrect(), 2);
+    expect(c.onCorrect(), 3);
+    expect(c.onCorrect(), 4);
+    expect(c.onCorrect(), 4);
+    c.onWrong();
+    expect(c.value, 0);
+    expect(c.onCorrect(), 0);
+  });
+
   test('completeLesson adds XP and marks the lesson complete', () {
     final state = AppState();
     expect(state.xp, 0);

@@ -38,6 +38,7 @@ class _LessonScreenState extends State<LessonScreen>
     _fb = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 420));
     Analytics.lessonStart(widget.lesson.id);
+    Sfx.instance.resetCombo();
   }
 
   @override
