@@ -8,6 +8,7 @@ import '../app_state.dart';
 import '../config.dart';
 import '../sfx.dart';
 import 'lesson_screen.dart';
+import 'admin_screen.dart';
 import '../widgets/transitions.dart';
 import '../widgets/rolling_number.dart';
 import '../widgets/streak_flame.dart';
@@ -257,6 +258,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
+          if (appState.isAdmin) ...[
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const AdminScreen())),
+              icon: const Icon(Icons.admin_panel_settings),
+              label: const Text('Content admin'),
+            ),
+          ],
           if (Config.hasSupabase) ...[
             const SizedBox(height: 16),
             TextButton.icon(

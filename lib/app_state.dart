@@ -18,6 +18,7 @@ class AppState extends ChangeNotifier {
   String displayName = '';
   String email = '';
   bool loaded = false;
+  bool isAdmin = false;
   final Set<String> _completed = <String>{};
 
   bool isCompleted(String lessonId) => _completed.contains(lessonId);
@@ -45,7 +46,7 @@ class AppState extends ChangeNotifier {
     try {
       final row = await client
           .from('profiles')
-          .select('total_xp, current_streak, hearts, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes')
+          .select('total_xp, current_streak, hearts, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes, is_admin')
           .eq('id', client.auth.currentUser!.id)
           .maybeSingle();
       if (row != null) {
@@ -56,6 +57,7 @@ class AppState extends ChangeNotifier {
         dailyGoalXp = (row['daily_goal_xp'] as int?) ?? dailyGoalXp;
         longestStreak = (row['longest_streak'] as int?) ?? longestStreak;
         streakFreezes = (row['streak_freezes'] as int?) ?? streakFreezes;
+        isAdmin = (row['is_admin'] as bool?) ?? false;
         final dynamic cl = row['completed_lessons'];
         if (cl is List) {
           _completed
@@ -144,6 +146,7 @@ class AppState extends ChangeNotifier {
     displayName = '';
     email = '';
     loaded = false;
+    isAdmin = false;
     _completed.clear();
     notifyListeners();
   }
