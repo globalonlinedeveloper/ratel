@@ -75,6 +75,16 @@ try{
       || Array.from(document.querySelectorAll('flt-semantics')).some(e=>hit(e.textContent));
   },txt);
   if(soundToggle && !(await hasLabel('background music'))) problems.push('Background music toggle missing in Profile');
+  // Mistake log: every answer in the lesson should be recorded to public.attempts.
+  phase='attempts';
+  if(token){
+    try{
+      const ar=await fetch(`${SUPA_URL}/rest/v1/attempts?select=is_correct&limit=20`,{headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`}});
+      const aj=await ar.json().catch(()=>[]);
+      if(!Array.isArray(aj)||aj.length<1) problems.push('no attempts logged after lesson');
+      else console.log('attempts logged:', aj.length);
+    }catch(e){ problems.push('attempts query failed: '+e.message); }
+  }
 }catch(e){problems.push(`crash in ${phase}: ${e.message}`);}
 let cleaned=false;
 try{ if(token){const r=await fetch(`${SUPA_URL}/rest/v1/rpc/delete_self`,{method:'POST',headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:'{}'});cleaned=(r.status===200||r.status===204);if(!cleaned)console.log('WARN cleanup status',r.status);} }catch(e){console.log('WARN cleanup error',e.message);}

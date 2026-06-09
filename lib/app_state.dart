@@ -94,6 +94,33 @@ class AppState extends ChangeNotifier {
     _persist();
   }
 
+  /// Log a single exercise attempt (fire-and-forget) for mistake analysis.
+  /// Only runs when signed in; user_id is filled by the DB default (auth.uid()).
+  Future<void> logAttempt({
+    required String lessonId,
+    required int exerciseIndex,
+    required String prompt,
+    required String chosen,
+    required String correctAnswer,
+    required bool isCorrect,
+  }) async {
+    final client = _client;
+    if (client == null) return;
+    try {
+      await client.from('attempts').insert({
+        'lesson_id': lessonId,
+        'exercise_index': exerciseIndex,
+        'exercise_key': '$lessonId:$exerciseIndex',
+        'prompt': prompt,
+        'chosen': chosen,
+        'correct_answer': correctAnswer,
+        'is_correct': isCorrect,
+      });
+    } catch (_) {
+      // Non-blocking: ignore logging errors (offline, etc.).
+    }
+  }
+
   Future<void> _persist() async {
     final client = _client;
     if (client == null) return;

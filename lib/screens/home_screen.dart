@@ -11,6 +11,7 @@ import 'lesson_screen.dart';
 import '../widgets/transitions.dart';
 import '../widgets/rolling_number.dart';
 import '../widgets/streak_flame.dart';
+import '../widgets/mistakes_review.dart';
 
 enum NodeState { done, current, locked }
 
@@ -160,71 +161,65 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildPractice() {
     final List<Lesson> lessons = [for (final u in course) ...u.lessons];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      padding: const EdgeInsets.all(16),
       children: [
-        const Padding(
-          padding: EdgeInsets.fromLTRB(16, 16, 16, 2),
-          child: Text('Practice',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-        ),
-        const Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 4),
-          child: Text('Revisit any lesson to sharpen up.',
-              style: TextStyle(color: RatelColors.textMuted)),
-        ),
-        Expanded(
-          child: ListView.separated(
-            padding: const EdgeInsets.all(16),
-            itemCount: lessons.length,
-            separatorBuilder: (_, _) => const SizedBox(height: 10),
-            itemBuilder: (context, i) {
-              final Lesson l = lessons[i];
-              final bool done = appState.isCompleted(l.id);
-              return InkWell(
-                onTap: () => Navigator.of(context).push(
-                  ratelRoute(LessonScreen(lesson: l)),
+        const Text('Practice',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 12),
+        const MistakesReview(),
+        const Text('Revisit lessons',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+        const SizedBox(height: 4),
+        const Text('Replay any lesson to sharpen up.',
+            style: TextStyle(color: RatelColors.textMuted)),
+        const SizedBox(height: 12),
+        ...lessons.map((l) {
+          final bool done = appState.isCompleted(l.id);
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: InkWell(
+              onTap: () =>
+                  Navigator.of(context).push(ratelRoute(LessonScreen(lesson: l))),
+              borderRadius: BorderRadius.circular(14),
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: RatelColors.surface,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: const Color(0xFFEAEAEA)),
                 ),
-                borderRadius: BorderRadius.circular(14),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: RatelColors.surface,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: const Color(0xFFEAEAEA)),
-                  ),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 18,
-                        backgroundColor:
-                            done ? RatelColors.teal : RatelColors.honey,
-                        child: Icon(done ? Icons.check : Icons.play_arrow,
-                            color: Colors.white, size: 20),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 18,
+                      backgroundColor:
+                          done ? RatelColors.teal : RatelColors.honey,
+                      child: Icon(done ? Icons.check : Icons.play_arrow,
+                          color: Colors.white, size: 20),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(l.title,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w600, fontSize: 16)),
+                          Text('${l.exercises.length} exercises',
+                              style: const TextStyle(
+                                  color: RatelColors.textMuted, fontSize: 13)),
+                        ],
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(l.title,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 16)),
-                            Text('${l.exercises.length} exercises',
-                                style: const TextStyle(
-                                    color: RatelColors.textMuted, fontSize: 13)),
-                          ],
-                        ),
-                      ),
-                      const Icon(Icons.chevron_right,
-                          color: RatelColors.textMuted),
-                    ],
-                  ),
+                    ),
+                    const Icon(Icons.chevron_right,
+                        color: RatelColors.textMuted),
+                  ],
                 ),
-              );
-            },
-          ),
-        ),
+              ),
+            ),
+          );
+        }),
       ],
     );
   }

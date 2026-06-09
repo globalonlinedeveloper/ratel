@@ -80,6 +80,14 @@ class _LessonScreenState extends State<LessonScreen>
       Sfx.instance.wrong();
     }
     _fb.forward(from: 0);
+    appState.logAttempt(
+      lessonId: widget.lesson.id,
+      exerciseIndex: _index,
+      prompt: _ex.prompt,
+      chosen: _userText(),
+      correctAnswer: _correctText(),
+      isCorrect: correct,
+    );
   }
 
   void _next() {
@@ -217,6 +225,13 @@ class _LessonScreenState extends State<LessonScreen>
   String _correctText() {
     if (_ex.type == ExerciseType.choice) return _ex.options[_ex.correctIndex];
     return _ex.correctOrder.join(' ');
+  }
+
+  String _userText() {
+    if (_ex.type == ExerciseType.choice) {
+      return _selected != null ? _ex.options[_selected!] : '(no answer)';
+    }
+    return _picked.map((i) => _ex.options[i]).join(' ');
   }
 
   /// Show the pre-authored explanation for this wrong answer. Looked up from

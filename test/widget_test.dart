@@ -10,6 +10,7 @@ import 'package:ratel/widgets/rolling_number.dart';
 import 'package:ratel/widgets/streak_flame.dart';
 import 'package:ratel/widgets/aurora_background.dart';
 import 'package:ratel/widgets/combo_glow.dart';
+import 'package:ratel/widgets/mistakes_review.dart';
 
 void main() {
   test('combo ladder rises then caps, resets on wrong', () {
@@ -158,5 +159,12 @@ void main() {
     }
     expect(missing, isEmpty,
         reason: 'Missing explanations for $missing — run tool/gen_explanations.py');
+  });
+
+  testWidgets('MistakesReview renders safely when signed out', (tester) async {
+    await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: MistakesReview())));
+    await tester.pump();
+    expect(find.byType(MistakesReview), findsOneWidget);
   });
 }
