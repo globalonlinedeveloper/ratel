@@ -7,6 +7,7 @@ import '../widgets/confetti.dart';
 import '../models.dart';
 import '../app_state.dart';
 import '../sfx.dart';
+import '../analytics.dart';
 
 /// Runs a learner through every exercise in a [Lesson], then shows a
 /// completion summary. Handles multiple-choice and word-bank exercises.
@@ -36,6 +37,7 @@ class _LessonScreenState extends State<LessonScreen>
     super.initState();
     _fb = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 420));
+    Analytics.lessonStart(widget.lesson.id);
   }
 
   @override
@@ -83,6 +85,8 @@ class _LessonScreenState extends State<LessonScreen>
       });
     } else {
       appState.completeLesson(widget.lesson.id, _correctCount * 10);
+      Analytics.lessonComplete(widget.lesson.id, _correctCount * 10,
+          _correctCount, widget.lesson.exercises.length);
       Sfx.instance.complete();
       setState(() => _finished = true);
     }

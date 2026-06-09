@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
+import '../analytics.dart';
 
 /// Email/password login + sign-up using Supabase Auth.
 class AuthScreen extends StatefulWidget {
@@ -38,12 +39,14 @@ class _AuthScreenState extends State<AuthScreen> {
           password: password,
           data: _name.text.trim().isEmpty ? null : {'full_name': _name.text.trim()},
         );
+        Analytics.signUp();
         if (res.session == null && mounted) {
           setState(() =>
               _message = 'Account created. Check your email to confirm, then log in.');
         }
       } else {
         await auth.signInWithPassword(email: email, password: password);
+        Analytics.login();
       }
     } on AuthException catch (e) {
       if (mounted) setState(() => _message = e.message);

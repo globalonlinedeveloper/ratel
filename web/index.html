@@ -31,6 +31,18 @@
 
   <title>ratel</title>
   <link rel="manifest" href="manifest.json">
+
+  <!-- Google Analytics 4 / Firebase Analytics (web) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EBJ1H0X8K2"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-EBJ1H0X8K2');
+    window.ratelLogEvent = function(name, paramsJson){
+      try { gtag('event', name, paramsJson ? JSON.parse(paramsJson) : {}); } catch (e) {}
+    };
+  </script>
 </head>
 <body>
   <!--
