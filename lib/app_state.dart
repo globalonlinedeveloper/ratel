@@ -13,6 +13,8 @@ class AppState extends ChangeNotifier {
   int streak = 0;
   int dailyGoalXp = 50;
   int todayXp = 0;
+  int longestStreak = 0;
+  int streakFreezes = 2;
   String displayName = '';
   String email = '';
   bool loaded = false;
@@ -43,7 +45,7 @@ class AppState extends ChangeNotifier {
     try {
       final row = await client
           .from('profiles')
-          .select('total_xp, current_streak, hearts, completed_lessons, display_name, daily_goal_xp')
+          .select('total_xp, current_streak, hearts, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes')
           .eq('id', client.auth.currentUser!.id)
           .maybeSingle();
       if (row != null) {
@@ -52,6 +54,8 @@ class AppState extends ChangeNotifier {
         hearts = (row['hearts'] as int?) ?? hearts;
         displayName = (row['display_name'] as String?) ?? displayName;
         dailyGoalXp = (row['daily_goal_xp'] as int?) ?? dailyGoalXp;
+        longestStreak = (row['longest_streak'] as int?) ?? longestStreak;
+        streakFreezes = (row['streak_freezes'] as int?) ?? streakFreezes;
         final dynamic cl = row['completed_lessons'];
         if (cl is List) {
           _completed
@@ -99,6 +103,24 @@ class AppState extends ChangeNotifier {
     } catch (_) {}
   }
 
+  /// Update the date-based streak server-side (touch_streak RPC) and reflect
+  /// the result locally. Streak freezes can save a single missed day.
+  Future<void> touchStreak() async {
+    final client = _client;
+    if (client == null) return;
+    try {
+      final res = await client.rpc('touch_streak');
+      final rows = List<Map<String, dynamic>>.from(res as List);
+      if (rows.isNotEmpty) {
+        final r = rows.first;
+        streak = (r['current_streak'] as num?)?.toInt() ?? streak;
+        longestStreak = (r['longest_streak'] as num?)?.toInt() ?? longestStreak;
+        streakFreezes = (r['streak_freezes'] as num?)?.toInt() ?? streakFreezes;
+        notifyListeners();
+      }
+    } catch (_) {}
+  }
+
   void loseHeart() {
     if (hearts > 0) {
       hearts -= 1;
@@ -116,6 +138,8 @@ class AppState extends ChangeNotifier {
     xp = 0;
     hearts = 5;
     streak = 0;
+    longestStreak = 0;
+    streakFreezes = 2;
     todayXp = 0;
     displayName = '';
     email = '';
@@ -131,6 +155,7 @@ class AppState extends ChangeNotifier {
     notifyListeners();
     _persist();
     _logXpEvent(earnedXp, 'lesson');
+    touchStreak();
   }
 
   /// Log a single exercise attempt (fire-and-forget) for mistake analysis.

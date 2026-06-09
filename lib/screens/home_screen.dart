@@ -193,6 +193,25 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.ac_unit, size: 15, color: RatelColors.teal),
+                Text(' ${appState.streakFreezes} freezes',
+                    style: const TextStyle(
+                        color: RatelColors.textMuted, fontSize: 13)),
+                const SizedBox(width: 14),
+                const Icon(Icons.emoji_events,
+                    size: 15, color: RatelColors.honey),
+                Text(' best ${appState.longestStreak}-day streak',
+                    style: const TextStyle(
+                        color: RatelColors.textMuted, fontSize: 13)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
           const WeakAreasSummary(),
           const AchievementsView(),
           const SizedBox(height: 8),
