@@ -14,6 +14,7 @@ import '../widgets/streak_flame.dart';
 import '../widgets/mistakes_review.dart';
 import '../widgets/weak_areas_summary.dart';
 import '../widgets/leagues_board.dart';
+import '../widgets/daily_nudge.dart';
 import '../widgets/achievements_view.dart';
 import '../widgets/daily_goal_card.dart';
 
@@ -340,6 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         _header(),
+        const DailyNudge(),
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.only(top: 12, bottom: 16),

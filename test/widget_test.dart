@@ -12,6 +12,7 @@ import 'package:ratel/widgets/streak_flame.dart';
 import 'package:ratel/widgets/aurora_background.dart';
 import 'package:ratel/widgets/combo_glow.dart';
 import 'package:ratel/widgets/mistakes_review.dart';
+import 'package:ratel/widgets/daily_nudge.dart';
 
 void main() {
   test('combo ladder rises then caps, resets on wrong', () {
@@ -193,5 +194,20 @@ void main() {
         isTrue);
     expect(isEarned(achievements.firstWhere((a) => a.title == 'XP hunter'), s),
         isFalse);
+  });
+
+  testWidgets('DailyNudge warns of streak risk and hides when goal met',
+      (tester) async {
+    appState.streak = 3;
+    appState.todayXp = 0;
+    appState.dailyGoalXp = 50;
+    await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: DailyNudge())));
+    expect(find.textContaining('streak alive'), findsOneWidget);
+    appState.todayXp = 100; // goal met -> nudge hides
+    await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: DailyNudge())));
+    expect(find.textContaining('streak alive'), findsNothing);
+    appState.reset();
   });
 }
