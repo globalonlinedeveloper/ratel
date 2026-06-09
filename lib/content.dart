@@ -486,3 +486,25 @@ const Unit unit4 = Unit(
 
 /// The full course, in order. Lessons unlock sequentially across all units.
 const List<Unit> course = [unit1, unit2, unit3, unit4];
+
+/// Resolve a content key ('lessonId:exerciseIndex') back to its [Exercise],
+/// or null if it doesn't map to current content (e.g. content changed). Used
+/// to rebuild a "practice your mistakes" session from logged attempt keys.
+Exercise? exerciseForKey(String key) {
+  final parts = key.split(':');
+  if (parts.length < 2) return null;
+  final lessonId = parts[0];
+  final idx = int.tryParse(parts[1]);
+  if (idx == null) return null;
+  for (final unit in course) {
+    for (final lesson in unit.lessons) {
+      if (lesson.id == lessonId) {
+        if (idx >= 0 && idx < lesson.exercises.length) {
+          return lesson.exercises[idx];
+        }
+        return null;
+      }
+    }
+  }
+  return null;
+}

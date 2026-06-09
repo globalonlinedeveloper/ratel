@@ -16,7 +16,14 @@ import '../explain_store.dart';
 /// completion summary. Handles multiple-choice and word-bank exercises.
 class LessonScreen extends StatefulWidget {
   final Lesson lesson;
-  const LessonScreen({super.key, required this.lesson});
+  final bool reviewMode; // review drill: no XP/completion side effects
+  final List<String>? sourceKeys; // original 'lessonId:exIdx' per review item
+  const LessonScreen({
+    super.key,
+    required this.lesson,
+    this.reviewMode = false,
+    this.sourceKeys,
+  });
 
   @override
   State<LessonScreen> createState() => _LessonScreenState();
@@ -80,9 +87,14 @@ class _LessonScreenState extends State<LessonScreen>
       Sfx.instance.wrong();
     }
     _fb.forward(from: 0);
+    final srcKey = (widget.sourceKeys != null &&
+            _index < widget.sourceKeys!.length)
+        ? widget.sourceKeys![_index]
+        : '${widget.lesson.id}:$_index';
+    final kp = srcKey.split(':');
     appState.logAttempt(
-      lessonId: widget.lesson.id,
-      exerciseIndex: _index,
+      lessonId: kp.isNotEmpty ? kp[0] : widget.lesson.id,
+      exerciseIndex: kp.length > 1 ? (int.tryParse(kp[1]) ?? _index) : _index,
       prompt: _ex.prompt,
       chosen: _userText(),
       correctAnswer: _correctText(),
@@ -101,9 +113,11 @@ class _LessonScreenState extends State<LessonScreen>
         _explanation = null;
       });
     } else {
-      appState.completeLesson(widget.lesson.id, _correctCount * 10);
-      Analytics.lessonComplete(widget.lesson.id, _correctCount * 10,
-          _correctCount, widget.lesson.exercises.length);
+      if (!widget.reviewMode) {
+        appState.completeLesson(widget.lesson.id, _correctCount * 10);
+        Analytics.lessonComplete(widget.lesson.id, _correctCount * 10,
+            _correctCount, widget.lesson.exercises.length);
+      }
       Sfx.instance.complete();
       setState(() => _finished = true);
     }
@@ -462,20 +476,24 @@ class _LessonScreenState extends State<LessonScreen>
                             pose: RatelPose.celebrate, size: 170),
                       ),
                       const SizedBox(height: 16),
-                      const Text('Lesson complete!',
-                          style: TextStyle(
+                      Text(widget.reviewMode ? 'Review complete!' : 'Lesson complete!',
+                          style: const TextStyle(
                               fontSize: 24, fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
-                      TweenAnimationBuilder<int>(
-                        tween: IntTween(begin: 0, end: earned),
-                        duration: const Duration(milliseconds: 1200),
-                        curve: Curves.easeOutCubic,
-                        builder: (context, value, _) => Text(
-                          '+$value XP   ·   $_correctCount / $total correct',
-                          style: const TextStyle(
-                              color: RatelColors.textMuted, fontSize: 16),
-                        ),
-                      ),
+                      widget.reviewMode
+                          ? Text('$_correctCount / $total correct',
+                              style: const TextStyle(
+                                  color: RatelColors.textMuted, fontSize: 16))
+                          : TweenAnimationBuilder<int>(
+                              tween: IntTween(begin: 0, end: earned),
+                              duration: const Duration(milliseconds: 1200),
+                              curve: Curves.easeOutCubic,
+                              builder: (context, value, _) => Text(
+                                '+$value XP   ·   $_correctCount / $total correct',
+                                style: const TextStyle(
+                                    color: RatelColors.textMuted, fontSize: 16),
+                              ),
+                            ),
                       const SizedBox(height: 18),
                       SizedBox(
                         width: 240,
@@ -494,7 +512,7 @@ class _LessonScreenState extends State<LessonScreen>
                           ),
                         ),
                       ),
-                      if (appState.streak > 0) ...[
+                      if (!widget.reviewMode && appState.streak > 0) ...[
                         const SizedBox(height: 16),
                         Row(
                           mainAxisSize: MainAxisSize.min,

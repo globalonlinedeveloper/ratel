@@ -167,4 +167,13 @@ void main() {
     await tester.pump();
     expect(find.byType(MistakesReview), findsOneWidget);
   });
+
+  test('exerciseForKey resolves content keys and rejects bad ones', () {
+    final ex = exerciseForKey('u1l1:0');
+    expect(ex, isNotNull);
+    expect(ex!.prompt, course[0].lessons[0].exercises[0].prompt);
+    expect(exerciseForKey('u1l1:999'), isNull);
+    expect(exerciseForKey('nope:0'), isNull);
+    expect(exerciseForKey('garbage'), isNull);
+  });
 }
