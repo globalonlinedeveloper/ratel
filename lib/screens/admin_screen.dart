@@ -189,10 +189,16 @@ class _AdminExerciseEditState extends State<AdminExerciseEdit> {
             Row(
               children: [
                 if (_type == 'choice')
-                  Radio<int>(
-                    value: i,
-                    groupValue: _correctIndex,
-                    onChanged: (v) => setState(() => _correctIndex = v ?? 0),
+                  IconButton(
+                    tooltip: 'Mark correct',
+                    icon: Icon(
+                        i == _correctIndex
+                            ? Icons.check_circle
+                            : Icons.radio_button_unchecked,
+                        color: i == _correctIndex
+                            ? RatelColors.teal
+                            : RatelColors.textMuted),
+                    onPressed: () => setState(() => _correctIndex = i),
                   ),
                 Expanded(child: _field('Option ${i + 1}', _options[i])),
               ],
