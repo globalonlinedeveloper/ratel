@@ -484,8 +484,14 @@ const Unit unit4 = Unit(
   ],
 );
 
-/// The full course, in order. Lessons unlock sequentially across all units.
-const List<Unit> course = [unit1, unit2, unit3, unit4];
+/// Built-in course (offline fallback + test baseline).
+const List<Unit> builtInCourse = [unit1, unit2, unit3, unit4];
+
+/// The active course: built-in by default, swapped to DB content at startup by
+/// ContentStore. Everything reads it via `course`. Lessons unlock in order.
+List<Unit> _activeCourse = builtInCourse;
+List<Unit> get course => _activeCourse;
+void setActiveCourse(List<Unit> units) => _activeCourse = units;
 
 /// Resolve a content key ('lessonId:exerciseIndex') back to its [Exercise],
 /// or null if it doesn't map to current content (e.g. content changed). Used

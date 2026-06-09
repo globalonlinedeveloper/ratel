@@ -4,6 +4,7 @@ import 'theme.dart';
 import 'config.dart';
 import 'sfx.dart';
 import 'explain_store.dart';
+import 'content_store.dart';
 import 'screens/auth_gate.dart';
 import 'screens/home_screen.dart';
 import 'widgets/aurora_background.dart';
@@ -18,6 +19,7 @@ Future<void> main() async {
   }
   await Sfx.instance.load();
   await ExplainStore.instance.load();
+  await ContentStore.instance.load();
   runApp(const RatelApp());
 }
 
