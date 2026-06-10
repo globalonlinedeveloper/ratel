@@ -156,8 +156,9 @@ jobs:
 
       - name: Build iOS (no codesign — compile validation)
         run: |
-          flutter pub get
           flutter config --no-enable-swift-package-manager
+          mkdir -p build/ios/SourcePackages
+          flutter pub get
           flutter build ios --release --no-codesign \
             --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co \
             --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
