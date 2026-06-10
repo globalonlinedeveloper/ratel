@@ -354,6 +354,14 @@ class AppState extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Placement "test out": mark lessons complete WITHOUT the lesson
+  /// side-effects (no XP, no streak touch, no quest/today counters).
+  Future<void> skipAhead(List<String> lessonIds) async {
+    _completed.addAll(lessonIds);
+    notifyListeners();
+    await _persist();
+  }
+
   void completeLesson(String lessonId, int earnedXp) {
     _completed.add(lessonId);
     xp += earnedXp;

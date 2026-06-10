@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../app_state.dart';
 import '../widgets/ratel_mascot.dart';
+import 'placement_screen.dart';
 
 /// First-run onboarding: a quick motivation + daily-goal commitment, then into
 /// the first lesson (the guaranteed first win). Shown once (profiles.onboarded).
@@ -80,6 +81,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 FilledButton(
                   onPressed: _busy ? null : _start,
                   child: Text(_busy ? 'Setting up…' : 'Start learning'),
+                ),
+                const SizedBox(height: 10),
+                OutlinedButton(
+                  onPressed: _busy
+                      ? null
+                      : () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => PlacementScreen(goal: _goal))),
+                  child: const Text('I already know some English'),
                 ),
               ],
             ),
