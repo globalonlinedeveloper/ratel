@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for Supabase auth/DB and the AI coach. Without this the
+         release APK fails every request with "Failed host lookup" (the debug
+         manifest has it for dev tooling, the release build does NOT inherit it). -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="Ratel"
         android:name="${applicationName}"
