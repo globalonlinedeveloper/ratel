@@ -32,6 +32,9 @@ void main() {
           light = c.surfaceC;
           return const SizedBox();
         })));
+    // Fresh tree first: MaterialApp animates theme changes, so pumping the
+    // dark app over the light one would capture the lerp's first (light) frame.
+    await tester.pumpWidget(const SizedBox());
     await tester.pumpWidget(MaterialApp(
         theme: ratelDarkTheme(),
         home: Builder(builder: (c) {
