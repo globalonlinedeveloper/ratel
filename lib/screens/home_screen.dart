@@ -654,7 +654,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(width: 12),
-          const RatelMascot(pose: RatelPose.encourage, size: 72),
+          const RatelPuppet(state: PuppetState.walk, size: 76),
         ],
       ),
     );
