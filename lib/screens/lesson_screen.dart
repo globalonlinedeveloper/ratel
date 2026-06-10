@@ -50,6 +50,7 @@ class _LessonScreenState extends State<LessonScreen>
   String? _reaction;
   bool _firstToday = false;
   bool _newBadge = false;
+  bool _unitDone = false;
   final math.Random _rng = math.Random();
   bool _finished = false;
 
@@ -166,6 +167,9 @@ class _LessonScreenState extends State<LessonScreen>
         _newBadge =
             achievements.where((a) => isEarned(a, appState)).length >
                 badgesBefore;
+        _unitDone = course.any((u) =>
+            u.lessons.any((l) => l.id == widget.lesson.id) &&
+            u.lessons.every((l) => appState.isCompleted(l.id)));
         Analytics.lessonComplete(widget.lesson.id, total, _correctCount,
             widget.lesson.exercises.length);
       }
@@ -287,9 +291,15 @@ class _LessonScreenState extends State<LessonScreen>
     }
     final bool perfect = !widget.reviewMode &&
         _correctCount >= widget.lesson.exercises.length;
-    return RatelPuppet(
-      state: perfect ? PuppetState.dance : PuppetState.celebrate,
-      size: 170,
+    return Image.asset(
+      perfect
+          ? 'assets/images/ratel-perfect-anim.webp'
+          : 'assets/images/ratel-jump.webp',
+      width: 170,
+      height: 170,
+      filterQuality: FilterQuality.medium,
+      errorBuilder: (_, _, _) =>
+          const RatelMascot(pose: RatelPose.celebrate, size: 170),
     );
   }
 
@@ -315,6 +325,10 @@ class _LessonScreenState extends State<LessonScreen>
             size: s);
       }
     } else {
+      if (widget.reviewMode && !_answered) {
+        return const RatelActionAnim(
+            action: 'snakestare', fallbackPose: RatelPose.think, size: s);
+      }
       if (_ex.type == ExerciseType.listen) {
         return const RatelActionAnim(
             action: 'listening', fallbackPose: RatelPose.speak, size: s);
@@ -724,6 +738,24 @@ class _LessonScreenState extends State<LessonScreen>
                           style: const TextStyle(
                               fontSize: 24, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
                       const StreakMilestoneCard(),
+                      if (_unitDone)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const RatelActionAnim(
+                                  action: 'gradcap',
+                                  fallbackPose: RatelPose.celebrate,
+                                  size: 54),
+                              const SizedBox(width: 8),
+                              Text('Unit complete!',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      color: context.textC)),
+                            ],
+                          ),
+                        ),
                       if (_newBadge)
                         Padding(
                           padding: const EdgeInsets.only(top: 10),

@@ -10,5 +10,5 @@ int? milestoneFor(int streak) =>
 String? pickReaction(int combo, int roll) {
   if (combo >= 5) return null;
   if (roll >= 3) return null;
-  return const ['nod', 'fistpump'][roll % 2];
+  return const ['nod', 'fistpump', 'wink'][roll % 3];
 }

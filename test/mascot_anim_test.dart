@@ -19,6 +19,22 @@ void main() {
     }
   });
 
+  test('all 24 action loops are bundled (full-body library)', () async {
+    for (final name in [
+      'jump', 'perfect', 'karate', 'listening', 'crying', 'dustoff',
+      'flex', 'trophy', 'thumbsup', 'sleeping', 'morningstretch',
+      'medalbite', 'tired', 'shrugok', 'digging', 'honeyjar',
+      'snakestare', 'headphones', 'gradcap', 'partyhat', 'nod',
+      'fistpump', 'wink',
+    ]) {
+      final path = name == 'jump'
+          ? 'assets/images/ratel-jump.webp'
+          : 'assets/images/ratel-$name-anim.webp';
+      final data = await rootBundle.load(path);
+      expect(data.lengthInBytes, greaterThan(20000), reason: name);
+    }
+  });
+
   test('baked pose statics are bundled (the new base design)', () async {
     for (final pose in [
       'idle', 'wave', 'celebrate', 'encourage',

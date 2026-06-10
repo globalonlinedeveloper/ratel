@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../widgets/anniversary_card.dart';
+import '../widgets/ratel_mascot.dart';
+import '../widgets/mascot_anim.dart';
 import '../widgets/ratel_puppet.dart';
 import 'package:flutter/services.dart';
 import '../theme.dart';
@@ -321,8 +324,13 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                   title: const Text('Background music'),
                   subtitle: const Text('Calm ambient loop while you learn'),
-                  secondary: const Icon(Icons.music_note,
-                      color: RatelColors.honey),
+                  secondary: Sfx.instance.musicOn
+                      ? const RatelActionAnim(
+                          action: 'headphones',
+                          fallbackPose: RatelPose.speak,
+                          size: 34)
+                      : const Icon(Icons.music_note,
+                          color: RatelColors.honey),
                   value: Sfx.instance.musicOn,
                   onChanged: (v) {
                     Sfx.instance.setMusicOn(v);
@@ -483,6 +491,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const DailyNudge(),
         const ReviewCard(),
         const DailyQuestsCard(),
+        const AnniversaryCard(),
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.only(top: 12, bottom: 16),

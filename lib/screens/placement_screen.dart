@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/mascot_anim.dart';
 import '../theme.dart';
 import '../app_state.dart';
 import '../placement.dart';
@@ -173,7 +174,13 @@ class _PlacementScreenState extends State<PlacementScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const RatelMascot(pose: RatelPose.celebrate, size: 120),
+                  skip > 0
+                      ? const RatelActionAnim(
+                          action: 'gradcap',
+                          fallbackPose: RatelPose.celebrate,
+                          size: 120)
+                      : const RatelMascot(
+                          pose: RatelPose.celebrate, size: 120),
                   const SizedBox(height: 16),
                   Text('$_correct / ${_probes.length} correct',
                       style: TextStyle(color: context.mutedC)),

@@ -18,7 +18,7 @@ void main() {
     }
     expect(pickReaction(2, 0), 'nod');
     expect(pickReaction(2, 1), 'fistpump');
-    expect(pickReaction(2, 2), 'nod');
+    expect(pickReaction(2, 2), 'wink');
     for (int roll = 3; roll < 12; roll++) {
       expect(pickReaction(2, roll), isNull);
     }
