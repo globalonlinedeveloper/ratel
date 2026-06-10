@@ -142,7 +142,7 @@ jobs:
   ios-build:
     needs: verify
     if: github.ref == 'refs/heads/main'
-    runs-on: macos-14
+    runs-on: macos-15
     steps:
       - name: Check out code
         uses: actions/checkout@v4
