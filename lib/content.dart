@@ -575,8 +575,92 @@ const Unit unit6 = Unit(
   ],
 );
 
+const Unit unit7 = Unit(
+  title: 'Unit 7',
+  subtitle: 'Work & school',
+  lessons: [
+    Lesson(id: 'u7l1', title: 'Jobs', exercises: [
+      Exercise.choice(prompt: 'Who teaches students at a school?', options: ['Teacher', 'Doctor', 'Driver', 'Cook'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'A ___ helps sick people in a hospital.', accepted: ['doctor', 'nurse']),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['as', 'She', 'works', 'a', 'nurse'], correctOrder: ['She', 'works', 'as', 'a', 'nurse']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'He ___ in an office.', options: ['works', 'work', 'working', 'worked'], correctIndex: 0),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['I work in a bank']),
+    ]),
+    Lesson(id: 'u7l2', title: 'Asking for help', exercises: [
+      Exercise.choice(prompt: 'What do you say when you need help?', options: ['Can you help me?', 'Good night', 'See you', 'No thanks'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the question', options: ['you', 'Could', 'repeat', 'that'], correctOrder: ['Could', 'you', 'repeat', 'that']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: "I don't ___ this word. What does it mean?", accepted: ['understand', 'know']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'Could you speak more ___, please?', options: ['slowly', 'slow', 'slower', 'slowest'], correctIndex: 0),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['Can you help me']),
+    ]),
+    Lesson(id: 'u7l3', title: 'Meetings & email', exercises: [
+      Exercise.choice(prompt: 'Which word starts a polite email?', options: ['Dear', 'Hey you', 'Listen', 'Now'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'The meeting starts ___ ten in the morning.', accepted: ['at']),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['send', 'I', 'will', 'the', 'report'], correctOrder: ['I', 'will', 'send', 'the', 'report']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'Please ___ the file to the email.', options: ['attach', 'eat', 'drive', 'sleep'], correctIndex: 0),
+      Exercise.choice(prompt: 'How do you end a polite email?', options: ['Best regards', 'Go away', 'Whatever', 'The end'], correctIndex: 0),
+    ]),
+    Lesson(id: 'u7l4', title: 'School & study', exercises: [
+      Exercise.choice(prompt: 'Where do students have lessons?', options: ['Classroom', 'Kitchen', 'Garage', 'Beach'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I have an English ___ every Tuesday.', accepted: ['class', 'lesson']),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['studying', 'am', 'I', 'for', 'exam', 'an'], correctOrder: ['I', 'am', 'studying', 'for', 'an', 'exam']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'She passed the test because she studied ___.', options: ['hard', 'hardly', 'harder', 'hardest'], correctIndex: 0),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['I have a question']),
+    ]),
+    Lesson(id: 'u7l5', title: 'Polite requests', exercises: [
+      Exercise.choice(prompt: 'Which is the most polite?', options: ['Could you open the window, please?', 'Open the window!', 'Window. Now.', 'You must open it'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: '___ I borrow your pen, please?', accepted: ['May', 'Can', 'Could']),
+      Exercise.wordBank(prompt: 'Build the question', options: ['mind', 'you', 'Would', 'helping', 'me'], correctOrder: ['Would', 'you', 'mind', 'helping', 'me']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'I would like ___ order a coffee, please.', options: ['to', 'for', 'at', 'of'], correctIndex: 0),
+      Exercise.choice(prompt: 'What do you say after someone helps you?', options: ['Thank you so much', 'Finally', 'Move on', 'Stop it'], correctIndex: 0),
+    ]),
+  ],
+);
+
+const Unit unit8 = Unit(
+  title: 'Unit 8',
+  subtitle: 'Stories & opinions',
+  lessons: [
+    Lesson(id: 'u8l1', title: 'Telling a story', exercises: [
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'I ___ TV when the phone rang.', options: ['was watching', 'watch', 'am watching', 'watches'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['began', 'The', 'rain', 'suddenly'], correctOrder: ['The', 'rain', 'began', 'suddenly']),
+      Exercise.typed(prompt: "Type the past tense of 'go'.", accepted: ['went']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'First we cooked dinner, ___ we watched a film.', options: ['then', 'but', 'or', 'if'], correctIndex: 0),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['It was a long day']),
+    ]),
+    Lesson(id: 'u8l2', title: 'Giving reasons', exercises: [
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'I stayed home ___ I was tired.', options: ['because', 'but', 'or', 'so'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['late', 'was', 'It', 'so', 'I', 'hurried'], correctOrder: ['It', 'was', 'late', 'so', 'I', 'hurried']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I was hungry, ___ I made a sandwich.', accepted: ['so']),
+      Exercise.choice(prompt: 'Which word gives a reason?', options: ['Because', 'Table', 'Blue', 'Quickly'], correctIndex: 0),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'She learns English ___ she wants a better job.', options: ['because', 'until', 'before', 'although'], correctIndex: 0),
+    ]),
+    Lesson(id: 'u8l3', title: 'Making suggestions', exercises: [
+      Exercise.choice(prompt: 'Which sentence makes a suggestion?', options: ["Let's go to the park", 'It is raining', 'I am tall', 'The cat sleeps'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the suggestion', options: ['we', 'Why', 'try', "don't", 'it'], correctOrder: ['Why', "don't", 'we', 'try', 'it']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'How ___ going to the beach?', accepted: ['about']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'We ___ watch a film tonight.', options: ['could', 'must not', 'did', 'was'], correctIndex: 0),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ["Let's eat together"]),
+    ]),
+    Lesson(id: 'u8l4', title: 'Agree & disagree', exercises: [
+      Exercise.choice(prompt: 'What do you say to agree?', options: ['I think so too', 'No way', 'Be quiet', 'Go away'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I ___ with you, that film was great.', accepted: ['agree']),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['sure', 'am', 'I', 'not', 'so'], correctOrder: ['I', 'am', 'not', 'so', 'sure']),
+      Exercise.choice(prompt: 'Which is a polite way to disagree?', options: ['I see your point, but I think differently', 'You are wrong!', 'That is stupid', 'Stop talking'], correctIndex: 0),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'In my ___, the book is better than the film.', options: ['opinion', 'table', 'water', 'morning'], correctIndex: 0),
+    ]),
+    Lesson(id: 'u8l5', title: 'Describing people', exercises: [
+      Exercise.choice(prompt: 'Which word describes hair?', options: ['Curly', 'Loud', 'Salty', 'Fast'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'My brother is very ___. He makes everyone laugh.', accepted: ['funny']),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['kind', 'is', 'She', 'very'], correctOrder: ['She', 'is', 'very', 'kind']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'He is the ___ person in our class.', options: ['tallest', 'taller', 'tall', 'most tall'], correctIndex: 0),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['She has brown eyes']),
+    ]),
+  ],
+);
+
 /// Built-in course (offline fallback + test baseline).
-const List<Unit> builtInCourse = [unit1, unit2, unit3, unit4, unit5, unit6];
+const List<Unit> builtInCourse = [unit1, unit2, unit3, unit4, unit5, unit6, unit7, unit8];
 
 /// The active course: built-in by default, swapped to DB content at startup by
 /// ContentStore. Everything reads it via `course`. Lessons unlock in order.
