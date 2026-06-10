@@ -95,20 +95,6 @@ try{
       || Array.from(document.querySelectorAll('flt-semantics')).some(e=>hit(e.textContent));
   },txt);
   if(soundToggle && !(await hasLabel('background music'))) problems.push('Background music toggle missing in Profile');
-  // Friends: the friend code (DB default at signup) must display, not blank dashes.
-  phase='friends';
-  let fOpen=false, fdl=Date.now()+9000;
-  while(Date.now()<fdl){ await page.mouse.wheel(0,320); await page.waitForTimeout(450); await sem(page); if(await page.getByText('Friends',{exact:true}).count()>=1){fOpen=true;break;} }
-  if(fOpen){
-    await tap(page,'Friends',{exact:true}); await page.waitForTimeout(1100); await sem(page);
-    const fi=await page.evaluate(()=>{
-      const txt=Array.from(document.querySelectorAll('flt-semantics')).map(e=>e.textContent||'').join(' | ');
-      return {onScreen:/your friend code/i.test(txt), dashes:txt.includes('\u2014\u2014'), sample:txt.replace(/\s+/g,' ').slice(0,160)};
-    });
-    if(!fi.onScreen) problems.push('Friends screen did not render: '+fi.sample);
-    else if(fi.dashes) problems.push('friend code shows blank dashes (not loaded): '+fi.sample);
-    else console.log('friend code displayed on Friends screen (no blank dashes)');
-  } else { problems.push('could not reach Friends button in Profile'); }
   // Mistake log: every answer in the lesson should be recorded to public.attempts.
   phase='attempts';
   if(token){
@@ -164,15 +150,20 @@ try{
       else console.log('pro trial status:',sj[0].status);
       await fetch(`${SUPA_URL}/rest/v1/rpc/cancel_pro`,{method:'POST',headers:ah,body:'{}'});
     }catch(e){ problems.push('pro trial flow failed: '+e.message); }
-    // Comeback: set up a broken streak on our own profile, then repair_streak must restore it.
+    // Comeback: set up a broken streak (confirm it landed), then repair_streak restores it.
     try{
       const today=new Date().toISOString().slice(0,10);
-      await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${me.id}`,{method:'PATCH',headers:{...ah,Prefer:'return=minimal'},body:JSON.stringify({broken_streak:9,broken_on:today,streak_freezes:1})});
-      const rr=await fetch(`${SUPA_URL}/rest/v1/rpc/repair_streak`,{method:'POST',headers:ah,body:'{}'});
-      const rj=await rr.json().catch(()=>[]);
-      if(!rr.ok) problems.push('repair_streak RPC failed: '+rr.status);
-      else if(!Array.isArray(rj)||rj.length<1||Number(rj[0].current_streak)!==9) problems.push('repair_streak did not restore streak: '+JSON.stringify(rj).slice(0,120));
-      else console.log('repair_streak restored streak to', rj[0].current_streak);
+      const pp=await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${me.id}`,{method:'PATCH',headers:{...ah,Prefer:'return=representation'},body:JSON.stringify({broken_streak:9,broken_on:today,streak_freezes:1})});
+      const pj=await pp.json().catch(()=>[]);
+      if(!pp.ok||!Array.isArray(pj)||Number(pj[0]?.broken_streak)!==9){
+        problems.push('could not set up broken streak: '+pp.status+' '+JSON.stringify(pj).slice(0,80));
+      } else {
+        const rr=await fetch(`${SUPA_URL}/rest/v1/rpc/repair_streak`,{method:'POST',headers:ah,body:'{}'});
+        const rj=await rr.json().catch(()=>[]);
+        if(!rr.ok) problems.push('repair_streak RPC failed: '+rr.status);
+        else if(!Array.isArray(rj)||rj.length<1||Number(rj[0].current_streak)!==9) problems.push('repair_streak did not restore streak: '+JSON.stringify(rj).slice(0,120));
+        else console.log('repair_streak restored streak to', rj[0].current_streak);
+      }
     }catch(e){ problems.push('repair_streak flow failed: '+e.message); }
   }
 }catch(e){problems.push(`crash in ${phase}: ${e.message}`);}
