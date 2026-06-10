@@ -1,11 +1,11 @@
 {
-    "name": "ratel",
-    "short_name": "ratel",
+    "name": "Ratel",
+    "short_name": "Ratel",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F7F7F4",
+    "theme_color": "#C77D2E",
+    "description": "Learn English, fearlessly - lessons, listening, typing and an AI coach.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
