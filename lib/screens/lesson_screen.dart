@@ -249,7 +249,13 @@ class _LessonScreenState extends State<LessonScreen>
   }
 
   RatelPose _pose() {
-    if (!_answered) return RatelPose.speak;
+    if (!_answered) {
+      return switch (_ex.type) {
+        ExerciseType.typed => RatelPose.think,
+        ExerciseType.listen => RatelPose.speak,
+        _ => RatelPose.point,
+      };
+    }
     return _isCorrect ? RatelPose.celebrate : RatelPose.oops;
   }
 

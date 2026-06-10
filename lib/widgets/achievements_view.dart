@@ -29,14 +29,14 @@ class AchievementsView extends StatelessWidget {
           Wrap(
             spacing: 10,
             runSpacing: 12,
-            children: [for (final a in achievements) _badge(a)],
+            children: [for (final a in achievements) _badge(context, a)],
           ),
         ],
       ),
     );
   }
 
-  Widget _badge(Achievement a) {
+  Widget _badge(BuildContext context, Achievement a) {
     final on = isEarned(a, appState);
     final color = on
         ? RatelColors.honey
