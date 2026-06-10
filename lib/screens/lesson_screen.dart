@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import '../content.dart';
 import '../widgets/battle_stage.dart';
-import '../widgets/ratel_puppet.dart';
 import '../widgets/milestone_card.dart';
 import '../milestones.dart';
 import '../achievements.dart';
