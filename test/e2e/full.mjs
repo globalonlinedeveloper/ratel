@@ -142,6 +142,15 @@ try{
       const r=await fetch(`${SUPA_URL}/rest/v1/rpc/my_friends`,{method:'POST',headers:ah,body:'{}'});
       if(!r.ok) problems.push('my_friends RPC failed: '+r.status); else console.log('my_friends ok');
     }catch(e){ problems.push('my_friends failed: '+e.message); }
+    // AI coach: tutor-chat function healthy (ping = zero LLM spend) + JWT-gated.
+    try{
+      const tc=await fetch(`${SUPA_URL}/functions/v1/tutor-chat`,{method:'POST',headers:ah,body:JSON.stringify({ping:true})});
+      const tj=await tc.json().catch(()=>({}));
+      if(!tc.ok||tj.ok!==true) problems.push('tutor-chat ping failed: '+tc.status);
+      else console.log('tutor-chat ping ok');
+      const tn=await fetch(`${SUPA_URL}/functions/v1/tutor-chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ping:true})});
+      if(tn.status!==401) problems.push('tutor-chat not JWT-gated: '+tn.status);
+    }catch(e){ problems.push('tutor-chat check failed: '+e.message); }
     // Pro trial lifecycle: start -> a subscription row exists -> cancel (row cascade-cleans on delete_self).
     try{
       const sp=await fetch(`${SUPA_URL}/rest/v1/rpc/start_pro_trial`,{method:'POST',headers:ah,body:'{}'});

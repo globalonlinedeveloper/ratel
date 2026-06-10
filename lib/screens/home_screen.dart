@@ -12,6 +12,7 @@ import 'lesson_screen.dart';
 import 'admin_screen.dart';
 import 'onboarding_screen.dart';
 import 'friends_screen.dart';
+import 'coach_screen.dart';
 import 'paywall_screen.dart';
 import '../widgets/transitions.dart';
 import '../widgets/rolling_number.dart';
@@ -67,6 +68,10 @@ class _HomeScreenState extends State<HomeScreen> {
               NavigationDestination(
                   icon: Icon(Icons.edit_outlined), label: 'Practice'),
               NavigationDestination(
+                  icon: Icon(Icons.forum_outlined),
+                  selectedIcon: Icon(Icons.forum),
+                  label: 'Coach'),
+              NavigationDestination(
                   icon: Icon(Icons.emoji_events_outlined), label: 'Leagues'),
               NavigationDestination(
                   icon: Icon(Icons.person_outline), label: 'Profile'),
@@ -104,8 +109,10 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         return _buildPractice();
       case 2:
-        return _buildLeagues();
+        return const CoachScreen();
       case 3:
+        return _buildLeagues();
+      case 4:
         return _buildProfile();
       default:
         return _placeholder();
