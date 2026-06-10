@@ -55,6 +55,7 @@ class _LessonScreenState extends State<LessonScreen>
   final math.Random _rng = math.Random();
   final BattleController _battle = BattleController();
   bool _isBoss = false;
+  String _villain = 'cobra';
   bool _finished = false;
 
   int? _selected; // choice
@@ -71,10 +72,11 @@ class _LessonScreenState extends State<LessonScreen>
   @override
   void initState() {
     super.initState();
-    for (final unit in course) {
-      if (unit.lessons.isNotEmpty &&
-          unit.lessons.last.id == widget.lesson.id) {
-        _isBoss = true;
+    for (int u = 0; u < course.length; u++) {
+      final unit = course[u];
+      if (unit.lessons.any((l) => l.id == widget.lesson.id)) {
+        _villain = villainForUnit(u);
+        if (unit.lessons.last.id == widget.lesson.id) _isBoss = true;
       }
     }
     SharedPreferences.getInstance().then((prefs) {
@@ -251,7 +253,9 @@ class _LessonScreenState extends State<LessonScreen>
                 children: [
                   (battleModeNotifier.value && !widget.reviewMode)
                       ? BattleStage(
-                          controller: _battle, isBoss: _isBoss)
+                          controller: _battle,
+                          villain: _villain,
+                          isBoss: _isBoss)
                       : _mascotSlot(),
                   const SizedBox(width: 12),
                   Expanded(

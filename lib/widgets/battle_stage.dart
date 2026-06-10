@@ -55,12 +55,16 @@ class BattleStage extends StatefulWidget {
   const BattleStage({
     super.key,
     required this.controller,
+    this.villain = 'cobra',
     this.isBoss = false,
     this.width = 168,
     this.height = 84,
   });
 
   final BattleController controller;
+
+  /// cobra | scorpion | bees | jackal | vulture (unit-tier roster).
+  final String villain;
   final bool isBoss;
   final double width;
   final double height;
@@ -127,7 +131,9 @@ class _BattleStageState extends State<BattleStage>
   }
 
   String _cobraAsset() {
-    final p = widget.isBoss ? 'boss' : 'cobra';
+    final String p = (widget.isBoss && widget.villain == 'cobra')
+        ? 'boss'
+        : widget.villain;
     final n = widget.controller.cobra.name;
     return 'assets/battle/${p}_$n.webp';
   }
@@ -190,8 +196,14 @@ class _BattleStageState extends State<BattleStage>
                       offset: Offset(cobraDx,
                           still ? 0 : 1.5 * (_sway.value - 0.5)),
                       child: Image.asset(_cobraAsset(),
-                          width: h - 12,
-                          height: h - 12,
+                          width: (h - 12) *
+                              (widget.isBoss && widget.villain != 'cobra'
+                                  ? 1.12
+                                  : 1.0),
+                          height: (h - 12) *
+                              (widget.isBoss && widget.villain != 'cobra'
+                                  ? 1.12
+                                  : 1.0),
                           filterQuality: FilterQuality.medium,
                           errorBuilder: (_, _, _) =>
                               SizedBox(width: h - 12, height: h - 12)),

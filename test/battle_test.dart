@@ -28,7 +28,9 @@ void main() {
   });
 
   test('all battle assets are bundled', () async {
-    for (final side in ['cobra', 'boss']) {
+    for (final side in [
+      'cobra', 'boss', 'scorpion', 'bees', 'jackal', 'vulture'
+    ]) {
       for (final st in [
         'idle', 'taunt', 'strike', 'recoil', 'dizzy', 'defeated'
       ]) {

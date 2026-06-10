@@ -2,6 +2,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/milestones.dart';
 
 void main() {
+  test('villain roster maps unit tiers', () {
+    expect(villainForUnit(0), 'cobra');
+    expect(villainForUnit(1), 'cobra');
+    expect(villainForUnit(2), 'scorpion');
+    expect(villainForUnit(5), 'bees');
+    expect(villainForUnit(7), 'jackal');
+    expect(villainForUnit(11), 'vulture');
+  });
+
   test('milestoneFor matches landmark days only', () {
     expect(milestoneFor(7), 7);
     expect(milestoneFor(30), 30);
