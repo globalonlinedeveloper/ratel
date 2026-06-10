@@ -22,6 +22,8 @@ class AppState extends ChangeNotifier {
   bool isAdmin = false;
   bool onboarded = true;
   String friendCode = '';
+  int brokenStreak = 0;
+  DateTime? brokenOn;
   bool isPro = false;
   List<String> dueKeys = [];
   final Set<String> _completed = <String>{};
@@ -29,6 +31,11 @@ class AppState extends ChangeNotifier {
   bool isCompleted(String lessonId) => _completed.contains(lessonId);
   int get completedCount => _completed.length;
   int get dueReviews => dueKeys.length;
+  bool get canRepair =>
+      brokenStreak > streak &&
+      brokenOn != null &&
+      DateTime.now().difference(brokenOn!).inDays <= 2 &&
+      streakFreezes > 0;
 
   /// The Supabase client if initialized AND a user is signed in, else null.
   SupabaseClient? get _client {
@@ -52,7 +59,7 @@ class AppState extends ChangeNotifier {
     try {
       final row = await client
           .from('profiles')
-          .select('total_xp, current_streak, hearts, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes, is_admin, onboarded, friend_code')
+          .select('total_xp, current_streak, hearts, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes, is_admin, onboarded, friend_code, broken_streak, broken_on')
           .eq('id', client.auth.currentUser!.id)
           .maybeSingle();
       if (row != null) {
@@ -66,6 +73,10 @@ class AppState extends ChangeNotifier {
         isAdmin = (row['is_admin'] as bool?) ?? false;
         onboarded = (row['onboarded'] as bool?) ?? true;
         friendCode = (row['friend_code'] as String?) ?? friendCode;
+        brokenStreak = (row['broken_streak'] as int?) ?? 0;
+        brokenOn = row['broken_on'] != null
+            ? DateTime.tryParse(row['broken_on'].toString())
+            : null;
         final dynamic cl = row['completed_lessons'];
         if (cl is List) {
           _completed
@@ -194,6 +205,8 @@ class AppState extends ChangeNotifier {
   Future<void> markOnboarded() async {
     onboarded = true;
     friendCode = '';
+    brokenStreak = 0;
+    brokenOn = null;
     notifyListeners();
     final client = _client;
     if (client == null) return;
@@ -230,6 +243,25 @@ class AppState extends ChangeNotifier {
       return List<Map<String, dynamic>>.from(res as List);
     } catch (_) {
       return [];
+    }
+  }
+
+  /// Restore a recently-broken streak (costs a freeze).
+  Future<bool> repairStreak() async {
+    final client = _client;
+    if (client == null) return false;
+    try {
+      final res = await client.rpc('repair_streak');
+      final rows = List<Map<String, dynamic>>.from(res as List);
+      if (rows.isEmpty) return false;
+      streak = (rows.first['current_streak'] as num?)?.toInt() ?? streak;
+      streakFreezes = (rows.first['streak_freezes'] as num?)?.toInt() ?? streakFreezes;
+      brokenStreak = 0;
+      brokenOn = null;
+      notifyListeners();
+      return true;
+    } catch (_) {
+      return false;
     }
   }
 

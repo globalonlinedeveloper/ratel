@@ -19,6 +19,7 @@ import '../widgets/mistakes_review.dart';
 import '../widgets/weak_areas_summary.dart';
 import '../widgets/leagues_board.dart';
 import '../widgets/daily_nudge.dart';
+import '../widgets/streak_repair_card.dart';
 import '../widgets/review_card.dart';
 import '../widgets/daily_quests_card.dart';
 import '../widgets/achievements_view.dart';
@@ -401,6 +402,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         _header(),
+        const StreakRepairCard(),
         const DailyNudge(),
         const ReviewCard(),
         const DailyQuestsCard(),
