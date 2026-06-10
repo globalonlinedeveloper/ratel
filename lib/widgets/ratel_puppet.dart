@@ -47,9 +47,9 @@ const Map<String, PartSpec> kRatelRig = {
   'torso': PartSpec(
       cx: .502, cy: .575, w: .45, aspect: .883, pivotX: .50, pivotY: .90),
   'arm_left': PartSpec(
-      cx: .665, cy: .560, w: .155, aspect: 1.899, pivotX: .50, pivotY: .10),
+      cx: .652, cy: .560, w: .155, aspect: 1.899, pivotX: .50, pivotY: .16),
   'arm_right': PartSpec(
-      cx: .335, cy: .560, w: .155, aspect: 1.899, pivotX: .50, pivotY: .10),
+      cx: .348, cy: .560, w: .155, aspect: 1.899, pivotX: .50, pivotY: .16),
   'head': PartSpec(
       cx: .50, cy: .272, w: .475, aspect: .937, pivotX: .50, pivotY: .85),
 };
