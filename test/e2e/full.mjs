@@ -95,6 +95,20 @@ try{
       || Array.from(document.querySelectorAll('flt-semantics')).some(e=>hit(e.textContent));
   },txt);
   if(soundToggle && !(await hasLabel('background music'))) problems.push('Background music toggle missing in Profile');
+  // Friends: the friend code (DB default at signup) must display, not blank dashes.
+  phase='friends';
+  let fOpen=false, fdl=Date.now()+9000;
+  while(Date.now()<fdl){ await page.mouse.wheel(0,320); await page.waitForTimeout(450); await sem(page); if(await page.getByText('Friends',{exact:true}).count()>=1){fOpen=true;break;} }
+  if(fOpen){
+    await tap(page,'Friends',{exact:true}); await page.waitForTimeout(1100); await sem(page);
+    const fi=await page.evaluate(()=>{
+      const txt=Array.from(document.querySelectorAll('flt-semantics')).map(e=>e.textContent||'').join(' | ');
+      return {onScreen:/your friend code/i.test(txt), dashes:txt.includes('\u2014\u2014'), sample:txt.replace(/\s+/g,' ').slice(0,160)};
+    });
+    if(!fi.onScreen) problems.push('Friends screen did not render: '+fi.sample);
+    else if(fi.dashes) problems.push('friend code shows blank dashes (not loaded): '+fi.sample);
+    else console.log('friend code displayed on Friends screen (no blank dashes)');
+  } else { problems.push('could not reach Friends button in Profile'); }
   // Mistake log: every answer in the lesson should be recorded to public.attempts.
   phase='attempts';
   if(token){

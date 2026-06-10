@@ -18,6 +18,15 @@ class _FriendsScreenState extends State<FriendsScreen> {
   bool _adding = false;
 
   @override
+  void initState() {
+    super.initState();
+    // Friend code is assigned at signup; fetch it if the client copy is empty.
+    appState.ensureFriendCode().then((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  @override
   void dispose() {
     _codeCtrl.dispose();
     super.dispose();

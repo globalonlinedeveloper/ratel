@@ -257,6 +257,14 @@ void main() {
     expect(ex.options, isEmpty);
   });
 
+  test('markOnboarded keeps the friend code (regression: it used to blank it)', () async {
+    final s = AppState();
+    s.friendCode = 'EDAB7F';
+    await s.markOnboarded();
+    expect(s.onboarded, isTrue);
+    expect(s.friendCode, 'EDAB7F'); // must survive onboarding
+  });
+
   test('listen exercise is graded like typed (accepted in correctOrder)', () {
     const ex = Exercise.listen(prompt: 'Type what you hear', accepted: ['Hello']);
     expect(ex.type, ExerciseType.listen);

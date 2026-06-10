@@ -207,7 +207,6 @@ class AppState extends ChangeNotifier {
   /// Mark first-run onboarding complete.
   Future<void> markOnboarded() async {
     onboarded = true;
-    friendCode = '';
     brokenStreak = 0;
     brokenOn = null;
     notifyListeners();
@@ -216,6 +215,29 @@ class AppState extends ChangeNotifier {
     try {
       await client.from('profiles')
           .update({'onboarded': true}).eq('id', client.auth.currentUser!.id);
+    } catch (_) {}
+  }
+
+  /// Make sure the friend code is loaded for display. Friend codes are assigned
+  /// by a DB default at signup, so a signed-in user always has one — this fetches
+  /// it directly if a sync race (or a prior blank) left the client copy empty.
+  Future<void> ensureFriendCode() async {
+    if (friendCode.isNotEmpty) return;
+    final client = _client;
+    if (client == null) return;
+    final uid = client.auth.currentUser?.id;
+    if (uid == null) return;
+    try {
+      final row = await client
+          .from('profiles')
+          .select('friend_code')
+          .eq('id', uid)
+          .maybeSingle();
+      final code = (row?['friend_code'] as String?) ?? '';
+      if (code.isNotEmpty) {
+        friendCode = code;
+        notifyListeners();
+      }
     } catch (_) {}
   }
 
