@@ -33,13 +33,13 @@ class DailyQuestsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          for (final q in quests) _quest(q),
+          for (final q in quests) _quest(context, q),
         ],
       ),
     );
   }
 
-  Widget _quest(Quest q) {
+  Widget _quest(BuildContext context, Quest q) {
     final p = questProgress(q, appState);
     final ok = p >= q.target;
     final frac = (p / q.target).clamp(0.0, 1.0);

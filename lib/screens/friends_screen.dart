@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme.dart';
+import '../widgets/empty_state.dart';
+import '../widgets/ratel_mascot.dart';
 import '../app_state.dart';
 import '../widgets/streak_flame.dart';
 
@@ -134,10 +136,11 @@ class _FriendsScreenState extends State<FriendsScreen> {
               }
               final friends = snap.data ?? const [];
               if (friends.isEmpty) {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Text('No friends yet — share your code to add some!',
-                      style: TextStyle(color: RatelColors.textMuted)),
+                return const RatelEmptyState(
+                  pose: RatelPose.wave,
+                  title: 'No friends yet',
+                  subtitle:
+                      'Share your code and add theirs — friend streaks keep you both going.',
                 );
               }
               return Column(children: [for (final f in friends) _friendRow(f)]);

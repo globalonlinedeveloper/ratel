@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
+import 'skeleton.dart';
 import '../models.dart';
 import '../content.dart';
 import '../screens/lesson_screen.dart';
@@ -86,13 +87,8 @@ class _MistakesReviewState extends State<MistakesReview> {
       builder: (context, snap) {
         if (snap.connectionState != ConnectionState.done) {
           return const Padding(
-            padding: EdgeInsets.symmetric(vertical: 16),
-            child: Center(
-              child: SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2)),
-            ),
+            padding: EdgeInsets.symmetric(vertical: 8),
+            child: SkeletonList(rows: 2, height: 52),
           );
         }
         final items = snap.data ?? const [];

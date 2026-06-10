@@ -75,6 +75,32 @@ Future<void> setThemeMode(ThemeMode mode) async {
   } catch (_) {}
 }
 
+/// ----- Reduce motion (user preference, OR'd with the OS setting) -----
+final ValueNotifier<bool> reduceMotionNotifier = ValueNotifier<bool>(false);
+
+Future<void> loadReduceMotion() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    reduceMotionNotifier.value = prefs.getBool('reduce_motion') ?? false;
+  } catch (_) {}
+}
+
+Future<void> setReduceMotion(bool on) async {
+  reduceMotionNotifier.value = on;
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('reduce_motion', on);
+  } catch (_) {}
+}
+
+extension RatelMotion on BuildContext {
+  /// True when the OS requests reduced animations OR the user turned the
+  /// in-app "Reduce motion" setting on.
+  bool get reduceMotion =>
+      (MediaQuery.maybeOf(this)?.disableAnimations ?? false) ||
+      reduceMotionNotifier.value;
+}
+
 /// Non-color design tokens (radii, spacing).
 class RatelTokens extends ThemeExtension<RatelTokens> {
   const RatelTokens({

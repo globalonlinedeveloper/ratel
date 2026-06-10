@@ -26,6 +26,8 @@ import '../widgets/review_card.dart';
 import '../widgets/daily_quests_card.dart';
 import '../widgets/achievements_view.dart';
 import '../widgets/daily_goal_card.dart';
+import '../widgets/pulse.dart';
+import '../widgets/stagger.dart';
 
 enum NodeState { done, current, locked }
 
@@ -138,9 +140,12 @@ class _HomeScreenState extends State<HomeScreen> {
         const Text('Replay any lesson to sharpen up.',
             style: TextStyle(color: RatelColors.textMuted)),
         const SizedBox(height: 12),
-        ...lessons.map((l) {
+        ...List.generate(lessons.length, (i) {
+          final Lesson l = lessons[i];
           final bool done = appState.isCompleted(l.id);
-          return Padding(
+          return StaggeredIn(
+            index: i,
+            child: Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: InkWell(
               onTap: () =>
@@ -182,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-          );
+          ));
         }),
       ],
     );
@@ -318,6 +323,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   value: Sfx.instance.musicOn,
                   onChanged: (v) {
                     Sfx.instance.setMusicOn(v);
+                    setState(() {});
+                  },
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Reduce motion'),
+                  subtitle: const Text('Minimize animations'),
+                  secondary:
+                      const Icon(Icons.motion_photos_off_outlined),
+                  value: reduceMotionNotifier.value,
+                  onChanged: (v) {
+                    setReduceMotion(v);
                     setState(() {});
                   },
                 ),
@@ -612,12 +629,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () => Navigator.of(context).push(
                   ratelRoute(LessonScreen(lesson: lesson)),
                 ),
-                child: Container(
-                  width: 66,
-                  height: 66,
-                  decoration: const BoxDecoration(
-                      color: RatelColors.honey, shape: BoxShape.circle),
-                  child: const Icon(Icons.star, color: Colors.white, size: 30),
+                child: Pulse(
+                  child: Container(
+                    width: 66,
+                    height: 66,
+                    decoration: BoxDecoration(
+                        color: RatelColors.honey,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                              color: RatelColors.honey.withValues(alpha: 0.45),
+                              blurRadius: 18,
+                              spreadRadius: 1),
+                        ]),
+                    child:
+                        const Icon(Icons.star, color: Colors.white, size: 30),
+                  ),
                 ),
               ),
             ],

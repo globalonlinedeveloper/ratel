@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
+import 'skeleton.dart';
+import 'empty_state.dart';
 
 /// Weekly tiered league. Ranks the learners in your tier by this week's XP
 /// (via the weekly_standings RPC); the top 5 are in the promotion zone, and
@@ -48,8 +50,7 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
       future: _future,
       builder: (context, snap) {
         if (snap.connectionState != ConnectionState.done) {
-          return _scaffold(
-              'Leagues', const Center(child: CircularProgressIndicator()));
+          return _scaffold('Leagues', const SkeletonList(rows: 6));
         }
         final rows = snap.data ?? const [];
         final tier = rows.isNotEmpty
@@ -71,7 +72,10 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
             ),
             Expanded(
               child: rows.isEmpty
-                  ? const Center(child: Text('No one here yet — earn XP!'))
+                  ? const RatelEmptyState(
+                      title: 'No one here yet',
+                      subtitle:
+                          'Earn XP this week to enter the league and climb the board.')
                   : ListView.builder(
                       padding: const EdgeInsets.all(16),
                       itemCount: rows.length,

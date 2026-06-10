@@ -27,17 +27,23 @@ class _AuroraBackgroundState extends State<AuroraBackground>
   void initState() {
     super.initState();
     _c.repeat();
+    reduceMotionNotifier.addListener(_onMotionPref);
+  }
+
+  void _onMotionPref() {
+    if (mounted) setState(() {});
   }
 
   @override
   void dispose() {
+    reduceMotionNotifier.removeListener(_onMotionPref);
     _c.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final reduceMotion = MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final reduceMotion = context.reduceMotion;
     if (reduceMotion && _c.isAnimating) {
       _c.stop();
     } else if (!reduceMotion && !_c.isAnimating) {

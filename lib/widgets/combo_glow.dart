@@ -15,8 +15,7 @@ class ComboGlow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final target = (combo / maxCombo).clamp(0.0, 1.0);
-    final reduceMotion =
-        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    final reduceMotion = context.reduceMotion;
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0, end: target),
       duration: Duration(milliseconds: reduceMotion ? 0 : 420),
