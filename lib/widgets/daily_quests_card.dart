@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'ratel_mascot.dart';
+import 'mascot_anim.dart';
 import '../theme.dart';
 import '../app_state.dart';
 import '../daily_quests.dart';
@@ -25,7 +27,13 @@ class DailyQuestsCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.flag_circle, color: RatelColors.honey, size: 18),
+              (quests.isNotEmpty && done >= quests.length)
+                  ? const RatelActionAnim(
+                      action: 'thumbsup',
+                      fallbackPose: RatelPose.celebrate,
+                      size: 34)
+                  : const Icon(Icons.flag_circle,
+                      color: RatelColors.honey, size: 18),
               const SizedBox(width: 6),
               Text('Daily quests ($done/${quests.length})',
                   style:

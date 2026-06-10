@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import '../widgets/mascot_anim.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/confetti.dart';
@@ -189,7 +190,14 @@ class _LessonScreenState extends State<LessonScreen>
               const SizedBox(height: 20),
               Row(
                 children: [
-                  RatelMascot(pose: _pose(), size: 84),
+                  (_answered &&
+                          _isCorrect &&
+                          Sfx.instance.combo.value >= 5)
+                      ? const RatelActionAnim(
+                          action: 'karate',
+                          fallbackPose: RatelPose.celebrate,
+                          size: 84)
+                      : RatelMascot(pose: _pose(), size: 84),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Container(

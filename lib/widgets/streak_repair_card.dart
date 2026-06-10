@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'ratel_mascot.dart';
+import 'mascot_anim.dart';
 import '../theme.dart';
 import '../app_state.dart';
 import 'streak_flame.dart';
@@ -55,6 +57,11 @@ class _StreakRepairCardState extends State<StreakRepairCard> {
         ),
         child: Row(
           children: [
+            const RatelActionAnim(
+                action: 'crying',
+                fallbackPose: RatelPose.oops,
+                size: 54),
+            const SizedBox(width: 10),
             StreakFlame(streak: n, size: 22),
             const SizedBox(width: 8),
             Expanded(

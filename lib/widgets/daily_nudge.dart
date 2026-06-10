@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'ratel_mascot.dart';
+import 'mascot_anim.dart';
 import '../theme.dart';
 import '../app_state.dart';
 
@@ -14,11 +16,13 @@ class DailyNudge extends StatelessWidget {
     final goal = appState.dailyGoalXp <= 0 ? 50 : appState.dailyGoalXp;
     final today = appState.todayXp;
     final streak = appState.streak;
+    bool atRisk = false;
 
     IconData icon;
     Color color;
     String text;
     if (streak > 0 && today == 0) {
+      atRisk = true;
       icon = Icons.local_fire_department;
       color = RatelColors.coral;
       text = 'Keep your $streak-day streak alive — finish a lesson today.';
@@ -40,7 +44,12 @@ class DailyNudge extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 20),
+          atRisk
+              ? const RatelActionAnim(
+                  action: 'sleeping',
+                  fallbackPose: RatelPose.think,
+                  size: 44)
+              : Icon(icon, color: color, size: 20),
           const SizedBox(width: 8),
           Expanded(
             child: Text(text,
