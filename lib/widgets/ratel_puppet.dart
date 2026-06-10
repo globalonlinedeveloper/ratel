@@ -75,7 +75,10 @@ class RatelPuppet extends StatefulWidget {
 
 class _RatelPuppetState extends State<RatelPuppet>
     with TickerProviderStateMixin {
-  static Future<bool>? _assetsOk;
+  // Per-instance (NOT static): a static future created inside one
+  // widget-test's fake-async zone never completes and would poison
+  // every later test. The AssetBundle caches the bytes anyway.
+  Future<bool>? _assetsOk;
 
   late final AnimationController _breath = AnimationController(
       vsync: this, duration: const Duration(milliseconds: 2600))
