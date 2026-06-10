@@ -52,10 +52,10 @@ void main() {
     expect(state.completedCount, 0);
   });
 
-  test('course has four units with twenty unique lesson ids', () {
-    expect(course.length, 4);
+  test('course has five units with twenty-five unique lesson ids', () {
+    expect(course.length, 5);
     final ids = [for (final u in course) ...u.lessons.map((l) => l.id)];
-    expect(ids.length, 20);
+    expect(ids.length, 25);
     expect(ids.toSet().length, ids.length); // no duplicate ids
   });
 
@@ -67,13 +67,19 @@ void main() {
           if (ex.type == ExerciseType.choice) {
             expect(ex.options.length, greaterThanOrEqualTo(2));
             expect(ex.correctIndex, inInclusiveRange(0, ex.options.length - 1));
-          } else {
+          } else if (ex.type == ExerciseType.wordBank) {
             // wordBank: the answer must be buildable from the given tiles.
             expect(ex.correctOrder, isNotEmpty);
             final bank = [...ex.options];
             for (final word in ex.correctOrder) {
               expect(bank.remove(word), isTrue,
                   reason: 'tile "$word" missing for "${ex.prompt}"');
+            }
+          } else {
+            // typed: at least one non-empty accepted answer (in correctOrder).
+            expect(ex.correctOrder, isNotEmpty);
+            for (final a in ex.correctOrder) {
+              expect(a.trim(), isNotEmpty);
             }
           }
         }
