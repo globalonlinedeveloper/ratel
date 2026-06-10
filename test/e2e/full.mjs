@@ -104,6 +104,20 @@ try{
       if(!Array.isArray(aj)||aj.length<1) problems.push('no attempts logged after lesson');
       else console.log('attempts logged:', aj.length);
     }catch(e){ problems.push('attempts query failed: '+e.message); }
+    // XP events must be written (powers the daily goal + weekly leagues ranking).
+    try{
+      const xr=await fetch(`${SUPA_URL}/rest/v1/xp_events?select=amount&limit=20`,{headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`}});
+      const xj=await xr.json().catch(()=>[]);
+      if(!Array.isArray(xj)||xj.length<1) problems.push('no xp_events after lesson (leagues + daily goal would show 0 XP)');
+      else console.log('xp_events logged:', xj.length);
+    }catch(e){ problems.push('xp_events query failed: '+e.message); }
+    // Answering must schedule spaced-repetition review (powers "Due for review").
+    try{
+      const sr=await fetch(`${SUPA_URL}/rest/v1/review_state?select=user_id&limit=20`,{headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`}});
+      const sj=await sr.json().catch(()=>[]);
+      if(!Array.isArray(sj)||sj.length<1) problems.push('no review_state after lesson (spaced repetition not scheduling)');
+      else console.log('review_state rows:', sj.length);
+    }catch(e){ problems.push('review_state query failed: '+e.message); }
   }
 }catch(e){problems.push(`crash in ${phase}: ${e.message}`);}
 let cleaned=false;

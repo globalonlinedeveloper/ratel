@@ -180,11 +180,14 @@ class AppState extends ChangeNotifier {
   }
 
   /// Record an answer into the spaced-repetition schedule (fire-and-forget).
-  void recordReview(String exerciseKey, bool correct) {
+  /// Record an answer into the spaced-repetition schedule (Leitner). Must
+  /// `await` the RPC — the builder is lazy, so without an await it never fires
+  /// (that left review_state empty -> "Due for review" never scheduled).
+  Future<void> recordReview(String exerciseKey, bool correct) async {
     final client = _client;
     if (client == null || exerciseKey.isEmpty) return;
     try {
-      client.rpc('review_answer',
+      await client.rpc('review_answer',
           params: {'p_key': exerciseKey, 'p_correct': correct});
     } catch (_) {}
   }
@@ -265,14 +268,16 @@ class AppState extends ChangeNotifier {
     }
   }
 
-  /// Log an XP event (fire-and-forget) — powers the daily goal + history.
-  void _logXpEvent(int amount, String reason) {
+  /// Log an XP event (fire-and-forget) — powers the daily goal + weekly leagues.
+  /// Must `await` the insert: the Supabase query builder is lazy, so without an
+  /// await the request is never sent (that left xp_events empty -> leagues 0 XP).
+  Future<void> _logXpEvent(int amount, String reason) async {
     final client = _client;
     if (client == null) return;
     final uid = client.auth.currentUser?.id;
     if (uid == null) return;
     try {
-      client.from('xp_events')
+      await client.from('xp_events')
           .insert({'user_id': uid, 'amount': amount, 'reason': reason});
     } catch (_) {}
   }
