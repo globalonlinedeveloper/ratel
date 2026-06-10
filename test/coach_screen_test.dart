@@ -8,8 +8,11 @@ void main() {
     await tester.pumpWidget(MaterialApp(
       home: Scaffold(
         body: CoachScreen(
-          sender: (history) async =>
-              'Better: "I went home." Nice! What happened next?',
+          // Delay so the in-flight "typing" state renders at least one frame.
+          sender: (history) async {
+            await Future<void>.delayed(const Duration(milliseconds: 200));
+            return 'Better: "I went home." Nice! What happened next?';
+          },
         ),
       ),
     ));
@@ -19,6 +22,7 @@ void main() {
     await tester.pump();
     expect(find.text('Ratel is typing...'), findsOneWidget);
     await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump();
     expect(find.textContaining('I goed home'), findsOneWidget);
     expect(find.textContaining('What happened next'), findsOneWidget);
     expect(find.text('Ratel is typing...'), findsNothing);
