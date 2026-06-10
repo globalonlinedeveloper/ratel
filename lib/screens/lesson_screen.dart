@@ -60,6 +60,7 @@ class _LessonScreenState extends State<LessonScreen>
   bool _finished = false;
 
   int? _selected; // choice
+  List<int> _order = const []; // shuffled display order (choice)
   final List<int> _picked = []; // word-bank: option indices in chosen order
   final TextEditingController _typedCtl =
       TextEditingController(); // typed answer
@@ -177,6 +178,7 @@ class _LessonScreenState extends State<LessonScreen>
         _isCorrect = false;
         _selected = null;
         _picked.clear();
+        _order = const [];
         _typedCtl.clear();
         _explanation = null;
         _explaining = false;
@@ -513,9 +515,14 @@ class _LessonScreenState extends State<LessonScreen>
   Widget _choiceBody() {
     return Column(
       children: [
-        for (int i = 0; i < _ex.options.length; i++) _optionTile(i),
+        for (final i in _ensureOrder(_ex.options.length)) _optionTile(i),
       ],
     );
+  }
+
+  List<int> _ensureOrder(int n) {
+    if (_order.length != n) _order = displayOrder(n, _rng);
+    return _order;
   }
 
   Widget _optionTile(int i) {

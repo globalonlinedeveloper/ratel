@@ -1,7 +1,20 @@
+import 'dart:math';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/milestones.dart';
 
 void main() {
+  test('displayOrder is a complete permutation and not always identity',
+      () {
+    final rng = Random(7);
+    for (var n = 2; n <= 6; n++) {
+      final o = displayOrder(n, rng);
+      expect(o.toSet(), Set.of(List.generate(n, (i) => i)));
+    }
+    final moved = List.generate(
+        20, (s) => displayOrder(4, Random(s)).first).any((f) => f != 0);
+    expect(moved, isTrue);
+  });
+
   test('villain roster maps unit tiers', () {
     expect(villainForUnit(0), 'cobra');
     expect(villainForUnit(1), 'cobra');

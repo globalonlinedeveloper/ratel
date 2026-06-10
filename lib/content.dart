@@ -659,8 +659,92 @@ const Unit unit8 = Unit(
   ],
 );
 
+const Unit unit9 = Unit(
+  title: 'Unit 9',
+  subtitle: 'Travel & places',
+  lessons: [
+    Lesson(id: 'u9l1', title: 'Directions', exercises: [
+      Exercise.choice(prompt: "Which word means the opposite of 'left'?", options: ['Right', 'Up', 'Down', 'Back'], correctIndex: 0),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'Go ___ ahead and turn at the bank.', options: ['straight', 'strong', 'street', 'stand'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the question', options: ['station', 'Where', 'the', 'is'], correctOrder: ['Where', 'is', 'the', 'station']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'Turn ___ at the corner, then go straight.', accepted: ['left', 'right']),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['The bank is next to the park']),
+    ]),
+    Lesson(id: 'u9l2', title: 'At the airport', exercises: [
+      Exercise.choice(prompt: 'What do you show at passport control?', options: ['My passport', 'My lunch', 'My shoes', 'My pet'], correctIndex: 0),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'Our flight ___ at 9 a.m.', options: ['leaves', 'eats', 'sleeps', 'rains'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['heavy', 'My', 'is', 'suitcase'], correctOrder: ['My', 'suitcase', 'is', 'heavy']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I bought a return ___ to London.', accepted: ['ticket']),
+      Exercise.choice(prompt: 'Which word is a place in an airport?', options: ['Gate', 'Spoon', 'Pillow', 'Garden'], correctIndex: 0),
+    ]),
+    Lesson(id: 'u9l3', title: 'Hotels & stays', exercises: [
+      Exercise.choice(prompt: 'What do you say at the hotel desk?', options: ['I have a reservation', 'I am a spoon', 'The moon is big', 'Run faster'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I would like to ___ a room for two nights.', accepted: ['book', 'reserve']),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['a', 'window', 'The', 'big', 'has', 'room'], correctOrder: ['The', 'room', 'has', 'a', 'big', 'window']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'Breakfast is ___ in the price.', options: ['included', 'painted', 'closed', 'broken'], correctIndex: 0),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['The hotel is very clean']),
+    ]),
+    Lesson(id: 'u9l4', title: 'Weather & seasons', exercises: [
+      Exercise.choice(prompt: 'Which word is a season?', options: ['Winter', 'Table', 'Doctor', 'Pencil'], correctIndex: 0),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'Take an umbrella, it is ___ outside.', options: ['raining', 'reading', 'running', 'singing'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'In summer the weather is usually ___.', accepted: ['hot', 'warm', 'sunny']),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['winter', 'It', 'cold', 'is', 'in'], correctOrder: ['It', 'is', 'cold', 'in', 'winter']),
+      Exercise.choice(prompt: 'What do you wear when it is cold?', options: ['A warm coat', 'A swimsuit', 'Sunglasses', 'Sandals'], correctIndex: 0),
+    ]),
+    Lesson(id: 'u9l5', title: 'Holiday stories', exercises: [
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'Last year we ___ to Japan.', options: ['went', 'go', 'goes', 'going'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['beach', 'We', 'a', 'visited', 'beautiful'], correctOrder: ['We', 'visited', 'a', 'beautiful', 'beach']),
+      Exercise.typed(prompt: "Type the past tense of 'see'.", accepted: ['saw']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'We took many ___ of the mountains.', options: ['photos', 'dinners', 'chairs', 'doors'], correctIndex: 0),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['The trip was wonderful']),
+    ]),
+  ],
+);
+
+const Unit unit10 = Unit(
+  title: 'Unit 10',
+  subtitle: 'Health & feelings',
+  lessons: [
+    Lesson(id: 'u10l1', title: 'Body & health', exercises: [
+      Exercise.choice(prompt: 'Which word is a part of the body?', options: ['Shoulder', 'Window', 'Carrot', 'Cloud'], correctIndex: 0),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'I walk every day to stay ___.', options: ['healthy', 'purple', 'wooden', 'rainy'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['every', 'Drink', 'day', 'water'], correctOrder: ['Drink', 'water', 'every', 'day']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I brush my ___ every morning and night.', accepted: ['teeth']),
+      Exercise.choice(prompt: 'Which activity is good for your health?', options: ['Morning exercise', 'Sleeping all day', 'Eating only sweets', 'Never drinking water'], correctIndex: 0),
+    ]),
+    Lesson(id: 'u10l2', title: 'At the doctor', exercises: [
+      Exercise.choice(prompt: 'What do you say to the doctor?', options: ['I have a headache', 'The bus is blue', 'My chair sings', 'Good price'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I feel sick. I need to see a ___.', accepted: ['doctor']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'The doctor gave me some ___.', options: ['medicine', 'furniture', 'homework', 'weather'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['hurts', 'My', 'a', 'throat', 'lot'], correctOrder: ['My', 'throat', 'hurts', 'a', 'lot']),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['Take this medicine twice a day']),
+    ]),
+    Lesson(id: 'u10l3', title: 'Feelings', exercises: [
+      Exercise.choice(prompt: 'Which word is a feeling?', options: ['Excited', 'Kitchen', 'Bicycle', 'Paper'], correctIndex: 0),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'She is ___ because she passed the exam.', options: ['happy', 'square', 'heavy', 'wooden'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I am ___ of spiders.', accepted: ['afraid', 'scared']),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['today', 'He', 'tired', 'feels'], correctOrder: ['He', 'feels', 'tired', 'today']),
+      Exercise.choice(prompt: 'How do you feel before a big exam?', options: ['Nervous', 'Delicious', 'Rainy', 'Wooden'], correctIndex: 0),
+    ]),
+    Lesson(id: 'u10l4', title: 'Giving advice', exercises: [
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'You look tired. You ___ go to bed early.', options: ['should', 'did', 'were', 'must not'], correctIndex: 0),
+      Exercise.choice(prompt: 'Which sentence gives advice?', options: ['You should drink more water', 'The cat is black', 'It rained yesterday', 'I have a red car'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['more', 'You', 'eat', 'should', 'vegetables'], correctOrder: ['You', 'should', 'eat', 'more', 'vegetables']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'You ___ smoke. It is bad for your health.', accepted: ["shouldn't", 'should not']),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['You should rest today']),
+    ]),
+    Lesson(id: 'u10l5', title: 'Future plans', exercises: [
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'Tomorrow I ___ visit my grandmother.', options: ['am going to', 'went', 'was', 'did'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['new', 'She', 'start', 'will', 'job', 'a'], correctOrder: ['She', 'will', 'start', 'a', 'new', 'job']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'Next year I ___ learn to drive.', accepted: ['will', 'am going to']),
+      Exercise.choice(prompt: 'Which sentence is about the future?', options: ['I will call you tonight', 'I called you yesterday', 'I was at home', 'It was sunny'], correctIndex: 0),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['We will travel next month']),
+    ]),
+  ],
+);
+
 /// Built-in course (offline fallback + test baseline).
-const List<Unit> builtInCourse = [unit1, unit2, unit3, unit4, unit5, unit6, unit7, unit8];
+const List<Unit> builtInCourse = [unit1, unit2, unit3, unit4, unit5, unit6, unit7, unit8, unit9, unit10];
 
 /// The active course: built-in by default, swapped to DB content at startup by
 /// ContentStore. Everything reads it via `course`. Lessons unlock in order.

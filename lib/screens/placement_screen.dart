@@ -1,8 +1,11 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import '../widgets/mascot_anim.dart';
 import '../theme.dart';
 import '../app_state.dart';
 import '../placement.dart';
+import '../milestones.dart';
 import '../widgets/ratel_mascot.dart';
 
 /// Optional onboarding placement check: 8 quick questions spanning Units 2-5;
@@ -22,6 +25,8 @@ class _PlacementScreenState extends State<PlacementScreen> {
   int _i = 0;
   int _correct = 0;
   int? _selected;
+  final Random _rng = Random();
+  List<int> _order = const [];
   bool _checked = false;
   bool _done = false;
   bool _busy = false;
@@ -41,6 +46,7 @@ class _PlacementScreenState extends State<PlacementScreen> {
       setState(() {
         _i++;
         _selected = null;
+        _order = const [];
         _checked = false;
       });
     }
@@ -106,7 +112,7 @@ class _PlacementScreenState extends State<PlacementScreen> {
                   Text(ex.sentence!, style: const TextStyle(fontSize: 16)),
                 ],
                 const SizedBox(height: 14),
-                for (int j = 0; j < ex.options.length; j++)
+                for (final j in _ensureOrder(ex.options.length))
                   _option(context, ex, j),
                 const SizedBox(height: 18),
                 _checked
@@ -124,6 +130,11 @@ class _PlacementScreenState extends State<PlacementScreen> {
         ),
       ),
     );
+  }
+
+  List<int> _ensureOrder(int n) {
+    if (_order.length != n) _order = displayOrder(n, _rng);
+    return _order;
   }
 
   Widget _option(BuildContext context, ex, int j) {
