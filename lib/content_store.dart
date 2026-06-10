@@ -60,6 +60,10 @@ class ContentStore {
             sentence: e['sentence'] as String?,
             accepted: _strs(e['correct_order']));
       }
+      if (type == 'listen') {
+        return Exercise.listen(
+            prompt: prompt, accepted: _strs(e['correct_order']));
+      }
       return Exercise.choice(
         prompt: prompt,
         sentence: e['sentence'] as String?,

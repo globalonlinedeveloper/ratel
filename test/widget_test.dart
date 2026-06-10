@@ -52,10 +52,10 @@ void main() {
     expect(state.completedCount, 0);
   });
 
-  test('course has five units with twenty-five unique lesson ids', () {
-    expect(course.length, 5);
+  test('course has six units with twenty-nine unique lesson ids', () {
+    expect(course.length, 6);
     final ids = [for (final u in course) ...u.lessons.map((l) => l.id)];
-    expect(ids.length, 25);
+    expect(ids.length, 29);
     expect(ids.toSet().length, ids.length); // no duplicate ids
   });
 
@@ -255,5 +255,14 @@ void main() {
     expect(ex.type, ExerciseType.typed);
     expect(ex.correctOrder, ['go', 'start']);
     expect(ex.options, isEmpty);
+  });
+
+  test('listen exercise is graded like typed (accepted in correctOrder)', () {
+    const ex = Exercise.listen(prompt: 'Type what you hear', accepted: ['Hello']);
+    expect(ex.type, ExerciseType.listen);
+    expect(ex.correctOrder, ['Hello']);
+    expect(ex.options, isEmpty);
+    expect(typedAnswerMatches('hello', ex.correctOrder), isTrue);
+    expect(typedAnswerMatches('yellow', ex.correctOrder), isFalse);
   });
 }

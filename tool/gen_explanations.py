@@ -65,7 +65,7 @@ lp=[(m.group(1),m.start()) for m in re.finditer(r"Lesson\(\s*id:\s*'([^']+)'",sr
 EX=[]
 for k in range(len(lp)-1):
     lid,st=lp[k];en=lp[k+1][1];sg=src[st:en];xi=0
-    for em in re.finditer(r"Exercise\.(choice|wordBank|typed)\(",sg):
+    for em in re.finditer(r"Exercise\.(choice|wordBank|typed|listen)\(",sg):
         et=em.group(1);op=sg.index('(',em.start());cp=mp(sg,op);b=sg[op+1:cp]
         ci=re.search(r"correctIndex:\s*(-?\d+)",b)
         EX.append(dict(lid=lid,exidx=xi,type=et,prompt=sa(b,'prompt'),sentence=sa(b,'sentence'),

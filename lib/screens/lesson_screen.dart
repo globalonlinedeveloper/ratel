@@ -8,6 +8,7 @@ import '../widgets/streak_flame.dart';
 import '../widgets/combo_glow.dart';
 import '../models.dart';
 import '../typed_match.dart';
+import '../tts.dart';
 import '../app_state.dart';
 import '../sfx.dart';
 import '../analytics.dart';
@@ -58,6 +59,7 @@ class _LessonScreenState extends State<LessonScreen>
         vsync: this, duration: const Duration(milliseconds: 420));
     Analytics.lessonStart(widget.lesson.id);
     Sfx.instance.resetCombo();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _speakListen());
   }
 
   @override
@@ -125,6 +127,7 @@ class _LessonScreenState extends State<LessonScreen>
         _explanation = null;
         _explaining = false;
       });
+      _speakListen();
     } else {
       if (!widget.reviewMode) {
         _bonusXp = Random().nextInt(5) == 0 ? (5 + Random().nextInt(16)) : 0;
@@ -215,9 +218,11 @@ class _LessonScreenState extends State<LessonScreen>
                   child: SingleChildScrollView(
                     child: _ex.type == ExerciseType.choice
                         ? _choiceBody()
-                        : _ex.type == ExerciseType.wordBank
-                            ? _wordBankBody()
-                            : _typedBody(),
+                        : _ex.type == ExerciseType.listen
+                            ? _listenBody()
+                            : _ex.type == ExerciseType.wordBank
+                                ? _wordBankBody()
+                                : _typedBody(),
                   ),
                 ),
               ),
@@ -255,7 +260,7 @@ class _LessonScreenState extends State<LessonScreen>
 
   String _correctText() {
     if (_ex.type == ExerciseType.choice) return _ex.options[_ex.correctIndex];
-    if (_ex.type == ExerciseType.typed) {
+    if (_ex.type == ExerciseType.typed || _ex.type == ExerciseType.listen) {
       return _ex.correctOrder.isNotEmpty ? _ex.correctOrder.first : '';
     }
     return _ex.correctOrder.join(' ');
@@ -265,7 +270,7 @@ class _LessonScreenState extends State<LessonScreen>
     if (_ex.type == ExerciseType.choice) {
       return _selected != null ? _ex.options[_selected!] : '(no answer)';
     }
-    if (_ex.type == ExerciseType.typed) {
+    if (_ex.type == ExerciseType.typed || _ex.type == ExerciseType.listen) {
       final t = _typedCtl.text.trim();
       return t.isEmpty ? '(no answer)' : t;
     }
@@ -469,36 +474,72 @@ class _LessonScreenState extends State<LessonScreen>
   }
 
   // ---- typed ----
+  Widget _typedField(String hint) {
+    return TextField(
+      key: const Key('typed-field'),
+      controller: _typedCtl,
+      enabled: !_answered,
+      autocorrect: false,
+      enableSuggestions: false,
+      textInputAction: TextInputAction.done,
+      onChanged: (_) => setState(() {}),
+      onSubmitted: (_) {
+        if (!_answered && _typedCtl.text.trim().isNotEmpty) _check();
+      },
+      decoration: InputDecoration(
+        hintText: hint,
+        filled: true,
+        fillColor: RatelColors.surface,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
+        ),
+      ),
+      style: const TextStyle(fontSize: 18),
+    );
+  }
+
   Widget _typedBody() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      children: [_typedField('Type your answer')],
+    );
+  }
+
+  // ---- listen ("type what you hear") ----
+  void _speakListen() {
+    if (_ex.type == ExerciseType.listen && _ex.correctOrder.isNotEmpty) {
+      Tts.instance.speak(_ex.correctOrder.first);
+    }
+  }
+
+  Widget _listenBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TextField(
-          key: const Key('typed-field'),
-          controller: _typedCtl,
-          enabled: !_answered,
-          autocorrect: false,
-          enableSuggestions: false,
-          textInputAction: TextInputAction.done,
-          onChanged: (_) => setState(() {}),
-          onSubmitted: (_) {
-            if (!_answered && _typedCtl.text.trim().isNotEmpty) _check();
-          },
-          decoration: InputDecoration(
-            hintText: 'Type your answer',
-            filled: true,
-            fillColor: RatelColors.surface,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 18),
+            child: FilledButton.icon(
+              onPressed: () {
+                Sfx.instance.tap();
+                _speakListen();
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: RatelColors.honey,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+              ),
+              icon: const Icon(Icons.volume_up, size: 26),
+              label: const Text('Play', style: TextStyle(fontSize: 18)),
             ),
           ),
-          style: const TextStyle(fontSize: 18),
         ),
+        _typedField('Type what you hear'),
       ],
     );
   }

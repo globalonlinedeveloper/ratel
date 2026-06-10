@@ -526,8 +526,41 @@ const Unit unit5 = Unit(
   ],
 );
 
+const Unit unit6 = Unit(
+  title: 'Unit 6',
+  subtitle: 'Listen & understand',
+  lessons: [
+    Lesson(id: 'u6l1', title: 'Hear the word', exercises: [
+      Exercise.listen(prompt: 'Type the word you hear', accepted: ['Hello']),
+      Exercise.listen(prompt: 'Type the word you hear', accepted: ['Water']),
+      Exercise.listen(prompt: 'Type the word you hear', accepted: ['Friend']),
+      Exercise.listen(prompt: 'Type the word you hear', accepted: ['Family']),
+      Exercise.choice(prompt: 'Which word do you say to greet someone?', options: ['Hello', 'Apple', 'Chair', 'River'], correctIndex: 0),
+    ]),
+    Lesson(id: 'u6l2', title: 'Hear the phrase', exercises: [
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['Good morning']),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['Thank you']),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['See you later']),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['I am happy', "I'm happy"]),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'Nice to ___ you.', accepted: ['meet']),
+    ]),
+    Lesson(id: 'u6l3', title: 'Numbers you hear', exercises: [
+      Exercise.listen(prompt: 'Type the number word you hear', accepted: ['Seven']),
+      Exercise.listen(prompt: 'Type the number word you hear', accepted: ['Twelve']),
+      Exercise.listen(prompt: 'Type the number word you hear', accepted: ['Thirteen']),
+      Exercise.listen(prompt: 'Type the number word you hear', accepted: ['Twenty']),
+    ]),
+    Lesson(id: 'u6l4', title: 'Everyday phrases', exercises: [
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['How are you']),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['Good night']),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['Excuse me']),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['I like English']),
+    ]),
+  ],
+);
+
 /// Built-in course (offline fallback + test baseline).
-const List<Unit> builtInCourse = [unit1, unit2, unit3, unit4, unit5];
+const List<Unit> builtInCourse = [unit1, unit2, unit3, unit4, unit5, unit6];
 
 /// The active course: built-in by default, swapped to DB content at startup by
 /// ContentStore. Everything reads it via `course`. Lessons unlock in order.

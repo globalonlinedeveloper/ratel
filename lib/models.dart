@@ -1,5 +1,5 @@
 /// Exercise types supported by the lesson player.
-enum ExerciseType { choice, wordBank, typed }
+enum ExerciseType { choice, wordBank, typed, listen }
 
 /// A single exercise within a lesson.
 class Exercise {
@@ -34,6 +34,18 @@ class Exercise {
     this.sentence,
     required List<String> accepted,
   })  : type = ExerciseType.typed,
+        options = const [],
+        correctIndex = -1,
+        correctOrder = accepted;
+
+  /// A listening exercise ("type what you hear"): text-to-speech reads a short
+  /// phrase aloud and the learner types it back. Graded like [Exercise.typed]
+  /// (lenient match against [accepted], whose first entry is spoken).
+  const Exercise.listen({
+    required this.prompt,
+    required List<String> accepted,
+  })  : type = ExerciseType.listen,
+        sentence = null,
         options = const [],
         correctIndex = -1,
         correctOrder = accepted;
