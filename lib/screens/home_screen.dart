@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../widgets/ratel_puppet.dart';
 import 'package:flutter/services.dart';
 import '../theme.dart';
-import '../widgets/ratel_mascot.dart';
 import '../models.dart';
 import '../content.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
