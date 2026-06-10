@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
 import '../models.dart';
@@ -74,6 +75,22 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  void _shareInvite(BuildContext context) {
+    final streak = appState.streak;
+    final code = appState.friendCode;
+    final streakLine = streak > 0
+        ? "I'm on a $streak-day streak learning English with Ratel! 🔥 "
+        : 'I\'m learning English with Ratel, a fearless honey badger. 🦡 ';
+    final invite = code.isEmpty
+        ? ''
+        : ' Add me with code $code.';
+    final msg =
+        '${streakLine}Join me: https://globalonlinedeveloper.github.io/ratel/$invite';
+    Clipboard.setData(ClipboardData(text: msg));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Invite copied — paste it anywhere to share!')));
   }
 
   Widget _placeholder() => const Center(
@@ -307,6 +324,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (_) => const FriendsScreen())),
               icon: const Icon(Icons.group_outlined),
               label: const Text('Friends'),
+            ),
+          ],
+          if (Config.hasSupabase) ...[
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => _shareInvite(context),
+              icon: const Icon(Icons.ios_share),
+              label: const Text('Share / invite friends'),
             ),
           ],
           if (appState.isAdmin) ...[
