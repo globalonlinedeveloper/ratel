@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/mascot_anim.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
 import '../config.dart';
@@ -164,7 +165,8 @@ class _CoachScreenState extends State<CoachScreen> {
             controller: _scroll,
             padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
             itemCount: _msgs.length,
-            itemBuilder: (context, i) => _bubble(_msgs[i]),
+            itemBuilder: (context, i) =>
+                _bubble(_msgs[i], i == _msgs.length - 1),
           ),
         ),
         if (_waiting)
@@ -238,9 +240,9 @@ class _CoachScreenState extends State<CoachScreen> {
     );
   }
 
-  Widget _bubble(ChatMsg m) {
+  Widget _bubble(ChatMsg m, bool last) {
     final bool user = m.role == 'user';
-    return Align(
+    final Widget bubble = Align(
       alignment: user ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: 10),
@@ -265,6 +267,21 @@ class _CoachScreenState extends State<CoachScreen> {
           ),
         ),
       ),
+    );
+    final bool coachTip =
+        !user && last && !_waiting && m.text.contains('Better:');
+    if (!coachTip) return bubble;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        const Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: RatelActionAnim(
+              action: 'teacher', fallbackPose: RatelPose.point, size: 44),
+        ),
+        const SizedBox(width: 6),
+        Expanded(child: bubble),
+      ],
     );
   }
 }

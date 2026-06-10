@@ -15,6 +15,19 @@ void main() {
       'ratel-crying-anim.webp',
       'ratel-sleeping-anim.webp',
       'ratel-thumbsup-anim.webp',
+      'ratel-perfect-anim.webp',
+      'ratel-tired-anim.webp',
+      'ratel-listening-anim.webp',
+      'ratel-flex-anim.webp',
+      'ratel-trophy-anim.webp',
+      'ratel-dustoff-anim.webp',
+      'ratel-morningstretch-anim.webp',
+      'ratel-digging-anim.webp',
+      'ratel-medalbite-anim.webp',
+      'ratel-teacher-anim.webp',
+      'ratel-shrugok-anim.webp',
+      'ratel-nod-anim.webp',
+      'ratel-fistpump-anim.webp',
     ]) {
       final data = await rootBundle.load('assets/images/$name');
       expect(data.lengthInBytes, greaterThan(20000), reason: name);

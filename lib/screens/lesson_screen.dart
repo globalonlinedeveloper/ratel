@@ -1,6 +1,11 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import '../widgets/milestone_card.dart';
+import '../milestones.dart';
+import '../achievements.dart';
+import 'dart:math' as math;
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/mascot_anim.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
@@ -40,6 +45,11 @@ class _LessonScreenState extends State<LessonScreen>
   int _correctCount = 0;
   bool _answered = false;
   bool _isCorrect = false;
+  int _missStreak = 0;
+  String? _reaction;
+  bool _firstToday = false;
+  bool _newBadge = false;
+  final math.Random _rng = math.Random();
   bool _finished = false;
 
   int? _selected; // choice
@@ -56,6 +66,14 @@ class _LessonScreenState extends State<LessonScreen>
   @override
   void initState() {
     super.initState();
+    SharedPreferences.getInstance().then((prefs) {
+      final String today =
+          DateTime.now().toIso8601String().substring(0, 10);
+      if (prefs.getString('last_open_day') != today) {
+        prefs.setString('last_open_day', today);
+        if (mounted) setState(() => _firstToday = true);
+      }
+    });
     _fb = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 420));
     Analytics.lessonStart(widget.lesson.id);
@@ -86,6 +104,14 @@ class _LessonScreenState extends State<LessonScreen>
     setState(() {
       _answered = true;
       _isCorrect = correct;
+      if (correct) {
+        _missStreak = 0;
+        _reaction =
+            pickReaction(Sfx.instance.combo.value, _rng.nextInt(12));
+      } else {
+        _missStreak++;
+        _reaction = null;
+      }
       if (correct) {
         _correctCount++;
         _combo++;
@@ -133,7 +159,12 @@ class _LessonScreenState extends State<LessonScreen>
       if (!widget.reviewMode) {
         _bonusXp = Random().nextInt(5) == 0 ? (5 + Random().nextInt(16)) : 0;
         final total = _correctCount * 10 + _bonusXp;
+        final int badgesBefore =
+            achievements.where((a) => isEarned(a, appState)).length;
         appState.completeLesson(widget.lesson.id, total);
+        _newBadge =
+            achievements.where((a) => isEarned(a, appState)).length >
+                badgesBefore;
         Analytics.lessonComplete(widget.lesson.id, total, _correctCount,
             widget.lesson.exercises.length);
       }
@@ -190,14 +221,7 @@ class _LessonScreenState extends State<LessonScreen>
               const SizedBox(height: 20),
               Row(
                 children: [
-                  (_answered &&
-                          _isCorrect &&
-                          Sfx.instance.combo.value >= 5)
-                      ? const RatelActionAnim(
-                          action: 'karate',
-                          fallbackPose: RatelPose.celebrate,
-                          size: 84)
-                      : RatelMascot(pose: _pose(), size: 84),
+                  _mascotSlot(),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Container(
@@ -254,6 +278,58 @@ class _LessonScreenState extends State<LessonScreen>
     }
     return Transform.translate(
         offset: Offset(sin(v * pi * 4) * 8 * (1 - v), 0), child: child);
+  }
+
+  Widget _completionAnim() {
+    if (context.reduceMotion) {
+      return const RatelMascot(pose: RatelPose.celebrate, size: 170);
+    }
+    final bool perfect = !widget.reviewMode &&
+        _correctCount >= widget.lesson.exercises.length;
+    return Image.asset(
+      perfect
+          ? 'assets/images/ratel-perfect-anim.webp'
+          : 'assets/images/ratel-jump.webp',
+      width: 170,
+      height: 170,
+      filterQuality: FilterQuality.medium,
+    );
+  }
+
+  Widget _mascotSlot() {
+    const double s = 84;
+    if (_answered) {
+      if (!_isCorrect && appState.hearts <= 0 && !appState.isPro) {
+        return const RatelActionAnim(
+            action: 'tired', fallbackPose: RatelPose.oops, size: s);
+      }
+      if (_isCorrect && Sfx.instance.combo.value >= 5) {
+        return const RatelActionAnim(
+            action: 'karate', fallbackPose: RatelPose.celebrate, size: s);
+      }
+      if (!_isCorrect && _missStreak >= 2) {
+        return const RatelActionAnim(
+            action: 'shrugok', fallbackPose: RatelPose.oops, size: s);
+      }
+      if (_isCorrect && _reaction != null) {
+        return RatelActionAnim(
+            action: _reaction!,
+            fallbackPose: RatelPose.celebrate,
+            size: s);
+      }
+    } else {
+      if (_ex.type == ExerciseType.listen) {
+        return const RatelActionAnim(
+            action: 'listening', fallbackPose: RatelPose.speak, size: s);
+      }
+      if (_firstToday) {
+        return const RatelActionAnim(
+            action: 'morningstretch',
+            fallbackPose: RatelPose.wave,
+            size: s);
+      }
+    }
+    return RatelMascot(pose: _pose(), size: s);
   }
 
   RatelPose _pose() {
@@ -644,20 +720,31 @@ class _LessonScreenState extends State<LessonScreen>
                         curve: Curves.elasticOut,
                         builder: (context, s, child) =>
                             Transform.scale(scale: s, child: child),
-                        child: context.reduceMotion
-                            ? const RatelMascot(
-                                pose: RatelPose.celebrate, size: 170)
-                            // AI-generated 6-frame celebration loop
-                            // (Gemini image frames -> animated WebP).
-                            : Image.asset('assets/images/ratel-jump.webp',
-                                width: 170,
-                                height: 170,
-                                filterQuality: FilterQuality.medium),
+                        child: _completionAnim(),
                       ),
                       const SizedBox(height: 16),
                       Text(widget.reviewMode ? 'Review complete!' : 'Lesson complete!',
                           style: const TextStyle(
                               fontSize: 24, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
+                      const StreakMilestoneCard(),
+                      if (_newBadge)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const RatelActionAnim(
+                                  action: 'medalbite',
+                                  fallbackPose: RatelPose.celebrate,
+                                  size: 54),
+                              const SizedBox(width: 8),
+                              Text('New achievement earned!',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      color: context.textC)),
+                            ],
+                          ),
+                        ),
                       const SizedBox(height: 8),
                       widget.reviewMode
                           ? Text('$_correctCount / $total correct',

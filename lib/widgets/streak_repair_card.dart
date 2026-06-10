@@ -37,8 +37,37 @@ class _StreakRepairCardState extends State<StreakRepairCard> {
     setState(() => _busy = true);
     final ok = await appState.repairStreak();
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(ok ? 'Streak restored! 🔥' : 'Could not repair right now')));
+    if (ok) {
+      showDialog<void>(
+        context: context,
+        builder: (dctx) => AlertDialog(
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const RatelActionAnim(
+                  action: 'dustoff',
+                  fallbackPose: RatelPose.idle,
+                  size: 130),
+              const SizedBox(height: 10),
+              const Text('Streak restored — fearless.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                      fontFamily: kDisplayFont,
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700)),
+            ],
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.of(dctx).pop(),
+                child: const Text('Keep going')),
+          ],
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text('Could not repair right now')));
+    }
     setState(() => _busy = false);
   }
 

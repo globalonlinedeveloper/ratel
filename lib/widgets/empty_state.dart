@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'mascot_anim.dart';
 import '../theme.dart';
 import 'ratel_mascot.dart';
 
@@ -7,9 +8,14 @@ class RatelEmptyState extends StatelessWidget {
   const RatelEmptyState({
     super.key,
     this.pose = RatelPose.encourage,
+    this.action,
     required this.title,
     required this.subtitle,
   });
+
+  /// Optional animated action loop (e.g. 'digging') used instead of the
+  /// static pose when motion is allowed.
+  final String? action;
 
   final RatelPose pose;
   final String title;
@@ -23,7 +29,10 @@ class RatelEmptyState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            RatelMascot(pose: pose, size: 84),
+            action != null
+                ? RatelActionAnim(
+                    action: action!, fallbackPose: pose, size: 84)
+                : RatelMascot(pose: pose, size: 84),
             const SizedBox(height: 12),
             Text(title,
                 textAlign: TextAlign.center,

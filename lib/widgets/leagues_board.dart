@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'ratel_mascot.dart';
+import 'mascot_anim.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
 import 'skeleton.dart';
@@ -70,9 +72,35 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
               child: Text('This week · top 5 advance · resets Monday',
                   style: TextStyle(color: RatelColors.textMuted)),
             ),
+            Builder(builder: (context) {
+              final int myRank =
+                  rows.indexWhere((r) => r['user_id'] == myId) + 1;
+              if (myRank < 1 || myRank > 5) {
+                return const SizedBox.shrink();
+              }
+              return Padding(
+                padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
+                child: Row(
+                  children: [
+                    const RatelActionAnim(
+                        action: 'trophy',
+                        fallbackPose: RatelPose.celebrate,
+                        size: 52),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: Text('Promotion zone — hold your spot!',
+                          style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              color: RatelColors.honey)),
+                    ),
+                  ],
+                ),
+              );
+            }),
             Expanded(
               child: rows.isEmpty
                   ? const RatelEmptyState(
+                      action: 'digging',
                       title: 'No one here yet',
                       subtitle:
                           'Earn XP this week to enter the league and climb the board.')
