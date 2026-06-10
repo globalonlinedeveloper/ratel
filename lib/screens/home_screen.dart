@@ -1,3 +1,4 @@
+import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import '../widgets/motd_card.dart';
 import '../widgets/anniversary_card.dart';
@@ -415,8 +416,27 @@ class _HomeScreenState extends State<HomeScreen> {
               label: const Text('Content admin'),
             ),
           ],
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () => launchUrl(Uri.parse(
+                    'https://globalonlinedeveloper.github.io/ratel/privacy.html')),
+                child: const Text('Privacy policy',
+                    style: TextStyle(
+                        color: RatelColors.textMuted, fontSize: 12)),
+              ),
+              TextButton(
+                onPressed: () => launchUrl(Uri.parse(
+                    'https://globalonlinedeveloper.github.io/ratel/terms.html')),
+                child: const Text('Terms',
+                    style: TextStyle(
+                        color: RatelColors.textMuted, fontSize: 12)),
+              ),
+            ],
+          ),
           if (Config.hasSupabase) ...[
-            const SizedBox(height: 16),
             TextButton.icon(
               onPressed: () async {
                 await Supabase.instance.client.auth.signOut();
@@ -426,11 +446,55 @@ class _HomeScreenState extends State<HomeScreen> {
               label: const Text('Log out',
                   style: TextStyle(color: RatelColors.textMuted)),
             ),
+            TextButton.icon(
+              onPressed: () => _confirmDeleteAccount(context, appState),
+              icon: const Icon(Icons.delete_forever,
+                  color: RatelColors.coral, size: 18),
+              label: const Text('Delete account',
+                  style:
+                      TextStyle(color: RatelColors.coral, fontSize: 12)),
+            ),
           ],
           const SizedBox(height: 24),
         ],
       ),
     );
+  }
+
+  Future<void> _confirmDeleteAccount(
+      BuildContext context, AppState appState) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete your account?'),
+        content: const Text(
+            'This permanently deletes your account and ALL progress '
+            '(XP, streak, friends, history). This cannot be undone.'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Keep my account')),
+          FilledButton(
+            style: FilledButton.styleFrom(
+                backgroundColor: RatelColors.coral),
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Delete forever'),
+          ),
+        ],
+      ),
+    );
+    if (ok != true) return;
+    try {
+      await Supabase.instance.client.rpc('delete_self');
+      await Supabase.instance.client.auth.signOut();
+      appState.reset();
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content:
+                Text("Couldn't delete right now — please try again.")));
+      }
+    }
   }
 
   Widget _statCardNum(IconData icon, int value, String label, Color color,
