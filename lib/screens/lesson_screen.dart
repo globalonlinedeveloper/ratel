@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import '../widgets/ratel_puppet.dart';
 import '../widgets/milestone_card.dart';
 import '../milestones.dart';
 import '../achievements.dart';
@@ -286,13 +287,9 @@ class _LessonScreenState extends State<LessonScreen>
     }
     final bool perfect = !widget.reviewMode &&
         _correctCount >= widget.lesson.exercises.length;
-    return Image.asset(
-      perfect
-          ? 'assets/images/ratel-perfect-anim.webp'
-          : 'assets/images/ratel-jump.webp',
-      width: 170,
-      height: 170,
-      filterQuality: FilterQuality.medium,
+    return RatelPuppet(
+      state: perfect ? PuppetState.dance : PuppetState.celebrate,
+      size: 170,
     );
   }
 

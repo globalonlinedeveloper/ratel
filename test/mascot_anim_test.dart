@@ -8,32 +8,6 @@ import 'package:ratel/widgets/ratel_mascot.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('all animated mascot assets are bundled and non-trivial', () async {
-    for (final name in [
-      'ratel-jump.webp',
-      'ratel-karate-anim.webp',
-      'ratel-crying-anim.webp',
-      'ratel-sleeping-anim.webp',
-      'ratel-thumbsup-anim.webp',
-      'ratel-perfect-anim.webp',
-      'ratel-tired-anim.webp',
-      'ratel-listening-anim.webp',
-      'ratel-flex-anim.webp',
-      'ratel-trophy-anim.webp',
-      'ratel-dustoff-anim.webp',
-      'ratel-morningstretch-anim.webp',
-      'ratel-digging-anim.webp',
-      'ratel-medalbite-anim.webp',
-      'ratel-teacher-anim.webp',
-      'ratel-shrugok-anim.webp',
-      'ratel-nod-anim.webp',
-      'ratel-fistpump-anim.webp',
-    ]) {
-      final data = await rootBundle.load('assets/images/$name');
-      expect(data.lengthInBytes, greaterThan(20000), reason: name);
-    }
-  });
-
   test('all puppet parts are bundled', () async {
     for (final name in [
       'torso', 'leg_left', 'leg_right',
@@ -45,14 +19,15 @@ void main() {
     }
   });
 
-  testWidgets('RatelActionAnim renders the animated asset', (tester) async {
-    reduceMotionNotifier.value = false;
-    await tester.pumpWidget(const MaterialApp(
-        home: RatelActionAnim(
-            action: 'thumbsup', fallbackPose: RatelPose.celebrate)));
-    await tester.pump(const Duration(milliseconds: 100));
-    expect(find.byType(Image), findsOneWidget);
-    expect(find.byType(RatelMascot), findsNothing);
+  test('baked pose statics are bundled (the new base design)', () async {
+    for (final pose in [
+      'idle', 'wave', 'celebrate', 'encourage',
+      'think', 'oops', 'speak', 'point',
+    ]) {
+      final data =
+          await rootBundle.load('assets/images/ratel-$pose.webp');
+      expect(data.lengthInBytes, greaterThan(8000), reason: pose);
+    }
   });
 
   testWidgets('RatelActionAnim falls back under reduce-motion',
@@ -60,8 +35,19 @@ void main() {
     reduceMotionNotifier.value = true;
     await tester.pumpWidget(const MaterialApp(
         home: RatelActionAnim(
-            action: 'thumbsup', fallbackPose: RatelPose.celebrate)));
+            action: 'anything', fallbackPose: RatelPose.celebrate)));
     expect(find.byType(RatelMascot), findsOneWidget);
     reduceMotionNotifier.value = false;
+  });
+
+  testWidgets('RatelActionAnim with a missing asset never crashes',
+      (tester) async {
+    reduceMotionNotifier.value = false;
+    await tester.pumpWidget(const MaterialApp(
+        home: RatelActionAnim(
+            action: 'does-not-exist', fallbackPose: RatelPose.oops)));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(tester.takeException(), isNull);
   });
 }

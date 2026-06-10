@@ -39,19 +39,19 @@ class PartSpec {
 /// (2026-06-10). Order in the map = paint order (first = back).
 const Map<String, PartSpec> kRatelRig = {
   'tail': PartSpec(
-      cx: .74, cy: .66, w: .34, aspect: .786, pivotX: .15, pivotY: .85),
+      cx: .72, cy: .625, w: .31, aspect: .786, pivotX: .15, pivotY: .85),
   'leg_left': PartSpec(
-      cx: .620, cy: .835, w: .265, aspect: .874, pivotX: .50, pivotY: .06),
+      cx: .605, cy: .845, w: .255, aspect: .874, pivotX: .50, pivotY: .06),
   'leg_right': PartSpec(
-      cx: .379, cy: .835, w: .261, aspect: .888, pivotX: .50, pivotY: .06),
+      cx: .394, cy: .845, w: .251, aspect: .888, pivotX: .50, pivotY: .06),
   'torso': PartSpec(
-      cx: .503, cy: .562, w: .436, aspect: .883, pivotX: .50, pivotY: .90),
+      cx: .502, cy: .575, w: .45, aspect: .883, pivotX: .50, pivotY: .90),
   'arm_left': PartSpec(
-      cx: .685, cy: .565, w: .17, aspect: 1.899, pivotX: .50, pivotY: .10),
+      cx: .665, cy: .560, w: .155, aspect: 1.899, pivotX: .50, pivotY: .10),
   'arm_right': PartSpec(
-      cx: .315, cy: .565, w: .17, aspect: 1.899, pivotX: .50, pivotY: .10),
+      cx: .335, cy: .560, w: .155, aspect: 1.899, pivotX: .50, pivotY: .10),
   'head': PartSpec(
-      cx: .50, cy: .30, w: .50, aspect: .937, pivotX: .50, pivotY: .85),
+      cx: .50, cy: .272, w: .475, aspect: .937, pivotX: .50, pivotY: .85),
 };
 
 /// Real-time skeletal mascot: breathing, blinking, tail wag, head tilt,
