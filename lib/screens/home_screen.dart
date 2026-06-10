@@ -10,6 +10,7 @@ import '../sfx.dart';
 import 'lesson_screen.dart';
 import 'admin_screen.dart';
 import 'onboarding_screen.dart';
+import 'friends_screen.dart';
 import 'paywall_screen.dart';
 import '../widgets/transitions.dart';
 import '../widgets/rolling_number.dart';
@@ -298,6 +299,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
+          if (Config.hasSupabase) ...[
+            const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => const FriendsScreen())),
+              icon: const Icon(Icons.group_outlined),
+              label: const Text('Friends'),
+            ),
+          ],
           if (appState.isAdmin) ...[
             const SizedBox(height: 12),
             OutlinedButton.icon(

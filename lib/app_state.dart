@@ -21,6 +21,7 @@ class AppState extends ChangeNotifier {
   bool loaded = false;
   bool isAdmin = false;
   bool onboarded = true;
+  String friendCode = '';
   bool isPro = false;
   List<String> dueKeys = [];
   final Set<String> _completed = <String>{};
@@ -51,7 +52,7 @@ class AppState extends ChangeNotifier {
     try {
       final row = await client
           .from('profiles')
-          .select('total_xp, current_streak, hearts, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes, is_admin, onboarded')
+          .select('total_xp, current_streak, hearts, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes, is_admin, onboarded, friend_code')
           .eq('id', client.auth.currentUser!.id)
           .maybeSingle();
       if (row != null) {
@@ -64,6 +65,7 @@ class AppState extends ChangeNotifier {
         streakFreezes = (row['streak_freezes'] as int?) ?? streakFreezes;
         isAdmin = (row['is_admin'] as bool?) ?? false;
         onboarded = (row['onboarded'] as bool?) ?? true;
+        friendCode = (row['friend_code'] as String?) ?? friendCode;
         final dynamic cl = row['completed_lessons'];
         if (cl is List) {
           _completed
@@ -191,6 +193,7 @@ class AppState extends ChangeNotifier {
   /// Mark first-run onboarding complete.
   Future<void> markOnboarded() async {
     onboarded = true;
+    friendCode = '';
     notifyListeners();
     final client = _client;
     if (client == null) return;
@@ -198,6 +201,36 @@ class AppState extends ChangeNotifier {
       await client.from('profiles')
           .update({'onboarded': true}).eq('id', client.auth.currentUser!.id);
     } catch (_) {}
+  }
+
+  /// Add a friend by their code. Returns (ok, message) for the UI.
+  Future<({bool ok, String message})> addFriend(String code) async {
+    final client = _client;
+    if (client == null) return (ok: false, message: 'Sign in first');
+    try {
+      final res = await client.rpc('add_friend', params: {'p_code': code.trim()});
+      final rows = List<Map<String, dynamic>>.from(res as List);
+      final name = rows.isNotEmpty
+          ? (rows.first['display_name']?.toString() ?? 'your friend')
+          : 'your friend';
+      return (ok: true, message: 'Added $name!');
+    } on PostgrestException catch (e) {
+      return (ok: false, message: e.message);
+    } catch (_) {
+      return (ok: false, message: 'Something went wrong');
+    }
+  }
+
+  /// The signed-in user's friends with their public stats.
+  Future<List<Map<String, dynamic>>> loadFriends() async {
+    final client = _client;
+    if (client == null) return [];
+    try {
+      final res = await client.rpc('my_friends');
+      return List<Map<String, dynamic>>.from(res as List);
+    } catch (_) {
+      return [];
+    }
   }
 
   /// Log an XP event (fire-and-forget) — powers the daily goal + history.
