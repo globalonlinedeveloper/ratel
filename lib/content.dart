@@ -57,6 +57,10 @@ const Unit unit1 = Unit(
         options: ['are', 'is', 'am', 'be'],
         correctIndex: 0,
       ),
+      Exercise.typed(
+        prompt: 'Type the word for a person who teaches.',
+        accepted: ['teacher'],
+      ),
     ]),
     Lesson(id: 'u1l3', title: 'Family', exercises: [
       Exercise.choice(
@@ -80,6 +84,10 @@ const Unit unit1 = Unit(
         sentence: 'My father ___ tall.',
         options: ['is', 'are', 'am', 'be'],
         correctIndex: 0,
+      ),
+      Exercise.listen(
+        prompt: 'Type what you hear',
+        accepted: ['Mother'],
       ),
     ]),
     Lesson(id: 'u1l4', title: 'Food & drink', exercises: [
@@ -105,6 +113,10 @@ const Unit unit1 = Unit(
         options: ['like', 'likes', 'liking', 'liked'],
         correctIndex: 0,
       ),
+      Exercise.typed(
+        prompt: 'Type the word for a hot drink made from coffee beans.',
+        accepted: ['coffee'],
+      ),
     ]),
     Lesson(id: 'u1l5', title: 'Daily routine', exercises: [
       Exercise.choice(
@@ -128,6 +140,10 @@ const Unit unit1 = Unit(
         sentence: 'We ___ dinner at night.',
         options: ['have', 'has', 'having', 'had'],
         correctIndex: 0,
+      ),
+      Exercise.listen(
+        prompt: 'Type what you hear',
+        accepted: ['Breakfast'],
       ),
     ]),
   ],
