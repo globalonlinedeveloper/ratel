@@ -8,17 +8,6 @@ import 'package:ratel/widgets/ratel_mascot.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('all puppet parts are bundled', () async {
-    for (final name in [
-      'torso', 'leg_left', 'leg_right',
-      'head_neutral', 'head_blink', 'head_talk',
-      'arm_left', 'arm_right', 'tail',
-    ]) {
-      final data = await rootBundle.load('assets/puppet/$name.webp');
-      expect(data.lengthInBytes, greaterThan(3000), reason: name);
-    }
-  });
-
   test('all 24 action loops are bundled (full-body library)', () async {
     for (final name in [
       'jump', 'perfect', 'karate', 'listening', 'crying', 'dustoff',

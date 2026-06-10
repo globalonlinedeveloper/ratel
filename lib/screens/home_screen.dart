@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/mascot_anim.dart';
-import '../widgets/ratel_puppet.dart';
 import 'package:flutter/services.dart';
 import '../theme.dart';
 import '../models.dart';
@@ -210,7 +209,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     : const Color(0xFFFAEEDA),
                 shape: BoxShape.circle),
             alignment: Alignment.center,
-            child: const RatelPuppet(size: 96),
+            child: const RatelMascot(pose: RatelPose.idle, size: 90),
           ),
           const SizedBox(height: 12),
           Text(appState.displayName.isEmpty ? 'Learner' : appState.displayName,
@@ -674,7 +673,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(width: 12),
-          const RatelPuppet(state: PuppetState.walk, size: 76),
+          const RatelMascot(pose: RatelPose.encourage, size: 72),
         ],
       ),
     );

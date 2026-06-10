@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../widgets/ratel_puppet.dart';
 import '../widgets/mascot_anim.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
@@ -139,11 +138,12 @@ class _CoachScreenState extends State<CoachScreen> {
           color: context.surfaceC,
           child: Row(
             children: [
-              RatelPuppet(
-                  state: _waiting
-                      ? PuppetState.listening
-                      : PuppetState.idle,
-                  size: 52),
+              _waiting
+                  ? const RatelActionAnim(
+                      action: 'listening',
+                      fallbackPose: RatelPose.think,
+                      size: 52)
+                  : const RatelMascot(pose: RatelPose.idle, size: 52),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
