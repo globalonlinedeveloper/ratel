@@ -636,8 +636,15 @@ class _LessonScreenState extends State<LessonScreen>
                         curve: Curves.elasticOut,
                         builder: (context, s, child) =>
                             Transform.scale(scale: s, child: child),
-                        child: const RatelMascot(
-                            pose: RatelPose.celebrate, size: 170),
+                        child: context.reduceMotion
+                            ? const RatelMascot(
+                                pose: RatelPose.celebrate, size: 170)
+                            // AI-generated 6-frame celebration loop
+                            // (Gemini image frames -> animated WebP).
+                            : Image.asset('assets/images/ratel-jump.webp',
+                                width: 170,
+                                height: 170,
+                                filterQuality: FilterQuality.medium),
                       ),
                       const SizedBox(height: 16),
                       Text(widget.reviewMode ? 'Review complete!' : 'Lesson complete!',
