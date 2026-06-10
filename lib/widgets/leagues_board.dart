@@ -90,12 +90,12 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
                           decoration: BoxDecoration(
                             color: isYou
                                 ? const Color(0xFFFAEEDA)
-                                : RatelColors.surface,
+                                : context.surfaceC,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
                                 color: promo
                                     ? RatelColors.teal.withValues(alpha: 0.5)
-                                    : const Color(0xFFEAEAEA)),
+                                    : context.borderC),
                           ),
                           child: Row(
                             children: [

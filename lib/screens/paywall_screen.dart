@@ -117,10 +117,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Widget _plan(String name, String price, String note, bool best) => Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: RatelColors.surface,
+          color: context.surfaceC,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-              color: best ? RatelColors.honey : const Color(0xFFEAEAEA),
+              color: best ? RatelColors.honey : context.borderC,
               width: best ? 2 : 1),
         ),
         child: Row(

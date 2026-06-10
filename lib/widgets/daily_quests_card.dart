@@ -16,9 +16,9 @@ class DailyQuestsCard extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: RatelColors.surface,
+        color: context.surfaceC,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        border: Border.all(color: context.borderC),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -63,7 +63,7 @@ class DailyQuestsCard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: frac,
                     minHeight: 7,
-                    backgroundColor: const Color(0xFFEAEAEA),
+                    backgroundColor: context.borderC,
                     color: ok ? RatelColors.teal : RatelColors.honey,
                   ),
                 ),

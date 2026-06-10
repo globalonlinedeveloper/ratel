@@ -61,9 +61,9 @@ class _WeakAreasSummaryState extends State<WeakAreasSummary> {
           margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: RatelColors.surface,
+            color: context.surfaceC,
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: const Color(0xFFEAEAEA)),
+            border: Border.all(color: context.borderC),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

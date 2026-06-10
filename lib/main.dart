@@ -18,6 +18,7 @@ Future<void> main() async {
     );
   }
   await Sfx.instance.load();
+  await loadThemeMode();
   await ExplainStore.instance.load();
   await ContentStore.instance.load();
   runApp(const RatelApp());
@@ -28,10 +29,15 @@ class RatelApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return ValueListenableBuilder<ThemeMode>(
+        valueListenable: themeModeNotifier,
+        builder: (context, mode, _) {
+          return MaterialApp(
       title: 'Ratel',
       debugShowCheckedModeBanner: false,
       theme: ratelTheme(),
+      darkTheme: ratelDarkTheme(),
+      themeMode: mode,
       builder: (context, child) {
         // Phone-width frame, centered on a slowly-shifting gradient backdrop.
         return AuroraBackground(
@@ -45,6 +51,7 @@ class RatelApp extends StatelessWidget {
       },
       // With config present, require login; otherwise run straight to Home.
       home: Config.hasSupabase ? const AuthGate() : const HomeScreen(),
-    );
+          );
+        });
   }
 }

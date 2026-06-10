@@ -97,10 +97,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
-          color: sel ? RatelColors.honey.withValues(alpha: 0.12) : RatelColors.surface,
+          color: sel ? RatelColors.honey.withValues(alpha: 0.12) : context.surfaceC,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-              color: sel ? RatelColors.honey : const Color(0xFFEAEAEA),
+              color: sel ? RatelColors.honey : context.borderC,
               width: sel ? 2 : 1),
         ),
         child: Row(

@@ -134,7 +134,7 @@ class _CoachScreenState extends State<CoachScreen> {
       children: [
         Container(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-          color: RatelColors.surface,
+          color: context.surfaceC,
           child: Row(
             children: [
               const RatelMascot(pose: RatelPose.speak, size: 46),
@@ -247,14 +247,14 @@ class _CoachScreenState extends State<CoachScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         constraints: const BoxConstraints(maxWidth: 320),
         decoration: BoxDecoration(
-          color: user ? RatelColors.honey : RatelColors.surface,
+          color: user ? RatelColors.honey : context.surfaceC,
           borderRadius: BorderRadius.only(
             topLeft: const Radius.circular(14),
             topRight: const Radius.circular(14),
             bottomLeft: Radius.circular(user ? 14 : 4),
             bottomRight: Radius.circular(user ? 4 : 14),
           ),
-          border: user ? null : Border.all(color: const Color(0xFFEAEAEA)),
+          border: user ? null : Border.all(color: context.borderC),
         ),
         child: Text(
           m.text,

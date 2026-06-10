@@ -149,9 +149,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: RatelColors.surface,
+                  color: context.surfaceC,
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: const Color(0xFFEAEAEA)),
+                  border: Border.all(color: context.borderC),
                 ),
                 child: Row(
                   children: [
@@ -321,6 +321,31 @@ class _HomeScreenState extends State<HomeScreen> {
                     setState(() {});
                   },
                 ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<ThemeMode>(
+                    segments: const [
+                      ButtonSegment(
+                          value: ThemeMode.system,
+                          icon: Icon(Icons.brightness_auto_outlined),
+                          label: Text('Auto')),
+                      ButtonSegment(
+                          value: ThemeMode.light,
+                          icon: Icon(Icons.light_mode_outlined),
+                          label: Text('Light')),
+                      ButtonSegment(
+                          value: ThemeMode.dark,
+                          icon: Icon(Icons.dark_mode_outlined),
+                          label: Text('Dark')),
+                    ],
+                    selected: {themeModeNotifier.value},
+                    onSelectionChanged: (s) {
+                      setThemeMode(s.first);
+                      setState(() {});
+                    },
+                  ),
+                ),
               ],
             ),
           ),
@@ -373,9 +398,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: RatelColors.surface,
+        color: context.surfaceC,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        border: Border.all(color: context.borderC),
       ),
       child: Row(
         children: [
@@ -451,7 +476,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _header() {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
-      color: RatelColors.surface,
+      color: context.surfaceC,
       child: Row(
         children: [
           const CircleAvatar(
@@ -544,7 +569,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final (Color bg, IconData icon) = switch (state) {
       NodeState.done => (RatelColors.teal, Icons.check),
       NodeState.locked => (
-          const Color(0xFFD9D9D9),
+          context.isDark ? const Color(0xFF3A3733) : const Color(0xFFD9D9D9),
           trophy ? Icons.emoji_events : Icons.lock
         ),
       NodeState.current => (RatelColors.honey, Icons.star),

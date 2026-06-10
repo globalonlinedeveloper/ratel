@@ -156,9 +156,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: RatelColors.surface,
+        color: context.surfaceC,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEAEAEA)),
+        border: Border.all(color: context.borderC),
       ),
       child: Row(
         children: [

@@ -195,7 +195,7 @@ class _LessonScreenState extends State<LessonScreen>
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: RatelColors.surface,
+                        color: context.surfaceC,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(color: const Color(0xFFE0E0E0)),
                       ),
@@ -385,7 +385,7 @@ class _LessonScreenState extends State<LessonScreen>
 
   Widget _optionTile(int i) {
     Color border = const Color(0xFFD8D8D8);
-    Color fill = RatelColors.surface;
+    Color fill = context.surfaceC;
     double width = 1;
     if (_answered && i == _ex.correctIndex) {
       border = RatelColors.teal;
@@ -441,7 +441,7 @@ class _LessonScreenState extends State<LessonScreen>
           constraints: const BoxConstraints(minHeight: 58),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: RatelColors.surface,
+            color: context.surfaceC,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: answerBorder, width: _answered ? 2 : 1),
           ),
@@ -489,7 +489,7 @@ class _LessonScreenState extends State<LessonScreen>
       decoration: InputDecoration(
         hintText: hint,
         filled: true,
-        fillColor: RatelColors.surface,
+        fillColor: context.surfaceC,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
@@ -551,7 +551,7 @@ class _LessonScreenState extends State<LessonScreen>
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
-          color: RatelColors.surface,
+          color: context.surfaceC,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(color: const Color(0xFFD8D8D8)),
         ),

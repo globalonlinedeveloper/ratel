@@ -46,12 +46,22 @@ class _AuroraBackgroundState extends State<AuroraBackground>
     return Stack(
       fit: StackFit.expand,
       children: [
-        const DecoratedBox(
+        DecoratedBox(
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [Color(0xFFEDEAE0), Color(0xFFE6E9E3), Color(0xFFEBE5DC)],
+              colors: context.isDark
+                  ? const [
+                      Color(0xFF171511),
+                      Color(0xFF14130F),
+                      Color(0xFF181410)
+                    ]
+                  : const [
+                      Color(0xFFEDEAE0),
+                      Color(0xFFE6E9E3),
+                      Color(0xFFEBE5DC)
+                    ],
             ),
           ),
         ),

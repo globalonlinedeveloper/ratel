@@ -133,7 +133,7 @@ class _MistakesReviewState extends State<MistakesReview> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: RatelColors.surface,
+        color: context.surfaceC,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: const Color(0xFFF0D9BE)),
       ),
