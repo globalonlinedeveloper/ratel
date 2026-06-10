@@ -9,6 +9,9 @@ void main() {
       (tester) async {
     reduceMotionNotifier.value = false;
     await tester.pumpWidget(const MaterialApp(home: RatelPuppet()));
+    // rootBundle.load is real I/O: let it complete outside fake-async.
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 80)));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.byType(Image), findsWidgets);
