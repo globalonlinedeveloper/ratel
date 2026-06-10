@@ -1,0 +1,257 @@
+diff --git a/lib/milestones.dart b/lib/milestones.dart
+index 46e9bf9..2967b5e 100644
+--- a/lib/milestones.dart
++++ b/lib/milestones.dart
+@@ -10,5 +10,5 @@ int? milestoneFor(int streak) =>
+ String? pickReaction(int combo, int roll) {
+   if (combo >= 5) return null;
+   if (roll >= 3) return null;
+-  return const ['nod', 'fistpump'][roll % 2];
++  return const ['nod', 'fistpump', 'wink'][roll % 3];
+ }
+diff --git a/lib/screens/home_screen.dart b/lib/screens/home_screen.dart
+index 121c8ae..e7f9600 100644
+--- a/lib/screens/home_screen.dart
++++ b/lib/screens/home_screen.dart
+@@ -1,4 +1,6 @@
+ import 'package:flutter/material.dart';
++import '../widgets/anniversary_card.dart';
++import '../widgets/mascot_anim.dart';
+ import 'package:flutter/services.dart';
+ import '../theme.dart';
+ import '../widgets/ratel_mascot.dart';
+@@ -321,8 +323,13 @@ class _HomeScreenState extends State<HomeScreen> {
+                   contentPadding: EdgeInsets.zero,
+                   title: const Text('Background music'),
+                   subtitle: const Text('Calm ambient loop while you learn'),
+-                  secondary: const Icon(Icons.music_note,
+-                      color: RatelColors.honey),
++                  secondary: Sfx.instance.musicOn
++                      ? const RatelActionAnim(
++                          action: 'headphones',
++                          fallbackPose: RatelPose.speak,
++                          size: 34)
++                      : const Icon(Icons.music_note,
++                          color: RatelColors.honey),
+                   value: Sfx.instance.musicOn,
+                   onChanged: (v) {
+                     Sfx.instance.setMusicOn(v);
+@@ -483,6 +490,7 @@ class _HomeScreenState extends State<HomeScreen> {
+         const DailyNudge(),
+         const ReviewCard(),
+         const DailyQuestsCard(),
++        const AnniversaryCard(),
+         Expanded(
+           child: SingleChildScrollView(
+             padding: const EdgeInsets.only(top: 12, bottom: 16),
+diff --git a/lib/screens/lesson_screen.dart b/lib/screens/lesson_screen.dart
+index f02fb4b..50b97c9 100644
+--- a/lib/screens/lesson_screen.dart
++++ b/lib/screens/lesson_screen.dart
+@@ -49,6 +49,7 @@ class _LessonScreenState extends State<LessonScreen>
+   String? _reaction;
+   bool _firstToday = false;
+   bool _newBadge = false;
++  bool _unitDone = false;
+   final math.Random _rng = math.Random();
+   bool _finished = false;
+ 
+@@ -165,6 +166,9 @@ class _LessonScreenState extends State<LessonScreen>
+         _newBadge =
+             achievements.where((a) => isEarned(a, appState)).length >
+                 badgesBefore;
++        _unitDone = course.any((u) =>
++            u.lessons.any((l) => l.id == widget.lesson.id) &&
++            u.lessons.every((l) => appState.isCompleted(l.id)));
+         Analytics.lessonComplete(widget.lesson.id, total, _correctCount,
+             widget.lesson.exercises.length);
+       }
+@@ -318,6 +322,10 @@ class _LessonScreenState extends State<LessonScreen>
+             size: s);
+       }
+     } else {
++      if (widget.reviewMode && !_answered) {
++        return const RatelActionAnim(
++            action: 'snakestare', fallbackPose: RatelPose.think, size: s);
++      }
+       if (_ex.type == ExerciseType.listen) {
+         return const RatelActionAnim(
+             action: 'listening', fallbackPose: RatelPose.speak, size: s);
+@@ -727,6 +735,24 @@ class _LessonScreenState extends State<LessonScreen>
+                           style: const TextStyle(
+                               fontSize: 24, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
+                       const StreakMilestoneCard(),
++                      if (_unitDone)
++                        Padding(
++                          padding: const EdgeInsets.only(top: 10),
++                          child: Row(
++                            mainAxisSize: MainAxisSize.min,
++                            children: [
++                              const RatelActionAnim(
++                                  action: 'gradcap',
++                                  fallbackPose: RatelPose.celebrate,
++                                  size: 54),
++                              const SizedBox(width: 8),
++                              Text('Unit complete!',
++                                  style: TextStyle(
++                                      fontWeight: FontWeight.w700,
++                                      color: context.textC)),
++                            ],
++                          ),
++                        ),
+                       if (_newBadge)
+                         Padding(
+                           padding: const EdgeInsets.only(top: 10),
+diff --git a/lib/screens/placement_screen.dart b/lib/screens/placement_screen.dart
+index 3fa864f..18f11bf 100644
+--- a/lib/screens/placement_screen.dart
++++ b/lib/screens/placement_screen.dart
+@@ -1,4 +1,5 @@
+ import 'package:flutter/material.dart';
++import '../widgets/mascot_anim.dart';
+ import '../theme.dart';
+ import '../app_state.dart';
+ import '../placement.dart';
+@@ -173,7 +174,13 @@ class _PlacementScreenState extends State<PlacementScreen> {
+               child: Column(
+                 mainAxisAlignment: MainAxisAlignment.center,
+                 children: [
+-                  const RatelMascot(pose: RatelPose.celebrate, size: 120),
++                  skip > 0
++                      ? const RatelActionAnim(
++                          action: 'gradcap',
++                          fallbackPose: RatelPose.celebrate,
++                          size: 120)
++                      : const RatelMascot(
++                          pose: RatelPose.celebrate, size: 120),
+                   const SizedBox(height: 16),
+                   Text('$_correct / ${_probes.length} correct',
+                       style: TextStyle(color: context.mutedC)),
+diff --git a/lib/widgets/daily_goal_card.dart b/lib/widgets/daily_goal_card.dart
+index 97d5f64..2e19980 100644
+--- a/lib/widgets/daily_goal_card.dart
++++ b/lib/widgets/daily_goal_card.dart
+@@ -1,4 +1,6 @@
+ import 'package:flutter/material.dart';
++import 'ratel_mascot.dart';
++import 'mascot_anim.dart';
+ import '../theme.dart';
+ import '../app_state.dart';
+ 
+@@ -26,8 +28,13 @@ class DailyGoalCard extends StatelessWidget {
+         children: [
+           Row(
+             children: [
+-              Icon(met ? Icons.check_circle : Icons.flag,
+-                  color: met ? RatelColors.teal : RatelColors.honey, size: 20),
++              met
++                  ? const RatelActionAnim(
++                      action: 'honeyjar',
++                      fallbackPose: RatelPose.celebrate,
++                      size: 36)
++                  : const Icon(Icons.flag,
++                      color: RatelColors.honey, size: 20),
+               const SizedBox(width: 8),
+               const Text('Daily goal',
+                   style:
+diff --git a/test/mascot_anim_test.dart b/test/mascot_anim_test.dart
+index b5ec21b..0b3a334 100644
+--- a/test/mascot_anim_test.dart
++++ b/test/mascot_anim_test.dart
+@@ -28,6 +28,12 @@ void main() {
+       'ratel-shrugok-anim.webp',
+       'ratel-nod-anim.webp',
+       'ratel-fistpump-anim.webp',
++      'ratel-wink-anim.webp',
++      'ratel-honeyjar-anim.webp',
++      'ratel-snakestare-anim.webp',
++      'ratel-headphones-anim.webp',
++      'ratel-gradcap-anim.webp',
++      'ratel-partyhat-anim.webp',
+     ]) {
+       final data = await rootBundle.load('assets/images/$name');
+       expect(data.lengthInBytes, greaterThan(20000), reason: name);
+diff --git a/test/milestones_test.dart b/test/milestones_test.dart
+index 7113057..b53b6e5 100644
+--- a/test/milestones_test.dart
++++ b/test/milestones_test.dart
+@@ -18,7 +18,7 @@ void main() {
+     }
+     expect(pickReaction(2, 0), 'nod');
+     expect(pickReaction(2, 1), 'fistpump');
+-    expect(pickReaction(2, 2), 'nod');
++    expect(pickReaction(2, 2), 'wink');
+     for (int roll = 3; roll < 12; roll++) {
+       expect(pickReaction(2, roll), isNull);
+     }
+diff --git a/lib/widgets/anniversary_card.dart b/lib/widgets/anniversary_card.dart
+new file mode 100644
+index 0000000..c83564a
+--- /dev/null
++++ b/lib/widgets/anniversary_card.dart
+@@ -0,0 +1,65 @@
++import 'package:flutter/material.dart';
++import 'package:supabase_flutter/supabase_flutter.dart';
++import '../app_state.dart';
++import '../config.dart';
++import '../theme.dart';
++import 'mascot_anim.dart';
++import 'ratel_mascot.dart';
++
++/// Account-anniversary celebration (party hat). Shows on the signup
++/// month-day once a year. Gated on todayXp > 0 so it never competes with
++/// the streak-at-risk nudge (one mascot loop per screen).
++class AnniversaryCard extends StatelessWidget {
++  const AnniversaryCard({super.key});
++
++  int _years() {
++    if (!Config.hasSupabase) return 0;
++    try {
++      final created = DateTime.tryParse(
++          Supabase.instance.client.auth.currentUser?.createdAt ?? '');
++      if (created == null) return 0;
++      final now = DateTime.now();
++      if (now.month != created.month || now.day != created.day) return 0;
++      return now.year - created.year;
++    } catch (_) {
++      return 0;
++    }
++  }
++
++  @override
++  Widget build(BuildContext context) {
++    final int years = _years();
++    if (years < 1 || appState.todayXp <= 0) {
++      return const SizedBox.shrink();
++    }
++    return Container(
++      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
++      padding: const EdgeInsets.all(12),
++      decoration: BoxDecoration(
++        color: context.tintC(RatelColors.honey),
++        borderRadius: BorderRadius.circular(14),
++        border: Border.all(
++            color: RatelColors.honey.withValues(alpha: 0.5)),
++      ),
++      child: Row(
++        children: [
++          const RatelActionAnim(
++              action: 'partyhat',
++              fallbackPose: RatelPose.celebrate,
++              size: 56),
++          const SizedBox(width: 10),
++          Expanded(
++            child: Text(
++                years == 1
++                    ? 'One year with Ratel — fearless!'
++                    : '$years years with Ratel — fearless!',
++                style: const TextStyle(
++                    fontFamily: kDisplayFont,
++                    fontSize: 16,
++                    fontWeight: FontWeight.w700)),
++          ),
++        ],
++      ),
++    );
++  }
++}
