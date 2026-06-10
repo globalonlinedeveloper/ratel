@@ -81,7 +81,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   const SizedBox(height: 8),
                   const Text('Ratel',
                       style: TextStyle(
-                          fontSize: 28,
+                          fontSize: 30, fontFamily: kDisplayFont,
                           fontWeight: FontWeight.w800,
                           color: RatelColors.honey)),
                   const Text('Learn English, fearlessly.',

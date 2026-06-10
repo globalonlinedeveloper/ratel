@@ -46,7 +46,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 const Text('Welcome to Ratel!',
                     textAlign: TextAlign.center,
                     style:
-                        TextStyle(fontSize: 24, fontWeight: FontWeight.w800)),
+                        TextStyle(fontSize: 24, fontFamily: kDisplayFont, fontWeight: FontWeight.w800)),
                 const Text('Be fearless about English. Two quick questions.',
                     textAlign: TextAlign.center,
                     style: TextStyle(color: RatelColors.textMuted)),

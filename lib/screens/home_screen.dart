@@ -129,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
       padding: const EdgeInsets.all(16),
       children: [
         const Text('Practice',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+            style: TextStyle(fontSize: 20, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
         const SizedBox(height: 12),
         const MistakesReview(),
         const Text('Revisit lessons',
@@ -203,7 +203,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 12),
           Text(appState.displayName.isEmpty ? 'Learner' : appState.displayName,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
+              style: const TextStyle(fontSize: 20, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
           Text(appState.email.isEmpty ? 'Learning English' : appState.email,
               style: const TextStyle(color: RatelColors.textMuted)),
           const SizedBox(height: 20),

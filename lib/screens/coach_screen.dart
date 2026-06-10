@@ -145,7 +145,7 @@ class _CoachScreenState extends State<CoachScreen> {
                   children: [
                     const Text('Coach',
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w700)),
+                            fontSize: 18, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
                     Text(
                       left == null
                           ? 'Real conversation practice with Ratel'

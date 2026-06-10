@@ -634,7 +634,7 @@ class _LessonScreenState extends State<LessonScreen>
                       const SizedBox(height: 16),
                       Text(widget.reviewMode ? 'Review complete!' : 'Lesson complete!',
                           style: const TextStyle(
-                              fontSize: 24, fontWeight: FontWeight.w700)),
+                              fontSize: 24, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
                       const SizedBox(height: 8),
                       widget.reviewMode
                           ? Text('$_correctCount / $total correct',
