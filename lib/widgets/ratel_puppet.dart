@@ -15,24 +15,31 @@ class PartSpec {
     required this.cx,
     required this.cy,
     required this.w,
+    required this.aspect,
     required this.pivotX,
     required this.pivotY,
   });
   final double cx; // part center x
   final double cy; // part center y
   final double w; // part width
+  final double aspect; // part height / width
   final double pivotX; // rotation pivot inside the part (0..1)
   final double pivotY;
 }
 
-/// PLACEHOLDER RIG — replaced by calibrated values when assets/puppet/
-/// ships. Order in the map = paint order (first = back).
+/// Calibrated against the generated parts via tool/anim previews
+/// (2026-06-10). Order in the map = paint order (first = back).
 const Map<String, PartSpec> kRatelRig = {
-  'tail': PartSpec(cx: .76, cy: .64, w: .36, pivotX: .12, pivotY: .82),
-  'arm_left': PartSpec(cx: .69, cy: .54, w: .20, pivotX: .30, pivotY: .12),
-  'body': PartSpec(cx: .50, cy: .64, w: .54, pivotX: .50, pivotY: .92),
-  'head': PartSpec(cx: .50, cy: .27, w: .50, pivotX: .50, pivotY: .88),
-  'arm_right': PartSpec(cx: .31, cy: .54, w: .20, pivotX: .70, pivotY: .12),
+  'tail': PartSpec(
+      cx: .74, cy: .66, w: .34, aspect: .786, pivotX: .15, pivotY: .85),
+  'body': PartSpec(
+      cx: .50, cy: .66, w: .52, aspect: 1.148, pivotX: .50, pivotY: .95),
+  'arm_left': PartSpec(
+      cx: .685, cy: .565, w: .17, aspect: 1.899, pivotX: .50, pivotY: .10),
+  'arm_right': PartSpec(
+      cx: .315, cy: .565, w: .17, aspect: 1.899, pivotX: .50, pivotY: .10),
+  'head': PartSpec(
+      cx: .50, cy: .30, w: .50, aspect: .937, pivotX: .50, pivotY: .85),
 };
 
 /// Real-time skeletal mascot: breathing, blinking, tail wag, head tilt,
@@ -187,18 +194,19 @@ class _RatelPuppetState extends State<RatelPuppet>
     final String asset = name == 'head'
         ? _headAsset()
         : 'assets/puppet/$name.webp';
-    final double w = p.w * s * (name == 'body' ? breathe : 1);
+    final double w = p.w * s;
+    final double h = w * p.aspect * (name == 'body' ? breathe : 1);
     return Positioned(
       left: p.cx * s - w / 2,
-      top: p.cy * s - w / 2,
+      top: p.cy * s - w * p.aspect / 2,
       child: Transform.rotate(
         angle: _angleFor(name),
         alignment: FractionalOffset(p.pivotX, p.pivotY),
         child: Image.asset(asset,
             width: w,
-            height: w,
+            height: h,
             filterQuality: FilterQuality.medium,
-            errorBuilder: (_, _, _) => SizedBox(width: w, height: w)),
+            errorBuilder: (_, _, _) => SizedBox(width: w, height: h)),
       ),
     );
   }

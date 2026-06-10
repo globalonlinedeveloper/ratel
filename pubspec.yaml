@@ -66,6 +66,7 @@ flutter:
     - assets/images/
     - assets/audio/
     - assets/explanations.json
+    - assets/puppet/
 
   fonts:
     - family: Baloo2

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/ratel_puppet.dart';
 import 'package:flutter/services.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
@@ -207,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     : const Color(0xFFFAEEDA),
                 shape: BoxShape.circle),
             alignment: Alignment.center,
-            child: const RatelMascot(pose: RatelPose.idle, size: 86),
+            child: const RatelPuppet(size: 96),
           ),
           const SizedBox(height: 12),
           Text(appState.displayName.isEmpty ? 'Learner' : appState.displayName,

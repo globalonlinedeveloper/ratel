@@ -34,6 +34,16 @@ void main() {
     }
   });
 
+  test('all puppet parts are bundled', () async {
+    for (final name in [
+      'body', 'head_neutral', 'head_blink', 'head_talk',
+      'arm_left', 'arm_right', 'tail',
+    ]) {
+      final data = await rootBundle.load('assets/puppet/$name.webp');
+      expect(data.lengthInBytes, greaterThan(3000), reason: name);
+    }
+  });
+
   testWidgets('RatelActionAnim renders the animated asset', (tester) async {
     reduceMotionNotifier.value = false;
     await tester.pumpWidget(const MaterialApp(
