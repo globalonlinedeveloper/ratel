@@ -75,6 +75,54 @@ jobs:
         with:
           path: build/web
 
+  android:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.44.1'
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build APK (debug-signed release build, live Supabase config)
+        run: |
+          flutter build apk --release \
+            --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co \
+            --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ratel-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Publish rolling "latest-apk" release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-apk
+          name: Ratel Android APK (latest main)
+          body: >-
+            Debug-signed APK built automatically from the latest main commit.
+            For sideloading/testing only - not a Play Store build.
+          files: build/app/outputs/flutter-apk/app-release.apk
+
   deploy:
     needs: verify
     if: github.ref == 'refs/heads/main'
