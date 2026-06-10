@@ -125,7 +125,7 @@ try{
     let me={}, mdl=Date.now()+8000;
     while(Date.now()<mdl){
       try{
-        const pr=await fetch(`${SUPA_URL}/rest/v1/profiles?select=current_streak,daily_goal_xp,friend_code`,{headers:ah});
+        const pr=await fetch(`${SUPA_URL}/rest/v1/profiles?select=id,current_streak,daily_goal_xp,friend_code`,{headers:ah});
         const pj=await pr.json().catch(()=>[]); me=(Array.isArray(pj)&&pj[0])?pj[0]:{};
         if(Number(me.current_streak)>=1) break;
       }catch(e){}
@@ -150,11 +150,16 @@ try{
       else console.log('pro trial status:',sj[0].status);
       await fetch(`${SUPA_URL}/rest/v1/rpc/cancel_pro`,{method:'POST',headers:ah,body:'{}'});
     }catch(e){ problems.push('pro trial flow failed: '+e.message); }
-    // Comeback RPC callable (no-op for a fresh user, must not 5xx).
+    // Comeback: set up a broken streak on our own profile, then repair_streak must restore it.
     try{
-      const r=await fetch(`${SUPA_URL}/rest/v1/rpc/repair_streak`,{method:'POST',headers:ah,body:'{}'});
-      if(!r.ok && r.status!==204) problems.push('repair_streak RPC failed: '+r.status); else console.log('repair_streak ok');
-    }catch(e){ problems.push('repair_streak failed: '+e.message); }
+      const today=new Date().toISOString().slice(0,10);
+      await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${me.id}`,{method:'PATCH',headers:{...ah,Prefer:'return=minimal'},body:JSON.stringify({broken_streak:9,broken_on:today,streak_freezes:1})});
+      const rr=await fetch(`${SUPA_URL}/rest/v1/rpc/repair_streak`,{method:'POST',headers:ah,body:'{}'});
+      const rj=await rr.json().catch(()=>[]);
+      if(!rr.ok) problems.push('repair_streak RPC failed: '+rr.status);
+      else if(!Array.isArray(rj)||rj.length<1||Number(rj[0].current_streak)!==9) problems.push('repair_streak did not restore streak: '+JSON.stringify(rj).slice(0,120));
+      else console.log('repair_streak restored streak to', rj[0].current_streak);
+    }catch(e){ problems.push('repair_streak flow failed: '+e.message); }
   }
 }catch(e){problems.push(`crash in ${phase}: ${e.message}`);}
 let cleaned=false;
