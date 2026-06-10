@@ -7,6 +7,7 @@ import '../widgets/confetti.dart';
 import '../widgets/streak_flame.dart';
 import '../widgets/combo_glow.dart';
 import '../models.dart';
+import '../typed_match.dart';
 import '../app_state.dart';
 import '../sfx.dart';
 import '../analytics.dart';
@@ -41,6 +42,8 @@ class _LessonScreenState extends State<LessonScreen>
 
   int? _selected; // choice
   final List<int> _picked = []; // word-bank: option indices in chosen order
+  final TextEditingController _typedCtl =
+      TextEditingController(); // typed answer
   int _combo = 0; // in-lesson correct streak -> drives the escalation glow
   String? _explanation; // explanation for a wrong answer (local bundle, then on-demand)
   bool _explaining = false;
@@ -60,6 +63,7 @@ class _LessonScreenState extends State<LessonScreen>
   @override
   void dispose() {
     _fb.dispose();
+    _typedCtl.dispose();
     super.dispose();
   }
 
@@ -70,9 +74,11 @@ class _LessonScreenState extends State<LessonScreen>
     final bool correct;
     if (_ex.type == ExerciseType.choice) {
       correct = _selected == _ex.correctIndex;
-    } else {
+    } else if (_ex.type == ExerciseType.wordBank) {
       final chosen = _picked.map((i) => _ex.options[i]).toList();
       correct = listEquals(chosen, _ex.correctOrder);
+    } else {
+      correct = typedAnswerMatches(_typedCtl.text, _ex.correctOrder);
     }
     setState(() {
       _answered = true;
@@ -115,6 +121,7 @@ class _LessonScreenState extends State<LessonScreen>
         _isCorrect = false;
         _selected = null;
         _picked.clear();
+        _typedCtl.clear();
         _explanation = null;
         _explaining = false;
       });
@@ -208,7 +215,9 @@ class _LessonScreenState extends State<LessonScreen>
                   child: SingleChildScrollView(
                     child: _ex.type == ExerciseType.choice
                         ? _choiceBody()
-                        : _wordBankBody(),
+                        : _ex.type == ExerciseType.wordBank
+                            ? _wordBankBody()
+                            : _typedBody(),
                   ),
                 ),
               ),
@@ -246,12 +255,19 @@ class _LessonScreenState extends State<LessonScreen>
 
   String _correctText() {
     if (_ex.type == ExerciseType.choice) return _ex.options[_ex.correctIndex];
+    if (_ex.type == ExerciseType.typed) {
+      return _ex.correctOrder.isNotEmpty ? _ex.correctOrder.first : '';
+    }
     return _ex.correctOrder.join(' ');
   }
 
   String _userText() {
     if (_ex.type == ExerciseType.choice) {
       return _selected != null ? _ex.options[_selected!] : '(no answer)';
+    }
+    if (_ex.type == ExerciseType.typed) {
+      final t = _typedCtl.text.trim();
+      return t.isEmpty ? '(no answer)' : t;
     }
     return _picked.map((i) => _ex.options[i]).join(' ');
   }
@@ -261,7 +277,9 @@ class _LessonScreenState extends State<LessonScreen>
   Future<void> _explain() async {
     final key = _ex.type == ExerciseType.choice
         ? '${widget.lesson.id}:$_index:$_selected'
-        : '${widget.lesson.id}:$_index:wb';
+        : _ex.type == ExerciseType.wordBank
+            ? '${widget.lesson.id}:$_index:wb'
+            : '${widget.lesson.id}:$_index:ty';
     // Bundled seed first: free, instant, offline; covers all current content.
     final local = ExplainStore.instance.lookup(key);
     if (local != null) {
@@ -450,6 +468,41 @@ class _LessonScreenState extends State<LessonScreen>
     );
   }
 
+  // ---- typed ----
+  Widget _typedBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        TextField(
+          key: const Key('typed-field'),
+          controller: _typedCtl,
+          enabled: !_answered,
+          autocorrect: false,
+          enableSuggestions: false,
+          textInputAction: TextInputAction.done,
+          onChanged: (_) => setState(() {}),
+          onSubmitted: (_) {
+            if (!_answered && _typedCtl.text.trim().isNotEmpty) _check();
+          },
+          decoration: InputDecoration(
+            hintText: 'Type your answer',
+            filled: true,
+            fillColor: RatelColors.surface,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
+            ),
+          ),
+          style: const TextStyle(fontSize: 18),
+        ),
+      ],
+    );
+  }
+
   Widget _tile(String text, {VoidCallback? onTap}) {
     return InkWell(
       onTap: onTap,
@@ -471,7 +524,9 @@ class _LessonScreenState extends State<LessonScreen>
     if (!_answered) {
       final bool canCheck = _ex.type == ExerciseType.choice
           ? _selected != null
-          : _picked.isNotEmpty;
+          : _ex.type == ExerciseType.wordBank
+              ? _picked.isNotEmpty
+              : _typedCtl.text.trim().isNotEmpty;
       return _wideButton('Check', canCheck ? _check : null);
     }
     final Color c = _isCorrect ? RatelColors.teal : RatelColors.coral;

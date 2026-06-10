@@ -7,6 +7,7 @@ import 'package:ratel/content.dart';
 import 'package:ratel/achievements.dart';
 import 'package:ratel/daily_quests.dart';
 import 'package:ratel/models.dart';
+import 'package:ratel/typed_match.dart';
 import 'package:ratel/sfx.dart';
 import 'package:ratel/widgets/rolling_number.dart';
 import 'package:ratel/widgets/streak_flame.dart';
@@ -150,8 +151,14 @@ void main() {
                 missing.add(key);
               }
             }
-          } else {
+          } else if (ex.type == ExerciseType.wordBank) {
             final key = '${lesson.id}:$i:wb';
+            if (!map.containsKey(key) ||
+                (map[key] as String).trim().isEmpty) {
+              missing.add(key);
+            }
+          } else {
+            final key = '${lesson.id}:$i:ty';
             if (!map.containsKey(key) ||
                 (map[key] as String).trim().isEmpty) {
               missing.add(key);
@@ -223,5 +230,24 @@ void main() {
       ..lessonsToday = 99;
     expect(a.every((q) => questDone(q, full)), isTrue);
     expect(a.any((q) => questDone(q, AppState())), isFalse);
+  });
+
+  test('typedAnswerMatches is case/punctuation/article tolerant', () {
+    expect(typedAnswerMatches('water', ['water']), isTrue);
+    expect(typedAnswerMatches('  WATER ', ['water']), isTrue);
+    expect(typedAnswerMatches('Water.', ['water']), isTrue);
+    expect(typedAnswerMatches('the shop', ['shop', 'store']), isTrue);
+    expect(typedAnswerMatches('a bus', ['bus']), isTrue);
+    expect(typedAnswerMatches('store', ['shop', 'store', 'market']), isTrue);
+    expect(typedAnswerMatches('train', ['bus']), isFalse);
+    expect(typedAnswerMatches('', ['bus']), isFalse);
+    expect(typedAnswerMatches('   ', ['bus']), isFalse);
+  });
+
+  test('typed exercise stores accepted answers in correctOrder', () {
+    const ex = Exercise.typed(prompt: 'Type it', accepted: ['go', 'start']);
+    expect(ex.type, ExerciseType.typed);
+    expect(ex.correctOrder, ['go', 'start']);
+    expect(ex.options, isEmpty);
   });
 }

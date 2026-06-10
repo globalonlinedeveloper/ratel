@@ -1,5 +1,5 @@
 /// Exercise types supported by the lesson player.
-enum ExerciseType { choice, wordBank }
+enum ExerciseType { choice, wordBank, typed }
 
 /// A single exercise within a lesson.
 class Exercise {
@@ -8,7 +8,7 @@ class Exercise {
   final String? sentence; // optional sentence (may contain "___")
   final List<String> options; // choice: answers; wordBank: word tiles
   final int correctIndex; // choice only
-  final List<String> correctOrder; // wordBank only
+  final List<String> correctOrder; // wordBank: order; typed: accepted answers
 
   const Exercise.choice({
     required this.prompt,
@@ -25,6 +25,18 @@ class Exercise {
   })  : type = ExerciseType.wordBank,
         sentence = null,
         correctIndex = -1;
+
+  /// A free-typing exercise. The learner types an answer; [accepted] holds the
+  /// acceptable answers (matched case-insensitively, articles/punctuation
+  /// tolerant). The first entry is treated as the canonical answer to display.
+  const Exercise.typed({
+    required this.prompt,
+    this.sentence,
+    required List<String> accepted,
+  })  : type = ExerciseType.typed,
+        options = const [],
+        correctIndex = -1,
+        correctOrder = accepted;
 }
 
 /// A lesson is an ordered list of exercises.

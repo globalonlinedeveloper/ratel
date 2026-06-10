@@ -65,11 +65,12 @@ lp=[(m.group(1),m.start()) for m in re.finditer(r"Lesson\(\s*id:\s*'([^']+)'",sr
 EX=[]
 for k in range(len(lp)-1):
     lid,st=lp[k];en=lp[k+1][1];sg=src[st:en];xi=0
-    for em in re.finditer(r"Exercise\.(choice|wordBank)\(",sg):
+    for em in re.finditer(r"Exercise\.(choice|wordBank|typed)\(",sg):
         et=em.group(1);op=sg.index('(',em.start());cp=mp(sg,op);b=sg[op+1:cp]
         ci=re.search(r"correctIndex:\s*(-?\d+)",b)
         EX.append(dict(lid=lid,exidx=xi,type=et,prompt=sa(b,'prompt'),sentence=sa(b,'sentence'),
-            options=la(b,'options'),correctIndex=int(ci.group(1)) if ci else None,correctOrder=la(b,'correctOrder')));xi+=1
+            options=la(b,'options'),correctIndex=int(ci.group(1)) if ci else None,
+            correctOrder=la(b,'correctOrder'),accepted=la(b,'accepted')));xi+=1
 tasks=[]
 for e in EX:
     if e['type']=='choice':
@@ -81,12 +82,19 @@ for e in EX:
                f"In 1-2 short sentences (max 35 words), teach WHY \"{cor}\" is right AND what \"{opt}\" actually is or why it does not fit here. "
                f"Give a real, learnable reason (meaning, category, or grammar rule) — never just restate that one is correct and the other is not.")
             tasks.append((f"{e['lid']}:{e['exidx']}:{j}",u))
-    else:
+    elif e['type']=='wordBank':
         cor=' '.join(e['correctOrder'])
         u=(f"Task: arrange words into a correct English sentence.\nThe correct sentence is: \"{cor}\"\n"
            f"In 1-2 short sentences (max 35 words), teach WHY the words go in this order (subject-verb-object, adjective before noun, etc.). "
            f"Give a real grammar reason a learner can reuse — not just 'arrange it this way'.")
         tasks.append((f"{e['lid']}:{e['exidx']}:wb",u))
+    else:
+        cor=(e['accepted'] or e['correctOrder'])[0]
+        ctx=f"Question: {e['prompt']}"+(f"\nSentence: {e['sentence']}" if e['sentence'] else "")
+        u=(f"{ctx}\nThe learner must TYPE the answer. The correct answer is: \"{cor}\"\n"
+           f"In 1-2 short sentences (max 35 words), teach what \"{cor}\" means and WHY it fits here "
+           f"(meaning, category, or grammar rule) so a learner can remember it. Plain text.")
+        tasks.append((f"{e['lid']}:{e['exidx']}:ty",u))
 out={}
 if os.path.exists(OUT):
     try:out=json.load(open(OUT))

@@ -54,6 +54,12 @@ class ContentStore {
         return Exercise.wordBank(
             prompt: prompt, options: opts, correctOrder: _strs(e['correct_order']));
       }
+      if (type == 'typed') {
+        return Exercise.typed(
+            prompt: prompt,
+            sentence: e['sentence'] as String?,
+            accepted: _strs(e['correct_order']));
+      }
       return Exercise.choice(
         prompt: prompt,
         sentence: e['sentence'] as String?,

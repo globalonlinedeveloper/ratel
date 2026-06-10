@@ -484,8 +484,50 @@ const Unit unit4 = Unit(
   ],
 );
 
+const Unit unit5 = Unit(
+  title: 'Unit 5',
+  subtitle: 'Daily life',
+  lessons: [
+    Lesson(id: 'u5l1', title: 'Food & drink', exercises: [
+      Exercise.choice(prompt: 'Which word is a drink?', options: ['Water', 'Bread', 'Chair', 'Apple'], correctIndex: 0),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'I ___ breakfast every morning.', options: ['eat', 'drink', 'sleep', 'run'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I am thirsty. I need some ___.', accepted: ['water']),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['like', 'I', 'red', 'apples'], correctOrder: ['I', 'like', 'red', 'apples']),
+      Exercise.typed(prompt: 'Type the meal you eat in the morning.', accepted: ['breakfast']),
+    ]),
+    Lesson(id: 'u5l2', title: 'Time & days', exercises: [
+      Exercise.choice(prompt: 'Which is a day of the week?', options: ['Monday', 'January', 'Summer', 'Evening'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the day that comes after Monday.', accepted: ['tuesday']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'I wake up early in the ___.', options: ['morning', 'table', 'blue', 'run'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'There are seven ___ in a week.', accepted: ['days']),
+      Exercise.wordBank(prompt: 'Build the question', options: ['is', 'What', 'it', 'time'], correctOrder: ['What', 'time', 'is', 'it']),
+    ]),
+    Lesson(id: 'u5l3', title: 'Shopping', exercises: [
+      Exercise.choice(prompt: 'Which word is about money?', options: ['Price', 'Cloud', 'Run', 'Happy'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'How ___ does it cost?', accepted: ['much']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'I want to ___ a new shirt.', options: ['buy', 'eat', 'sleep', 'sing'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type a place where you buy food.', accepted: ['shop', 'store', 'supermarket', 'market', 'grocery']),
+      Exercise.wordBank(prompt: 'Build the question', options: ['it', 'How', 'is', 'much'], correctOrder: ['How', 'much', 'is', 'it']),
+    ]),
+    Lesson(id: 'u5l4', title: 'Home', exercises: [
+      Exercise.choice(prompt: 'Which room is for cooking?', options: ['Kitchen', 'Bedroom', 'Garden', 'Garage'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I sleep in my ___.', accepted: ['bedroom', 'bed', 'room']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'The cat is ___ the table.', options: ['under', 'eat', 'blue', 'fast'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the room where you take a shower.', accepted: ['bathroom', 'washroom']),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['a', 'I', 'have', 'house'], correctOrder: ['I', 'have', 'a', 'house']),
+    ]),
+    Lesson(id: 'u5l5', title: 'Getting around', exercises: [
+      Exercise.choice(prompt: 'Which is a way to travel?', options: ['Bus', 'Apple', 'Chair', 'Cloud'], correctIndex: 0),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'A big vehicle that carries many people is a ___.', accepted: ['bus']),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'The station is on the ___.', options: ['left', 'eat', 'blue', 'fast'], correctIndex: 0),
+      Exercise.typed(prompt: "Type the opposite of 'stop'.", accepted: ['go', 'start']),
+      Exercise.wordBank(prompt: 'Build the question', options: ['the', 'Where', 'station', 'is'], correctOrder: ['Where', 'is', 'the', 'station']),
+    ]),
+  ],
+);
+
 /// Built-in course (offline fallback + test baseline).
-const List<Unit> builtInCourse = [unit1, unit2, unit3, unit4];
+const List<Unit> builtInCourse = [unit1, unit2, unit3, unit4, unit5];
 
 /// The active course: built-in by default, swapped to DB content at startup by
 /// ContentStore. Everything reads it via `course`. Lessons unlock in order.
