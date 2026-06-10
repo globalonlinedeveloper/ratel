@@ -45,7 +45,7 @@ class DailyGoalCard extends StatelessWidget {
             child: LinearProgressIndicator(
               value: pct,
               minHeight: 10,
-              backgroundColor: const Color(0xFFE6E6E6),
+              backgroundColor: context.borderC,
               color: met ? RatelColors.teal : RatelColors.honey,
             ),
           ),

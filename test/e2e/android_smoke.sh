@@ -38,4 +38,16 @@ if [ "$SIZE" -lt 60000 ]; then
   exit 1
 fi
 
-echo "ANDROID SMOKE PASS — installed, networked, launched, alive, rendering"
+echo "== dark mode render sanity =="
+adb shell cmd uimode night yes || true
+sleep 8
+adb exec-out screencap -p > android-screen-dark.png
+DSIZE=$(stat -c%s android-screen-dark.png)
+echo "dark screenshot bytes: $DSIZE"
+if [ "$DSIZE" -lt 60000 ]; then
+  echo "FAIL: dark-mode screenshot suspiciously small ($DSIZE bytes)"
+  exit 1
+fi
+adb shell cmd uimode night no || true
+
+echo "ANDROID SMOKE PASS — installed, networked, launched, alive, rendering (light + dark)"

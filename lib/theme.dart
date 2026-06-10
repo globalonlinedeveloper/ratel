@@ -43,6 +43,17 @@ extension RatelThemeColors on BuildContext {
   Color get mutedC =>
       isDark ? RatelColorsDark.textMuted : RatelColors.textMuted;
   Color get textC => isDark ? RatelColorsDark.text : RatelColors.charcoal;
+
+  /// Subtle hairline (lighter than [borderC]) for input fields / idle tiles.
+  Color get faintBorderC =>
+      isDark ? const Color(0xFF34312C) : const Color(0xFFD8D8D8);
+
+  /// Solid accent wash readable in BOTH modes: blends the accent over the
+  /// current surface (light -> soft pastel, dark -> deep accent-washed
+  /// surface), so default text keeps contrast. Use for answer-state fills,
+  /// highlight rows, info cards.
+  Color tintC(Color accent) => Color.alphaBlend(
+      accent.withValues(alpha: isDark ? 0.24 : 0.12), surfaceC);
 }
 
 /// ----- Theme mode (System / Light / Dark), persisted -----

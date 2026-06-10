@@ -93,7 +93,7 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
                               horizontal: 12, vertical: 10),
                           decoration: BoxDecoration(
                             color: isYou
-                                ? const Color(0xFFFAEEDA)
+                                ? context.tintC(RatelColors.honey)
                                 : context.surfaceC,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
@@ -120,7 +120,7 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
                                 radius: 16,
                                 backgroundColor: isYou
                                     ? RatelColors.honey
-                                    : const Color(0xFFE0E0E0),
+                                    : context.borderC,
                                 child: Text(
                                     (name.isEmpty ? 'L' : name)
                                         .substring(0, 1)

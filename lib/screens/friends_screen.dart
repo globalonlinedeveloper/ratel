@@ -167,7 +167,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundColor: const Color(0xFFE0E0E0),
+            backgroundColor: context.borderC,
             child: Text(name.substring(0, 1).toUpperCase(),
                 style: const TextStyle(color: Colors.white, fontSize: 13)),
           ),

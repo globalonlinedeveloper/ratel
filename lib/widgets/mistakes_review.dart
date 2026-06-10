@@ -131,7 +131,9 @@ class _MistakesReviewState extends State<MistakesReview> {
       decoration: BoxDecoration(
         color: context.surfaceC,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFF0D9BE)),
+        border: Border.all(
+            color: RatelColors.honey
+                .withValues(alpha: context.isDark ? 0.5 : 0.35)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

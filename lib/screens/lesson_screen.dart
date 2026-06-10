@@ -172,7 +172,7 @@ class _LessonScreenState extends State<LessonScreen>
                         builder: (context, value, _) => LinearProgressIndicator(
                           value: value,
                           minHeight: 12,
-                          backgroundColor: const Color(0xFFE6E6E6),
+                          backgroundColor: context.borderC,
                           color: RatelColors.teal,
                         ),
                       ),
@@ -197,7 +197,7 @@ class _LessonScreenState extends State<LessonScreen>
                       decoration: BoxDecoration(
                         color: context.surfaceC,
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: const Color(0xFFE0E0E0)),
+                        border: Border.all(color: context.borderC),
                       ),
                       child: Text(_bubble()),
                     ),
@@ -334,9 +334,11 @@ class _LessonScreenState extends State<LessonScreen>
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: const Color(0xFFFFF6EC),
+          color: context.tintC(RatelColors.honey),
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: const Color(0xFFF0D9BE)),
+          border: Border.all(
+              color: RatelColors.honey.withValues(
+                  alpha: context.isDark ? 0.5 : 0.35)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,20 +386,20 @@ class _LessonScreenState extends State<LessonScreen>
   }
 
   Widget _optionTile(int i) {
-    Color border = const Color(0xFFD8D8D8);
+    Color border = context.faintBorderC;
     Color fill = context.surfaceC;
     double width = 1;
     if (_answered && i == _ex.correctIndex) {
       border = RatelColors.teal;
-      fill = const Color(0xFFE1F5EE);
+      fill = context.tintC(RatelColors.teal);
       width = 2;
     } else if (_answered && i == _selected) {
       border = RatelColors.coral;
-      fill = const Color(0xFFFAECE7);
+      fill = context.tintC(RatelColors.coral);
       width = 2;
     } else if (!_answered && i == _selected) {
       border = const Color(0xFF378ADD);
-      fill = const Color(0xFFE6F1FB);
+      fill = context.tintC(const Color(0xFF378ADD));
       width = 2;
     }
     return Padding(
@@ -432,7 +434,7 @@ class _LessonScreenState extends State<LessonScreen>
     ];
     final Color answerBorder = _answered
         ? (_isCorrect ? RatelColors.teal : RatelColors.coral)
-        : const Color(0xFFE0E0E0);
+        : context.borderC;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -492,11 +494,11 @@ class _LessonScreenState extends State<LessonScreen>
         fillColor: context.surfaceC,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
+          borderSide: BorderSide(color: context.faintBorderC),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: Color(0xFFD8D8D8)),
+          borderSide: BorderSide(color: context.faintBorderC),
         ),
       ),
       style: const TextStyle(fontSize: 18),
@@ -553,7 +555,7 @@ class _LessonScreenState extends State<LessonScreen>
         decoration: BoxDecoration(
           color: context.surfaceC,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: const Color(0xFFD8D8D8)),
+          border: Border.all(color: context.faintBorderC),
         ),
         child: Text(text, style: const TextStyle(fontSize: 16)),
       ),
@@ -669,7 +671,7 @@ class _LessonScreenState extends State<LessonScreen>
                             builder: (context, v, _) => LinearProgressIndicator(
                               value: v.clamp(0.0, 1.0),
                               minHeight: 10,
-                              backgroundColor: const Color(0xFFE6E6E6),
+                              backgroundColor: context.borderC,
                               color: RatelColors.honey,
                             ),
                           ),

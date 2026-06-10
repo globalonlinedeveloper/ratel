@@ -201,8 +201,11 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             width: 110,
             height: 110,
-            decoration: const BoxDecoration(
-                color: Color(0xFFFAEEDA), shape: BoxShape.circle),
+            decoration: BoxDecoration(
+                color: context.isDark
+                    ? const Color(0xFF35302A)
+                    : const Color(0xFFFAEEDA),
+                shape: BoxShape.circle),
             alignment: Alignment.center,
             child: const RatelMascot(pose: RatelPose.idle, size: 86),
           ),

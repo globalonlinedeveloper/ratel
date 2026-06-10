@@ -188,7 +188,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: android-e2e-screenshot
-          path: android-screen.png
+          path: |
+            android-screen.png
+            android-screen-dark.png
           if-no-files-found: ignore
 
   deploy:

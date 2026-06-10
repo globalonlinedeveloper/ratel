@@ -45,7 +45,7 @@ class DailyNudge extends StatelessWidget {
           Expanded(
             child: Text(text,
                 style: TextStyle(
-                    color: RatelColors.charcoal,
+                    color: context.textC,
                     fontWeight: FontWeight.w500,
                     fontSize: 13.5)),
           ),

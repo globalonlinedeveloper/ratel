@@ -38,7 +38,9 @@ class AchievementsView extends StatelessWidget {
 
   Widget _badge(Achievement a) {
     final on = isEarned(a, appState);
-    final color = on ? RatelColors.honey : const Color(0xFFBFBFBF);
+    final color = on
+        ? RatelColors.honey
+        : (context.isDark ? const Color(0xFF6E6A63) : const Color(0xFFBFBFBF));
     return Tooltip(
       message: '${a.title} — ${a.description}',
       child: SizedBox(
@@ -51,7 +53,7 @@ class AchievementsView extends StatelessWidget {
               decoration: BoxDecoration(
                 color: on
                     ? RatelColors.honey.withValues(alpha: 0.14)
-                    : const Color(0xFFF0F0F0),
+                    : (context.isDark ? const Color(0xFF2A2724) : const Color(0xFFF0F0F0)),
                 shape: BoxShape.circle,
                 border: Border.all(color: color, width: 2),
               ),
@@ -66,7 +68,7 @@ class AchievementsView extends StatelessWidget {
                 style: TextStyle(
                     fontSize: 11,
                     height: 1.1,
-                    color: on ? RatelColors.charcoal : RatelColors.textMuted,
+                    color: on ? context.textC : context.mutedC,
                     fontWeight: on ? FontWeight.w600 : FontWeight.w400)),
           ],
         ),
