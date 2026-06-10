@@ -1,6 +1,8 @@
 import 'dart:math';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import '../content.dart';
+import '../widgets/battle_stage.dart';
 import '../widgets/ratel_puppet.dart';
 import '../widgets/milestone_card.dart';
 import '../milestones.dart';
@@ -52,6 +54,8 @@ class _LessonScreenState extends State<LessonScreen>
   bool _newBadge = false;
   bool _unitDone = false;
   final math.Random _rng = math.Random();
+  final BattleController _battle = BattleController();
+  bool _isBoss = false;
   bool _finished = false;
 
   int? _selected; // choice
@@ -68,6 +72,12 @@ class _LessonScreenState extends State<LessonScreen>
   @override
   void initState() {
     super.initState();
+    for (final unit in course) {
+      if (unit.lessons.isNotEmpty &&
+          unit.lessons.last.id == widget.lesson.id) {
+        _isBoss = true;
+      }
+    }
     SharedPreferences.getInstance().then((prefs) {
       final String today =
           DateTime.now().toIso8601String().substring(0, 10);
@@ -85,6 +95,7 @@ class _LessonScreenState extends State<LessonScreen>
 
   @override
   void dispose() {
+    _battle.dispose();
     _fb.dispose();
     _typedCtl.dispose();
     super.dispose();
@@ -113,6 +124,18 @@ class _LessonScreenState extends State<LessonScreen>
       } else {
         _missStreak++;
         _reaction = null;
+      }
+      if (battleModeNotifier.value && !widget.reviewMode) {
+        final int combo = Sfx.instance.combo.value;
+        if (correct) {
+          _battle.fire(
+              combo >= 5 ? BattleEvent.finisher : BattleEvent.correct,
+              combo: combo);
+        } else if (appState.hearts <= 0 && !appState.isPro) {
+          _battle.fire(BattleEvent.defeat, combo: combo);
+        } else {
+          _battle.fire(BattleEvent.wrong, combo: combo);
+        }
       }
       if (correct) {
         _correctCount++;
@@ -164,6 +187,7 @@ class _LessonScreenState extends State<LessonScreen>
         final int badgesBefore =
             achievements.where((a) => isEarned(a, appState)).length;
         appState.completeLesson(widget.lesson.id, total);
+        _battle.fire(BattleEvent.victory);
         _newBadge =
             achievements.where((a) => isEarned(a, appState)).length >
                 badgesBefore;
@@ -226,7 +250,10 @@ class _LessonScreenState extends State<LessonScreen>
               const SizedBox(height: 20),
               Row(
                 children: [
-                  _mascotSlot(),
+                  (battleModeNotifier.value && !widget.reviewMode)
+                      ? BattleStage(
+                          controller: _battle, isBoss: _isBoss)
+                      : _mascotSlot(),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Container(

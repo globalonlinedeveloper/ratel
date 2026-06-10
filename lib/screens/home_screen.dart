@@ -349,6 +349,18 @@ class _HomeScreenState extends State<HomeScreen> {
                     setState(() {});
                   },
                 ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Battle mode'),
+                  subtitle: const Text('Duel a rival as you answer'),
+                  secondary:
+                      const Icon(Icons.sports_kabaddi_outlined),
+                  value: battleModeNotifier.value,
+                  onChanged: (v) {
+                    setBattleMode(v);
+                    setState(() {});
+                  },
+                ),
                 const SizedBox(height: 12),
                 SizedBox(
                   width: double.infinity,

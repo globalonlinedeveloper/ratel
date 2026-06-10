@@ -112,6 +112,24 @@ extension RatelMotion on BuildContext {
       reduceMotionNotifier.value;
 }
 
+/// ----- Battle mode (the duel layer over lessons), persisted -----
+final ValueNotifier<bool> battleModeNotifier = ValueNotifier<bool>(true);
+
+Future<void> loadBattleMode() async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    battleModeNotifier.value = prefs.getBool('battle_mode') ?? true;
+  } catch (_) {}
+}
+
+Future<void> setBattleMode(bool on) async {
+  battleModeNotifier.value = on;
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('battle_mode', on);
+  } catch (_) {}
+}
+
 /// Non-color design tokens (radii, spacing).
 class RatelTokens extends ThemeExtension<RatelTokens> {
   const RatelTokens({

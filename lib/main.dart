@@ -20,6 +20,7 @@ Future<void> main() async {
   await Sfx.instance.load();
   await loadThemeMode();
   await loadReduceMotion();
+  await loadBattleMode();
   await ExplainStore.instance.load();
   await ContentStore.instance.load();
   runApp(const RatelApp());
