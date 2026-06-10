@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../widgets/motd_card.dart';
 import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/mascot_anim.dart';
@@ -498,6 +499,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         _header(),
+        const MotdCard(),
         const StreakRepairCard(),
         const DailyNudge(),
         const ReviewCard(),

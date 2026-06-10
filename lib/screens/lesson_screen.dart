@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import '../content.dart';
+import '../flags.dart';
 import '../push.dart';
 import '../widgets/battle_stage.dart';
 import '../widgets/milestone_card.dart';
@@ -186,7 +187,9 @@ class _LessonScreenState extends State<LessonScreen>
       _speakListen();
     } else {
       if (!widget.reviewMode) {
-        _bonusXp = Random().nextInt(5) == 0 ? (5 + Random().nextInt(16)) : 0;
+        final oneIn = max(1, Flags.instance.intOf('xp_bonus_one_in', 5));
+        _bonusXp =
+            Random().nextInt(oneIn) == 0 ? (5 + Random().nextInt(16)) : 0;
         final total = _correctCount * 10 + _bonusXp;
         final int badgesBefore =
             achievements.where((a) => isEarned(a, appState)).length;

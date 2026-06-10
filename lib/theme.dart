@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'flags.dart';
 
 /// Brand font families (bundled in assets/fonts, OFL-licensed).
 const String kDisplayFont = 'Baloo2';
@@ -118,7 +119,8 @@ final ValueNotifier<bool> battleModeNotifier = ValueNotifier<bool>(true);
 Future<void> loadBattleMode() async {
   try {
     final prefs = await SharedPreferences.getInstance();
-    battleModeNotifier.value = prefs.getBool('battle_mode') ?? true;
+    battleModeNotifier.value = prefs.getBool('battle_mode') ??
+        Flags.instance.flag('battle_default_on', true);
   } catch (_) {}
 }
 

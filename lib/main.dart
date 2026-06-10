@@ -5,6 +5,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'flags.dart';
 import 'push.dart';
 import 'theme.dart';
 import 'config.dart';
@@ -41,6 +42,7 @@ Future<void> main() async {
   await Sfx.instance.load();
   await loadThemeMode();
   await loadReduceMotion();
+  await Flags.instance.load(); // remote config before dependent loads
   await loadBattleMode();
   await ExplainStore.instance.load();
   await ContentStore.instance.load();
