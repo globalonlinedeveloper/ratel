@@ -28,7 +28,7 @@ class RatelActionAnim extends StatelessWidget {
       width: size,
       height: size,
       filterQuality: FilterQuality.medium,
-      errorBuilder: (_, __, ___) =>
+      errorBuilder: (_, _, _) =>
           RatelMascot(pose: fallbackPose, size: size),
     );
   }
