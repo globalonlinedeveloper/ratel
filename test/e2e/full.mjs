@@ -118,6 +118,43 @@ try{
       if(!Array.isArray(sj)||sj.length<1) problems.push('no review_state after lesson (spaced repetition not scheduling)');
       else console.log('review_state rows:', sj.length);
     }catch(e){ problems.push('review_state query failed: '+e.message); }
+    // --- Engagement writes (Leagues/streak/friends/Pro/comeback) — these write
+    // to the DB and were previously unverified by the suite (the source of the
+    // silent xp_events/review_state no-op bug). All checked at the API layer. ---
+    const ah={apikey:SUPA_ANON,Authorization:`Bearer ${token}`,'Content-Type':'application/json'};
+    let me={}, mdl=Date.now()+8000;
+    while(Date.now()<mdl){
+      try{
+        const pr=await fetch(`${SUPA_URL}/rest/v1/profiles?select=current_streak,daily_goal_xp,friend_code`,{headers:ah});
+        const pj=await pr.json().catch(()=>[]); me=(Array.isArray(pj)&&pj[0])?pj[0]:{};
+        if(Number(me.current_streak)>=1) break;
+      }catch(e){}
+      await page.waitForTimeout(700);
+    }
+    if(!(Number(me.current_streak)>=1)) problems.push('current_streak not set after lesson (touch_streak no-op)');
+    if(!(Number(me.daily_goal_xp)>=1)) problems.push('daily_goal_xp missing on profile');
+    if(!me.friend_code) problems.push('friend_code not assigned at signup');
+    if(me.current_streak) console.log('profile streak/goal/code:',me.current_streak,me.daily_goal_xp,me.friend_code);
+    // Friends RPC callable.
+    try{
+      const r=await fetch(`${SUPA_URL}/rest/v1/rpc/my_friends`,{method:'POST',headers:ah,body:'{}'});
+      if(!r.ok) problems.push('my_friends RPC failed: '+r.status); else console.log('my_friends ok');
+    }catch(e){ problems.push('my_friends failed: '+e.message); }
+    // Pro trial lifecycle: start -> a subscription row exists -> cancel (row cascade-cleans on delete_self).
+    try{
+      const sp=await fetch(`${SUPA_URL}/rest/v1/rpc/start_pro_trial`,{method:'POST',headers:ah,body:'{}'});
+      if(!sp.ok) problems.push('start_pro_trial RPC failed: '+sp.status);
+      const su=await fetch(`${SUPA_URL}/rest/v1/subscriptions?select=status&limit=1`,{headers:ah});
+      const sj=await su.json().catch(()=>[]);
+      if(!Array.isArray(sj)||sj.length<1) problems.push('no subscription row after start_pro_trial');
+      else console.log('pro trial status:',sj[0].status);
+      await fetch(`${SUPA_URL}/rest/v1/rpc/cancel_pro`,{method:'POST',headers:ah,body:'{}'});
+    }catch(e){ problems.push('pro trial flow failed: '+e.message); }
+    // Comeback RPC callable (no-op for a fresh user, must not 5xx).
+    try{
+      const r=await fetch(`${SUPA_URL}/rest/v1/rpc/repair_streak`,{method:'POST',headers:ah,body:'{}'});
+      if(!r.ok && r.status!==204) problems.push('repair_streak RPC failed: '+r.status); else console.log('repair_streak ok');
+    }catch(e){ problems.push('repair_streak failed: '+e.message); }
   }
 }catch(e){problems.push(`crash in ${phase}: ${e.message}`);}
 let cleaned=false;
