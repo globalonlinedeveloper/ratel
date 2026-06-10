@@ -21,7 +21,7 @@ const page=await(await browser.newContext({viewport:{width:480,height:900}})).ne
 page.on('console',m=>{if(m.type()==='error')consoleErrors.push(m.text());});
 page.on('pageerror',e=>consoleErrors.push('pageerror: '+e.message));
 const email=`citest${Date.now()}@ratel.test`, password='RatelTest123';
-let token=null, phase='load';
+let token=null, uid=null, phase='load';
 try{
   await page.goto(baseUrl+'/',{waitUntil:'load',timeout:60000});
   let ok=false,dl=Date.now()+25000;
@@ -36,6 +36,8 @@ try{
   await tap(page,'Create account');
   await page.waitForTimeout(4500);
   token=await page.evaluate(()=>{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);const r=localStorage.getItem(k);if(!r||r.indexOf('access_token')<0)continue;try{const o=JSON.parse(r);const t=o.access_token||(o.currentSession&&o.currentSession.access_token)||(o.session&&o.session.access_token);if(t)return t;}catch(e){}}return null;});
+  try{ if(token) uid=JSON.parse(Buffer.from(token.split('.')[1],'base64').toString()).sub; }catch(e){}
+  if(token && !uid) problems.push('could not derive uid from token');
   if(!token) problems.push('no session token after signup');
   // First-run onboarding intercepts new users — dismiss it.
   phase='onboarding';
@@ -67,7 +69,7 @@ try{
     let pxp=0, pdl=Date.now()+12000;
     while(Date.now()<pdl){
       try{
-        const pr=await fetch(`${SUPA_URL}/rest/v1/profiles?select=total_xp`,{headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`}});
+        const pr=await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${uid}&select=total_xp`,{headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`}});
         const pj=await pr.json().catch(()=>[]);
         pxp=Array.isArray(pj)&&pj[0]?(pj[0].total_xp||0):0;
         if(pxp>=10) break;
@@ -125,7 +127,7 @@ try{
     let me={}, mdl=Date.now()+8000;
     while(Date.now()<mdl){
       try{
-        const pr=await fetch(`${SUPA_URL}/rest/v1/profiles?select=id,current_streak,daily_goal_xp,friend_code`,{headers:ah});
+        const pr=await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${uid}&select=id,current_streak,daily_goal_xp,friend_code`,{headers:ah});
         const pj=await pr.json().catch(()=>[]); me=(Array.isArray(pj)&&pj[0])?pj[0]:{};
         if(Number(me.current_streak)>=1) break;
       }catch(e){}
@@ -153,7 +155,7 @@ try{
     // Comeback: set up a broken streak (confirm it landed), then repair_streak restores it.
     try{
       const today=new Date().toISOString().slice(0,10);
-      const pp=await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${me.id}`,{method:'PATCH',headers:{...ah,Prefer:'return=representation'},body:JSON.stringify({broken_streak:9,broken_on:today,streak_freezes:1})});
+      const pp=await fetch(`${SUPA_URL}/rest/v1/profiles?id=eq.${uid}`,{method:'PATCH',headers:{...ah,Prefer:'return=representation'},body:JSON.stringify({broken_streak:9,broken_on:today,streak_freezes:1})});
       const pj=await pp.json().catch(()=>[]);
       if(!pp.ok||!Array.isArray(pj)||Number(pj[0]?.broken_streak)!==9){
         problems.push('could not set up broken streak: '+pp.status+' '+JSON.stringify(pj).slice(0,80));
