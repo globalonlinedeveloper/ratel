@@ -3,6 +3,7 @@
          release APK fails every request with "Failed host lookup" (the debug
          manifest has it for dev tooling, the release build does NOT inherit it). -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="Ratel"
         android:name="${applicationName}"

@@ -39,6 +39,9 @@ dependencies:
   rive: ^0.13.0
   shared_preferences: ^2.2.0
   flutter_tts: ^4.2.5
+  firebase_core:
+  firebase_crashlytics:
+  firebase_messaging:
 
 dev_dependencies:
   flutter_test:

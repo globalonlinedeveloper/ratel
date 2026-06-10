@@ -1,5 +1,11 @@
+import 'dart:ui' show PlatformDispatcher;
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'push.dart';
 import 'theme.dart';
 import 'config.dart';
 import 'sfx.dart';
@@ -11,6 +17,21 @@ import 'widgets/aurora_background.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) {
+    // Crash reporting (Android/iOS; config from google-services.json).
+    try {
+      await Firebase.initializeApp();
+      FlutterError.onError =
+          FirebaseCrashlytics.instance.recordFlutterFatalError;
+      PlatformDispatcher.instance.onError = (error, stack) {
+        FirebaseCrashlytics.instance
+            .recordError(error, stack, fatal: true);
+        return true;
+      };
+    } catch (_) {
+      // Never block startup on telemetry.
+    }
+  }
   if (Config.hasSupabase) {
     await Supabase.initialize(
       url: Config.supabaseUrl,
@@ -23,6 +44,7 @@ Future<void> main() async {
   await loadBattleMode();
   await ExplainStore.instance.load();
   await ContentStore.instance.load();
+  Push.instance.refreshIfGranted(); // fire-and-forget token upkeep
   runApp(const RatelApp());
 }
 

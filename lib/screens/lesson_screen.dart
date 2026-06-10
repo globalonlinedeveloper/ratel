@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import '../content.dart';
+import '../push.dart';
 import '../widgets/battle_stage.dart';
 import '../widgets/milestone_card.dart';
 import '../milestones.dart';
@@ -189,6 +190,7 @@ class _LessonScreenState extends State<LessonScreen>
             achievements.where((a) => isEarned(a, appState)).length;
         appState.completeLesson(widget.lesson.id, total);
         _battle.fire(BattleEvent.victory);
+        Push.instance.requestOnce();
         _newBadge =
             achievements.where((a) => isEarned(a, appState)).length >
                 badgesBefore;
