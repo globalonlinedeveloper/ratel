@@ -64,10 +64,16 @@ class RatelPuppet extends StatefulWidget {
     super.key,
     this.state = PuppetState.idle,
     this.size = 120,
+    this.debugAssetsOk,
   });
 
   final PuppetState state;
   final double size;
+
+  /// Tests force the rendering path: asset I/O started inside a
+  /// widget-test's fake-async zone hangs forever (even with runAsync),
+  /// while bundling itself is covered by a plain test().
+  final bool? debugAssetsOk;
 
   @override
   State<RatelPuppet> createState() => _RatelPuppetState();
@@ -99,10 +105,12 @@ class _RatelPuppetState extends State<RatelPuppet>
   @override
   void initState() {
     super.initState();
-    _assetsOk ??= rootBundle
-        .load('assets/puppet/torso.webp')
-        .then((_) => true)
-        .catchError((_) => false);
+    _assetsOk ??= widget.debugAssetsOk != null
+        ? Future<bool>.value(widget.debugAssetsOk)
+        : rootBundle
+            .load('assets/puppet/torso.webp')
+            .then((_) => true)
+            .catchError((_) => false);
     _syncState();
   }
 
