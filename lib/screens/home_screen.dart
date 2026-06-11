@@ -7,6 +7,7 @@ import '../widgets/share_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import '../widgets/motd_card.dart';
+import '../widgets/campaign_cards.dart';
 import '../widgets/hearts_sheet.dart';
 import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
@@ -688,6 +689,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         _header(),
         const MotdCard(),
+        CampaignCards(onCoach: () => setState(() => _tab = 2)),
         const StreakRepairCard(),
         const DailyNudge(),
         const ReviewCard(),
