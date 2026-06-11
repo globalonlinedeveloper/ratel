@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../widgets/friends_feed.dart';
 import '../theme.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/ratel_mascot.dart';
@@ -58,6 +59,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          const FriendsFeed(),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(

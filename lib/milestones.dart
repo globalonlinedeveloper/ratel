@@ -166,3 +166,11 @@ int localHourFromUtc(int utcHour, Duration tzOffset) {
   final h = (utcHour + tzOffset.inHours) % 24;
   return h < 0 ? h + 24 : h;
 }
+
+/// Compact 'time ago' for feed rows.
+String timeAgo(Duration d) {
+  if (d.inMinutes < 1) return 'just now';
+  if (d.inHours < 1) return '${d.inMinutes}m ago';
+  if (d.inDays < 1) return '${d.inHours}h ago';
+  return '${d.inDays}d ago';
+}
