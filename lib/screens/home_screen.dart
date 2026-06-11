@@ -817,6 +817,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
     setState(() => _chests = {..._chests, '$u'});
     appState.addBonusXp(20);
+    appState.addGems(5);
     try {
       final p = await SharedPreferences.getInstance();
       await p.setStringList('chests', _chests.toList());
@@ -825,7 +826,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('You found 20 XP!'),
+        title: const Text('You found 20 XP and 5 gems!'),
         content: const Text('The honey badger approves. Keep going!'),
         actions: [
           FilledButton(
@@ -841,6 +842,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       showDragHandle: true,
       builder: (ctx) => SafeArea(
+        child: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -855,6 +857,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: RatelColors.textMuted, fontSize: 13)),
             ),
           ],
+        ),
         ),
       ),
     );
@@ -930,6 +933,8 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: _streakPopover,
             child: _streakStat(appState.streak),
           ),
+          const SizedBox(width: 12),
+          _numStat(Icons.diamond, appState.gems, RatelColors.teal),
           const SizedBox(width: 12),
           _numStat(Icons.bolt, appState.xp, RatelColors.honey),
           const SizedBox(width: 12),

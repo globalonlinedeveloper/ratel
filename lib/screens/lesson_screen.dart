@@ -79,6 +79,7 @@ class _LessonScreenState extends State<LessonScreen>
   String? _explanation; // explanation for a wrong answer (local bundle, then on-demand)
   bool _explaining = false;
   int _bonusXp = 0; // occasional surprise bonus on completion
+  int _gemsEarned = 0; // combo milestones + flawless bonus
 
   late final AnimationController _fb; // answer feedback: pop on right, shake on wrong
 
@@ -157,6 +158,9 @@ class _LessonScreenState extends State<LessonScreen>
       if (correct) {
         if (!_fixPhase) _correctCount++;
         _combo++;
+        if (!_fixPhase && !widget.reviewMode) {
+          _gemsEarned += comboGemBonus(_combo); // first pass only
+        }
       } else {
         _combo = 0;
         if (_fixPhase) {
@@ -244,6 +248,11 @@ class _LessonScreenState extends State<LessonScreen>
         appState.earnHeart(); // practicing your mistakes restores one
       }
       _elapsed = DateTime.now().difference(_startedAt);
+      if (!widget.reviewMode &&
+          _correctCount >= widget.lesson.exercises.length) {
+        _gemsEarned += 5; // flawless first pass
+      }
+      if (_gemsEarned > 0) appState.addGems(_gemsEarned);
       Sfx.instance.complete();
       setState(() => _finished = true);
     }
@@ -1165,6 +1174,9 @@ class _LessonScreenState extends State<LessonScreen>
                           children: [
                             _statChip(Icons.bolt, '+$earned XP', 'TOTAL',
                                 RatelColors.honey),
+                            if (_gemsEarned > 0)
+                              _statChip(Icons.diamond, '+$_gemsEarned',
+                                  'GEMS', RatelColors.teal),
                             _statChip(
                                 Icons.track_changes,
                                 '${(_correctCount * 100 ~/ widget.lesson.exercises.length)}%',

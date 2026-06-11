@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// configured or no user is signed in.
 class AppState extends ChangeNotifier {
   int xp = 0;
+  int gems = 0;
   int hearts = 5;
   DateTime heartsUpdatedAt = DateTime.now();
   int streak = 0;
@@ -61,7 +62,7 @@ class AppState extends ChangeNotifier {
     try {
       final row = await client
           .from('profiles')
-          .select('total_xp, current_streak, hearts, hearts_updated_at, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes, is_admin, onboarded, friend_code, broken_streak, broken_on')
+          .select('total_xp, current_streak, hearts, hearts_updated_at, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes, is_admin, onboarded, friend_code, broken_streak, broken_on, gems')
           .eq('id', client.auth.currentUser!.id)
           .maybeSingle();
       if (row != null) {
@@ -76,6 +77,7 @@ class AppState extends ChangeNotifier {
         dailyGoalXp = (row['daily_goal_xp'] as int?) ?? dailyGoalXp;
         longestStreak = (row['longest_streak'] as int?) ?? longestStreak;
         streakFreezes = (row['streak_freezes'] as int?) ?? streakFreezes;
+        gems = (row['gems'] as int?) ?? gems;
         isAdmin = (row['is_admin'] as bool?) ?? false;
         onboarded = (row['onboarded'] as bool?) ?? true;
         friendCode = (row['friend_code'] as String?) ?? friendCode;
@@ -378,6 +380,7 @@ class AppState extends ChangeNotifier {
   /// Clear all state on sign-out so the next user re-syncs from the database.
   void reset() {
     xp = 0;
+    gems = 0;
     hearts = 5;
     streak = 0;
     longestStreak = 0;
@@ -423,6 +426,22 @@ class AppState extends ChangeNotifier {
     _logXpEvent(amount, reason);
   }
 
+  void addGems(int n) {
+    if (n <= 0) return;
+    gems += n;
+    notifyListeners();
+    _persist();
+  }
+
+  /// False (and no change) when the balance can't cover [cost].
+  bool spendGems(int cost) {
+    if (cost <= 0 || gems < cost) return false;
+    gems -= cost;
+    notifyListeners();
+    _persist();
+    return true;
+  }
+
   /// Log a single exercise attempt (fire-and-forget) for mistake analysis.
   /// Only runs when signed in; user_id is filled by the DB default (auth.uid()).
   Future<void> logAttempt({
@@ -456,6 +475,7 @@ class AppState extends ChangeNotifier {
     try {
       await client.from('profiles').update({
         'total_xp': xp,
+        'gems': gems,
         'current_streak': streak,
         'hearts': hearts,
         'hearts_updated_at': heartsUpdatedAt.toIso8601String(),

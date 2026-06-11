@@ -84,3 +84,6 @@ String fmtCountdown(Duration d) {
   final int sec = d.inSeconds % 60;
   return '$m:${sec.toString().padLeft(2, '0')}';
 }
+
+/// +1 gem on every 5th correct-in-a-row (5, 10, 15...).
+int comboGemBonus(int combo) => combo > 0 && combo % 5 == 0 ? 1 : 0;

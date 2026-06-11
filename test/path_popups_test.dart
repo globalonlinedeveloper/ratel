@@ -55,14 +55,15 @@ void main() {
     await tester.ensureVisible(find.byKey(const Key('chest_0')));
     await tester.tap(find.byKey(const Key('chest_0')));
     await tester.pump(const Duration(milliseconds: 350));
-    expect(find.text('You found 20 XP!'), findsOneWidget);
+    expect(find.text('You found 20 XP and 5 gems!'), findsOneWidget);
     await tester.tap(find.text('Claim'));
     await tester.pump(const Duration(milliseconds: 350));
     expect(appState.xp, before + 20);
     await tester.tap(find.byKey(const Key('chest_0')));
     await tester.pump(const Duration(milliseconds: 350));
-    expect(find.text('You found 20 XP!'), findsNothing); // pays once
-    expect(appState.xp, before + 20);
+    expect(find.text('You found 20 XP and 5 gems!'), findsNothing);
+    expect(appState.xp, before + 20); // pays once
+    expect(appState.gems, 5);
   });
 
   testWidgets('locked chest nudges instead of paying', (tester) async {
