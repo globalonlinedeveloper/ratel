@@ -31,6 +31,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text("You're out of hearts"), findsOneWidget);
     expect(find.textContaining('Next heart in'), findsOneWidget);
+    await tester.ensureVisible(
+        find.text('Practice mistakes — earn a heart'));
+    await tester.pump(const Duration(milliseconds: 200));
     await tester.tap(find.text('Practice mistakes — earn a heart'));
     await tester.pump(const Duration(milliseconds: 400));
     expect(practiced, isTrue);
