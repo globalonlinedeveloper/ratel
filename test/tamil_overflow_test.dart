@@ -120,7 +120,7 @@ void main() {
       final s = d.toString();
       if (s.contains('overflowed')) {
         overflows.add(
-            'step=\$step\n\${s.split('\n').take(16).join('\n')}');
+            'step=$step\n${s.split('\n').take(16).join('\n')}');
       } else {
         old?.call(d);
       }
