@@ -79,9 +79,9 @@ class _HomeScreenState extends State<HomeScreen> {
         if (await appState.grantWeeklyFreeze()) {
           await p.setString('freeze_grant_week', wk);
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                content: Text(
-                    'A free streak freeze arrived — stay fearless!')));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(S.instance.t('freeze_drip',
+                    'A free streak freeze arrived — stay fearless!'))));
           }
         } else {
           await p.setString('freeze_grant_week', wk);
@@ -1004,8 +1004,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 appState.isPro
                     ? 'Unlimited hearts with Ratel Pro'
                     : (appState.hearts >= 5 || next == null)
-                        ? 'Hearts full — go get them!'
-                        : 'Next heart in ${fmtCountdown(next)}',
+                        ? S.instance.t('hearts_full',
+                            'Hearts full — go get them!')
+                        : S.instance
+                            .t('hearts_next', 'Next heart in {t}')
+                            .replaceAll('{t}', fmtCountdown(next)),
                 style: const TextStyle(color: RatelColors.textMuted)),
             if (!appState.isPro && appState.hearts < 5) ...[
               const SizedBox(height: 12),
@@ -1019,9 +1022,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     appState.spendGems(cost);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text(
-                                'Not enough gems yet — keep learning!')));
+                        SnackBar(
+                            content: Text(S.instance.t(
+                                'gems_short',
+                                'Not enough gems yet — keep learning!'))));
                   }
                 },
                 icon: const Icon(Icons.diamond,

@@ -5,6 +5,7 @@ import '../app_state.dart';
 import '../config.dart';
 import '../content.dart';
 import '../milestones.dart';
+import '../strings.dart';
 import '../models.dart';
 import '../screens/lesson_screen.dart';
 import '../theme.dart';
@@ -103,8 +104,11 @@ class SmartPracticeCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Smart practice',
-                        style: TextStyle(fontWeight: FontWeight.w800)),
+                    Text(
+                        S.instance.t('smart_practice_title',
+                            'Smart practice'),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w800)),
                     Text(
                         '${keys.length} items picked for you — reviews, '
                         'misses and weak spots',

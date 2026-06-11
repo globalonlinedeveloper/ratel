@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../app_state.dart';
 import '../milestones.dart';
+import '../strings.dart';
 import '../theme.dart';
 
 /// One free chest per day on the Learn screen. Claimed state morphs in
@@ -103,7 +104,9 @@ class _DailyChestCardState extends State<DailyChestCard> {
                   Icon(Icons.redeem, color: RatelColors.honey),
                   SizedBox(width: 10),
                   Expanded(
-                    child: Text('Daily chest — tap to open!',
+                    child: Text(
+                        S.instance.t('daily_chest_cta',
+                            'Daily chest — tap to open!'),
                         style: TextStyle(fontWeight: FontWeight.w700)),
                   ),
                   Icon(Icons.chevron_right, color: RatelColors.textMuted),

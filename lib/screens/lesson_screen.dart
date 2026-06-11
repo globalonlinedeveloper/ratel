@@ -1342,9 +1342,11 @@ class _LessonScreenState extends State<LessonScreen>
                       );
                       Navigator.of(ctx).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Thanks! The honey badger '
-                                  'is on it.')));
+                          SnackBar(
+                              content: Text(S.instance.t(
+                                  'report_thanks',
+                                  'Thanks! The honey badger '
+                                  'is on it.'))));
                     },
                     child: Text(r),
                   ),

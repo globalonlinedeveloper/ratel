@@ -1,5 +1,6 @@
 import '../flags.dart';
 import '../guest.dart';
+import '../strings.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
@@ -170,7 +171,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     TextButton.icon(
                       onPressed: _loading ? null : _tryAsGuest,
                       icon: const Icon(Icons.bolt, size: 18),
-                      label: const Text('Just let me try it'),
+                      label: Text(S.instance.t('guest_cta', 'Just let me try it')),
                     ),
                   ],
                 ],

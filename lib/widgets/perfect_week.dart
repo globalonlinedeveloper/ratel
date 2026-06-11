@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../app_state.dart';
 import '../config.dart';
 import '../milestones.dart';
+import '../strings.dart';
 import '../theme.dart';
 
 /// Seven straight days at or above the daily goal -> +20 gems, once per
@@ -100,7 +101,8 @@ class _PerfectWeekCardState extends State<PerfectWeekCard> {
             child: Text(
                 _claimedNow
                     ? 'Perfect Week claimed — +20 gems!'
-                    : 'PERFECT WEEK! 7 days on goal.',
+                    : S.instance.t('perfect_week_title',
+                        'PERFECT WEEK! 7 days on goal.'),
                 style: const TextStyle(fontWeight: FontWeight.w800)),
           ),
           if (!_claimedNow)

@@ -6,6 +6,7 @@ import '../app_state.dart';
 import '../config.dart';
 import '../flags.dart';
 import '../milestones.dart';
+import '../strings.dart';
 import '../theme.dart';
 
 /// One month-long arc: 'Earn N XP in June'. Pays +30 gems once per
@@ -102,8 +103,12 @@ class _MonthlyQuestCardState extends State<MonthlyQuestCard> {
                 child: Text(
                     _justPaid
                         ? 'Monthly quest complete — +30 gems!'
-                        : '${monthName(DateTime.now())} quest: '
-                            'earn $_goal XP',
+                        : S.instance
+                            .t('monthly_quest_title',
+                                '{month} quest: earn {goal} XP')
+                            .replaceAll('{month}',
+                                monthName(DateTime.now()))
+                            .replaceAll('{goal}', '$_goal'),
                     style:
                         const TextStyle(fontWeight: FontWeight.w800)),
               ),
