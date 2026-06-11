@@ -45,6 +45,7 @@ Future<void> main() async {
   await loadReduceMotion();
   await Flags.instance.load(); // remote config before dependent loads
   await S.instance.load(); // server copy (in-code defaults if offline)
+  await S.instance.restoreLocale();
   await loadBattleMode();
   await ExplainStore.instance.load();
   await ContentStore.instance.load();

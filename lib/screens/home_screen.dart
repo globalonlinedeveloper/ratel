@@ -16,6 +16,7 @@ import '../widgets/ratel_mascot.dart';
 import '../widgets/mascot_anim.dart';
 import '../theme.dart';
 import '../flags.dart';
+import '../strings.dart';
 import '../milestones.dart';
 import '../guidebook.dart';
 import 'section_test_screen.dart';
@@ -407,6 +408,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     Sfx.instance.setMusicOn(v);
                     setState(() {});
                   },
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.translate,
+                      color: RatelColors.teal),
+                  title: const Text('App language'),
+                  subtitle: const Text('Server copy follows your choice'),
+                  trailing: SegmentedButton<String>(
+                    showSelectedIcon: false,
+                    style: const ButtonStyle(
+                        visualDensity: VisualDensity.compact),
+                    segments: const [
+                      ButtonSegment(value: 'en', label: Text('EN')),
+                      ButtonSegment(value: 'ta', label: Text('தமிழ்')),
+                    ],
+                    selected: {S.instance.locale},
+                    onSelectionChanged: (sel) async {
+                      await S.instance.setLocale(sel.first);
+                      if (mounted) setState(() {});
+                    },
+                  ),
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,

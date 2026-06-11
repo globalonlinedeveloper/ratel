@@ -1,3 +1,4 @@
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'config.dart';
@@ -41,6 +42,23 @@ class S {
     if (v.isNotEmpty) return v;
     final en = row['en'] ?? '';
     return en.isNotEmpty ? en : def; // locale column empty -> en -> default
+  }
+
+  /// Persisted choice; restored by [restoreLocale] at startup.
+  Future<void> setLocale(String l) async {
+    locale = l == 'ta' ? 'ta' : 'en';
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setString('app_locale', locale);
+    } catch (_) {}
+  }
+
+  Future<void> restoreLocale() async {
+    try {
+      final p = await SharedPreferences.getInstance();
+      final l = p.getString('app_locale');
+      if (l == 'ta') locale = 'ta';
+    } catch (_) {}
   }
 
   /// Test injection.
