@@ -95,3 +95,38 @@ int comboGemBonus(int combo) => combo > 0 && combo % 5 == 0 ? 1 : 0;
     : now.hour >= 22
         ? (3, 'Night owl bonus!')
         : (2, '');
+
+/// A CEFR-anchored course section: units [firstUnit..lastUnit] inclusive.
+class CourseSection {
+  const CourseSection(
+      {required this.title,
+      required this.cefr,
+      required this.firstUnit,
+      required this.lastUnit});
+
+  final String title;
+  final String cefr;
+  final int firstUnit;
+  final int lastUnit;
+}
+
+/// The course's shape (10 units today; lastUnit clamps for shorter
+/// fallback courses, so the helpers never go out of range).
+const List<CourseSection> kSections = [
+  CourseSection(title: 'First steps', cefr: 'A1', firstUnit: 0, lastUnit: 2),
+  CourseSection(title: 'Daily life', cefr: 'A2', firstUnit: 3, lastUnit: 5),
+  CourseSection(
+      title: 'Confident talk', cefr: 'B1', firstUnit: 6, lastUnit: 9),
+];
+
+/// The section containing unit [u] (the last section absorbs overflow).
+CourseSection sectionForUnit(int u) {
+  for (final s in kSections) {
+    if (u >= s.firstUnit && u <= s.lastUnit) return s;
+  }
+  return kSections.last;
+}
+
+/// True when [u] is the first unit of its section (banner insertion).
+bool startsSection(int u) =>
+    kSections.any((s) => s.firstUnit == u);

@@ -683,6 +683,7 @@ class _HomeScreenState extends State<HomeScreen> {
     for (int u = 0; u < course.length; u++) {
       final unit = course[u];
       if (u > 0) path.add(_checkpoint(u));
+      if (startsSection(u)) path.add(_sectionBanner(u));
       path.add(_unitBanner(u, unit));
       path.add(const SizedBox(height: 14));
       for (int i = 0; i < unit.lessons.length; i++) {
@@ -1062,6 +1063,63 @@ class _HomeScreenState extends State<HomeScreen> {
     Icons.flight, // 9 travel & places
     Icons.favorite, // 10 health & feelings
   ];
+
+  Widget _sectionBanner(int u) {
+    final s = sectionForUnit(u);
+    final int last =
+        s.lastUnit < course.length ? s.lastUnit : course.length - 1;
+    int unitsDone = 0;
+    for (int i = s.firstUnit; i <= last; i++) {
+      if (course[i].lessons.every((l) => appState.isCompleted(l.id))) {
+        unitsDone++;
+      }
+    }
+    final int total = last - s.firstUnit + 1;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 18, 16, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: context.surfaceC,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: context.borderC),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+            decoration: BoxDecoration(
+                color: unitAccent(s.firstUnit),
+                borderRadius: BorderRadius.circular(10)),
+            child: Text(s.cefr,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Section ${kSections.indexOf(s) + 1}',
+                    style: const TextStyle(
+                        color: RatelColors.textMuted, fontSize: 11)),
+                Text(s.title,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800, fontSize: 16)),
+              ],
+            ),
+          ),
+          Text('$unitsDone/$total units',
+              style: const TextStyle(
+                  color: RatelColors.textMuted,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700)),
+        ],
+      ),
+    );
+  }
 
   Widget _unitBanner(int index, Unit unit) {
     final int done =
