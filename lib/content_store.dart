@@ -60,6 +60,12 @@ class ContentStore {
             sentence: e['sentence'] as String?,
             accepted: _strs(e['correct_order']));
       }
+      if (type == 'dialogue') {
+        return Exercise.dialogueOrder(
+            prompt: prompt,
+            lines: opts,
+            correctOrder: _strs(e['correct_order']));
+      }
       if (type == 'match') {
         return Exercise.matchPairs(
             prompt: prompt,

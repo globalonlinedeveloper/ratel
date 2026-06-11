@@ -1,5 +1,12 @@
 /// Exercise types supported by the lesson player.
-enum ExerciseType { choice, wordBank, typed, listen, matchPairs }
+enum ExerciseType {
+  choice,
+  wordBank,
+  typed,
+  listen,
+  matchPairs,
+  dialogueOrder,
+}
 
 /// A single exercise within a lesson.
 class Exercise {
@@ -52,6 +59,17 @@ class Exercise {
         options = left,
         correctIndex = -1,
         correctOrder = right;
+
+  /// Order the conversation: [lines] are the tiles (shuffled at
+  /// display) and [correctOrder] is the conversation in sequence.
+  const Exercise.dialogueOrder({
+    required this.prompt,
+    required List<String> lines,
+    required this.correctOrder,
+  })  : type = ExerciseType.dialogueOrder,
+        sentence = null,
+        options = lines,
+        correctIndex = -1;
 
   const Exercise.listen({
     required this.prompt,

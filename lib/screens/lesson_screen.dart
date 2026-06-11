@@ -264,7 +264,7 @@ class _LessonScreenState extends State<LessonScreen>
       selected: _selected,
       pickedCount: _ex.type == ExerciseType.matchPairs
           ? _mDone.length
-          : _picked.length,
+          : _picked.length, // dialogue uses _picked too
       typed: _typedCtl.text);
 
   /// Keyboard (web/desktop): 1-4 pick a choice, Enter checks / continues.
@@ -565,6 +565,7 @@ class _LessonScreenState extends State<LessonScreen>
                       ExerciseType.wordBank => _wordBankBody(),
                       ExerciseType.typed => _typedBody(),
                       ExerciseType.matchPairs => _matchBody(),
+                      ExerciseType.dialogueOrder => _dialogueBody(),
                     },
                   ),
                 ),
@@ -1011,6 +1012,74 @@ class _LessonScreenState extends State<LessonScreen>
           border: Border.all(color: context.faintBorderC),
         ),
         child: Text(text, style: const TextStyle(fontSize: 16)),
+      ),
+    );
+  }
+
+  // ---- dialogue order ----
+  Widget _dialogueBody() {
+    final available = [
+      for (final i in _ensureOrder(_ex.options.length))
+        if (!_picked.contains(i)) i
+    ];
+    final Color answerBorder = _answered
+        ? (_isCorrect ? RatelColors.teal : RatelColors.coral)
+        : context.borderC;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          constraints: const BoxConstraints(minHeight: 84),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: context.surfaceC,
+            borderRadius: BorderRadius.circular(12),
+            border:
+                Border.all(color: answerBorder, width: _answered ? 2 : 1),
+          ),
+          child: Column(
+            children: [
+              for (int p = 0; p < _picked.length; p++)
+                _lineTile(
+                    '${p.isEven ? 'A' : 'B'}:  ${_ex.options[_picked[p]]}',
+                    bold: p.isEven,
+                    onTap: _answered
+                        ? null
+                        : () =>
+                            setState(() => _picked.remove(_picked[p]))),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
+        for (final idx in available)
+          _lineTile(_ex.options[idx],
+              onTap: _answered
+                  ? null
+                  : () => setState(() => _picked.add(idx))),
+      ],
+    );
+  }
+
+  Widget _lineTile(String text, {VoidCallback? onTap, bool bold = false}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          width: double.infinity,
+          padding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: context.surfaceC,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: context.faintBorderC),
+          ),
+          child: Text(text,
+              style: TextStyle(
+                  fontSize: 14.5,
+                  fontWeight: bold ? FontWeight.w600 : FontWeight.w400)),
+        ),
       ),
     );
   }

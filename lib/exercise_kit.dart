@@ -16,6 +16,8 @@ bool canCheckAnswer(Exercise e,
     ExerciseType.typed || ExerciseType.listen => typed.trim().isNotEmpty,
     // match-pairs: checkable once every pair is locked in
     ExerciseType.matchPairs => pickedCount >= e.options.length,
+    // dialogue: every line must be placed before checking
+    ExerciseType.dialogueOrder => pickedCount >= e.options.length,
   };
 }
 
@@ -24,7 +26,9 @@ bool gradeAnswer(Exercise e,
     {int? selected, List<String> pickedWords = const [], String typed = ''}) {
   return switch (e.type) {
     ExerciseType.choice => selected == e.correctIndex,
-    ExerciseType.wordBank => listEquals(pickedWords, e.correctOrder),
+    ExerciseType.wordBank ||
+    ExerciseType.dialogueOrder =>
+      listEquals(pickedWords, e.correctOrder),
     ExerciseType.typed ||
     ExerciseType.listen =>
       typedAnswerMatches(typed, e.correctOrder),
@@ -48,6 +52,7 @@ String correctTextFor(Exercise e) {
           i++)
         '${e.options[i]} — ${e.correctOrder[i]}'
     ].join(', '),
+    ExerciseType.dialogueOrder => e.correctOrder.join('  ·  '),
   };
 }
 
@@ -63,6 +68,7 @@ String userTextFor(Exercise e,
         return t.isEmpty ? '(no answer)' : t;
       }(),
     ExerciseType.matchPairs => 'all pairs matched',
+    ExerciseType.dialogueOrder => pickedWords.join('  ·  '),
   };
 }
 
@@ -73,5 +79,6 @@ String explainSuffixFor(Exercise e, {int? selected}) {
     ExerciseType.wordBank => 'wb',
     ExerciseType.typed || ExerciseType.listen => 'ty',
     ExerciseType.matchPairs => 'mp',
+    ExerciseType.dialogueOrder => 'do',
   };
 }
