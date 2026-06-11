@@ -1,3 +1,4 @@
+import '../flags.dart';
 import 'package:flutter/material.dart';
 import 'ratel_mascot.dart';
 import 'mascot_anim.dart';
@@ -25,11 +26,16 @@ class DailyNudge extends StatelessWidget {
       atRisk = true;
       icon = Icons.local_fire_department;
       color = RatelColors.coral;
-      text = 'Keep your $streak-day streak alive — finish a lesson today.';
+      text = Flags.instance
+          .str('str_nudge_risk',
+              'Keep your {n}-day streak alive — finish a lesson today.')
+          .replaceAll('{n}', '$streak');
     } else if (today < goal) {
       icon = Icons.bolt;
       color = RatelColors.honey;
-      text = '${goal - today} XP to reach today\'s goal.';
+      text = Flags.instance
+          .str('str_nudge_goal', "{n} XP to reach today's goal.")
+          .replaceAll('{n}', '${goal - today}');
     } else {
       return const SizedBox.shrink(); // goal met — nothing to nudge
     }

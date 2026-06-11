@@ -1,0 +1,83 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../app_state.dart';
+import '../theme.dart';
+import '../widgets/streak_flame.dart';
+
+/// A shareable streak card: a screenshot-worthy visual + one-tap copy of the
+/// invite text (image export ships with the store build).
+Future<void> showShareCard(BuildContext context) {
+  return showDialog(
+    context: context,
+    builder: (ctx) => Dialog(
+      backgroundColor: Colors.transparent,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF2C2A2A), Color(0xFF4A3B22)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset('assets/images/ratel-herojump.webp',
+                    width: 110,
+                    height: 110,
+                    errorBuilder: (_, _, _) =>
+                        const SizedBox(width: 110, height: 110)),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    StreakFlame(streak: appState.streak, size: 30),
+                    const SizedBox(width: 8),
+                    Text('${appState.streak}-day streak',
+                        style: const TextStyle(
+                            color: RatelColors.cream,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800)),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text('${appState.xp} XP · learning English fearlessly',
+                    style: TextStyle(
+                        color: RatelColors.cream.withValues(alpha: 0.8),
+                        fontSize: 13)),
+                const SizedBox(height: 6),
+                Text('ratel · friend code ${appState.friendCode}',
+                    style: TextStyle(
+                        color: RatelColors.cream.withValues(alpha: 0.6),
+                        fontSize: 11,
+                        letterSpacing: 1.1)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          FilledButton.icon(
+            onPressed: () {
+              Clipboard.setData(ClipboardData(
+                  text:
+                      "I'm on a ${appState.streak}-day English streak with "
+                      'Ratel the honey badger! Join me — add my friend code '
+                      '${appState.friendCode} at '
+                      'https://globalonlinedeveloper.github.io/ratel/'));
+              Navigator.of(ctx).pop();
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text('Invite copied — paste it anywhere!')));
+            },
+            icon: const Icon(Icons.copy, size: 18),
+            label: const Text('Copy invite text'),
+          ),
+        ],
+      ),
+    ),
+  );
+}

@@ -47,18 +47,40 @@ class AchievementsView extends StatelessWidget {
         width: 64,
         child: Column(
           children: [
-            Container(
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                color: on
-                    ? RatelColors.honey.withValues(alpha: 0.14)
-                    : (context.isDark ? const Color(0xFF2A2724) : const Color(0xFFF0F0F0)),
-                shape: BoxShape.circle,
-                border: Border.all(color: color, width: 2),
+            SizedBox(
+              width: 52,
+              height: 52,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  if (!on)
+                    Positioned.fill(
+                      child: CircularProgressIndicator(
+                        value: (valueFor(a.metric, appState) / a.threshold)
+                            .clamp(0.0, 1.0),
+                        strokeWidth: 3,
+                        backgroundColor: color.withValues(alpha: 0.25),
+                        color: RatelColors.honey,
+                      ),
+                    ),
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: BoxDecoration(
+                      color: on
+                          ? RatelColors.honey.withValues(alpha: 0.14)
+                          : (context.isDark
+                              ? const Color(0xFF2A2724)
+                              : const Color(0xFFF0F0F0)),
+                      shape: BoxShape.circle,
+                      border: on
+                          ? Border.all(color: color, width: 2)
+                          : null,
+                    ),
+                    child: Icon(a.icon, color: color, size: 22),
+                  ),
+                ],
               ),
-              child: Icon(on ? a.icon : Icons.lock_outline,
-                  color: color, size: 24),
             ),
             const SizedBox(height: 4),
             Text(a.title,
