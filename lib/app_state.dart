@@ -328,6 +328,9 @@ class AppState extends ChangeNotifier {
     } catch (_) {}
   }
 
+  /// Public change ping (used after auth-side updates).
+  void notify() => notifyListeners();
+
   void loseHeart() {
     if (isPro) return; // Pro: unlimited hearts
     if (hearts > 0) {

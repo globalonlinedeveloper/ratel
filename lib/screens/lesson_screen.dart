@@ -1,3 +1,5 @@
+import '../guest.dart';
+import '../widgets/save_account_sheet.dart';
 import 'dart:math';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
@@ -819,6 +821,17 @@ class _LessonScreenState extends State<LessonScreen>
                           style: const TextStyle(
                               fontSize: 24, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
                       const StreakMilestoneCard(),
+                      if (isGuest && !widget.reviewMode)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: OutlinedButton.icon(
+                            onPressed: () =>
+                                showSaveAccountSheet(context),
+                            icon: const Icon(Icons.cloud_done, size: 18),
+                            label: const Text(
+                                'Save your progress — free account'),
+                          ),
+                        ),
                       if (_unitDone)
                         Padding(
                           padding: const EdgeInsets.only(top: 10),

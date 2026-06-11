@@ -1,3 +1,5 @@
+import '../flags.dart';
+import '../guest.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
@@ -52,6 +54,26 @@ class _AuthScreenState extends State<AuthScreen> {
       if (mounted) setState(() => _message = e.message);
     } catch (_) {
       if (mounted) setState(() => _message = 'Something went wrong. Please try again.');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _tryAsGuest() async {
+    setState(() {
+      _loading = true;
+      _message = null;
+    });
+    try {
+      await startGuestSession();
+      Analytics.log('guest_start');
+    } on AuthException catch (e) {
+      if (mounted) setState(() => _message = e.message);
+    } catch (_) {
+      if (mounted) {
+        setState(() => _message =
+            'Something went wrong. Please try again.');
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -143,6 +165,14 @@ class _AuthScreenState extends State<AuthScreen> {
                         ? 'Have an account? Log in'
                         : 'New here? Create an account'),
                   ),
+                  if (Flags.instance.flag('guest_mode', false)) ...[
+                    const SizedBox(height: 2),
+                    TextButton.icon(
+                      onPressed: _loading ? null : _tryAsGuest,
+                      icon: const Icon(Icons.bolt, size: 18),
+                      label: const Text('Just let me try it'),
+                    ),
+                  ],
                 ],
               ),
             ),

@@ -1,3 +1,5 @@
+import '../guest.dart';
+import '../widgets/save_account_sheet.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import '../widgets/motd_card.dart';
@@ -223,6 +225,16 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 12),
           Text(appState.displayName.isEmpty ? 'Learner' : appState.displayName,
               style: const TextStyle(fontSize: 20, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
+          if (isGuest)
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: FilledButton.tonalIcon(
+                onPressed: () => showSaveAccountSheet(context),
+                icon: const Icon(Icons.cloud_upload, size: 18),
+                label: const Text('Guest — save your progress'),
+              ),
+            )
+          else
           Text(appState.email.isEmpty ? 'Learning English' : appState.email,
               style: const TextStyle(color: RatelColors.textMuted)),
           const SizedBox(height: 20),
