@@ -82,3 +82,26 @@ List<PlacementProbe> sectionProbes(int firstUnit, {int cap = 8}) {
 /// Pass rule for a section test-out: at least 85% correct.
 bool sectionTestPassed(int correct, int total) =>
     total > 0 && correct * 100 >= total * 85;
+
+/// The timed-challenge pool: every choice exercise in the course,
+/// round-robin across units so early/late material mixes.
+List<Exercise> timedPool() {
+  final pool = <Exercise>[];
+  int li = 0;
+  bool any = true;
+  while (any) {
+    any = false;
+    for (final unit in course) {
+      if (li >= unit.lessons.length) continue;
+      any = true;
+      for (final ex in unit.lessons[li].exercises) {
+        if (ex.type == ExerciseType.choice) {
+          pool.add(ex);
+          break;
+        }
+      }
+    }
+    li++;
+  }
+  return pool;
+}

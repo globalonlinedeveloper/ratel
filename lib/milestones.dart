@@ -244,3 +244,7 @@ String? friendCodeFromUri(Uri uri) {
   final c = (uri.queryParameters['friend'] ?? '').trim().toUpperCase();
   return c.isEmpty ? null : c;
 }
+
+/// Timed challenge pays +1 gem per 5 correct (kind, not farmable:
+/// the clock is the cap).
+int timedGems(int correct) => correct < 0 ? 0 : correct ~/ 5;

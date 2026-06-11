@@ -23,6 +23,7 @@ import '../strings.dart';
 import '../milestones.dart';
 import '../guidebook.dart';
 import 'section_test_screen.dart';
+import 'timed_challenge_screen.dart';
 import '../models.dart';
 import '../content.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -168,6 +169,45 @@ class _HomeScreenState extends State<HomeScreen> {
             style: TextStyle(fontSize: 20, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
         const SizedBox(height: 12),
         const SmartPracticeCard(),
+        Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          padding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          decoration: BoxDecoration(
+            color: context.tintC(RatelColors.coral),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(color: context.faintBorderC),
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.timer_outlined,
+                  color: RatelColors.coral),
+              const SizedBox(width: 10),
+              const Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Timed challenge',
+                        style:
+                            TextStyle(fontWeight: FontWeight.w800)),
+                    Text('Beat the clock — no hearts at risk',
+                        style: TextStyle(
+                            color: RatelColors.textMuted,
+                            fontSize: 12)),
+                  ],
+                ),
+              ),
+              FilledButton(
+                style: FilledButton.styleFrom(
+                    backgroundColor: RatelColors.coral,
+                    visualDensity: VisualDensity.compact),
+                onPressed: () => Navigator.of(context).push(
+                    ratelRoute(const TimedChallengeScreen())),
+                child: const Text('Go'),
+              ),
+            ],
+          ),
+        ),
         const MistakesReview(),
         const Text('Revisit lessons',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
