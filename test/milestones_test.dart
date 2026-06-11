@@ -3,6 +3,16 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/milestones.dart';
 
 void main() {
+  test('completion tier labels', () {
+    expect(accuracyTier(100), 'GREAT');
+    expect(accuracyTier(90), 'GREAT');
+    expect(accuracyTier(80), 'GOOD');
+    expect(accuracyTier(40), 'NICE');
+    expect(speedTier(const Duration(seconds: 90)), 'BLAZING');
+    expect(speedTier(const Duration(seconds: 200)), 'QUICK');
+    expect(speedTier(const Duration(minutes: 9)), 'STEADY');
+  });
+
   test('regenHearts: +1 per 2h, cap 5, remainder carries', () {
     final t0 = DateTime(2026, 1, 1, 0, 0);
     var r = regenHearts(3, t0, t0.add(const Duration(minutes: 119)));

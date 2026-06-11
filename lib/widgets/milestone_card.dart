@@ -46,6 +46,23 @@ class _StreakMilestoneCardState extends State<StreakMilestoneCard> {
       if (m == 7 && !(prefs.getBool('review_asked') ?? false)) {
         await prefs.setBool('review_asked', true);
         Future.delayed(const Duration(milliseconds: 1600), () async {
+          if (!mounted) return;
+          // sentiment gate: only happy learners meet the store prompt
+          final happy = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: const Text('Enjoying Ratel so far?'),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.of(ctx).pop(false),
+                    child: const Text('Not yet')),
+                FilledButton(
+                    onPressed: () => Navigator.of(ctx).pop(true),
+                    child: const Text('Loving it!')),
+              ],
+            ),
+          );
+          if (happy != true) return;
           try {
             final review = InAppReview.instance;
             if (await review.isAvailable()) {

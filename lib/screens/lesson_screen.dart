@@ -47,7 +47,14 @@ class LessonScreen extends StatefulWidget {
 
 class _LessonScreenState extends State<LessonScreen>
     with SingleTickerProviderStateMixin {
-  int _index = 0;
+  int _index = 0; // position in the PLAYLIST (not the exercise list)
+  late List<int> _playlist =
+      List<int>.generate(widget.lesson.exercises.length, (i) => i);
+  bool _fixPhase = false; // replaying first-pass mistakes (no hearts)
+  final List<int> _missedFirstPass = [];
+  final Map<int, int> _fixAttempts = {};
+  final DateTime _startedAt = DateTime.now();
+  Duration _elapsed = Duration.zero;
   int _correctCount = 0;
   bool _answered = false;
   bool _isCorrect = false;
@@ -108,8 +115,9 @@ class _LessonScreenState extends State<LessonScreen>
     super.dispose();
   }
 
-  Exercise get _ex => widget.lesson.exercises[_index];
-  bool get _isLast => _index == widget.lesson.exercises.length - 1;
+  int get _eIdx => _playlist[_index]; // real exercise index
+  Exercise get _ex => widget.lesson.exercises[_eIdx];
+  bool get _isLast => _index == _playlist.length - 1;
 
   void _check() {
     final bool correct;
@@ -145,11 +153,19 @@ class _LessonScreenState extends State<LessonScreen>
         }
       }
       if (correct) {
-        _correctCount++;
+        if (!_fixPhase) _correctCount++;
         _combo++;
       } else {
         _combo = 0;
-        appState.loseHeart();
+        if (_fixPhase) {
+          // mercy mode: no hearts at risk; try the item again (max 2)
+          final a = (_fixAttempts[_eIdx] ?? 0) + 1;
+          _fixAttempts[_eIdx] = a;
+          if (a < 2) _playlist.add(_eIdx);
+        } else {
+          _missedFirstPass.add(_eIdx);
+          appState.loseHeart();
+        }
       }
     });
     if (correct) {
@@ -175,6 +191,18 @@ class _LessonScreenState extends State<LessonScreen>
   }
 
   void _next() {
+    if (_isLast &&
+        !_fixPhase &&
+        !widget.reviewMode &&
+        _missedFirstPass.isNotEmpty) {
+      // the honey badger never leaves a fight unfinished
+      _playlist = [..._playlist, ..._missedFirstPass];
+      _missedFirstPass.clear();
+      _fixPhase = true;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+              "Let's fix your mistakes — no hearts at risk!")));
+    }
     if (!_isLast) {
       setState(() {
         _index++;
@@ -210,6 +238,7 @@ class _LessonScreenState extends State<LessonScreen>
       } else {
         appState.earnHeart(); // practicing your mistakes restores one
       }
+      _elapsed = DateTime.now().difference(_startedAt);
       Sfx.instance.complete();
       setState(() => _finished = true);
     }
@@ -218,7 +247,7 @@ class _LessonScreenState extends State<LessonScreen>
   @override
   Widget build(BuildContext context) {
     if (_finished) return _completion(context);
-    final int total = widget.lesson.exercises.length;
+    final int total = _playlist.length;
     final double progress = (_answered ? _index + 1 : _index) / total;
     return Scaffold(
       body: Stack(
@@ -258,6 +287,21 @@ class _LessonScreenState extends State<LessonScreen>
                           color: RatelColors.textMuted,
                           fontSize: 12,
                           fontWeight: FontWeight.w700)),
+                  if (_fixPhase) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                          color: context.tintC(const Color(0xFFE08330)),
+                          borderRadius: BorderRadius.circular(12)),
+                      child: const Text('FIXING MISTAKES',
+                          style: TextStyle(
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFFE08330))),
+                    ),
+                  ],
                   if (_combo >= 2) ...[
                     const SizedBox(width: 8),
                     Container(
@@ -347,6 +391,37 @@ class _LessonScreenState extends State<LessonScreen>
         ),
           ),
           IgnorePointer(child: ComboGlow(combo: _combo)),
+        ],
+      ),
+    );
+  }
+
+  Widget _statChip(IconData icon, String value, String label, Color c) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: context.tintC(c),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: c.withValues(alpha: 0.5)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(label,
+              style: TextStyle(
+                  fontSize: 9, fontWeight: FontWeight.w800, color: c)),
+          const SizedBox(height: 2),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 14, color: c),
+              const SizedBox(width: 4),
+              Text(value,
+                  style: TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.w800,
+                      color: c)),
+            ],
+          ),
         ],
       ),
     );
@@ -460,10 +535,10 @@ class _LessonScreenState extends State<LessonScreen>
   /// one-time server generate-and-cache for content not in the bundle.
   Future<void> _explain() async {
     final key = _ex.type == ExerciseType.choice
-        ? '${widget.lesson.id}:$_index:$_selected'
+        ? '${widget.lesson.id}:$_eIdx:$_selected'
         : _ex.type == ExerciseType.wordBank
-            ? '${widget.lesson.id}:$_index:wb'
-            : '${widget.lesson.id}:$_index:ty';
+            ? '${widget.lesson.id}:$_eIdx:wb'
+            : '${widget.lesson.id}:$_eIdx:ty';
     // Bundled seed first: free, instant, offline; covers all current content.
     final local = ExplainStore.instance.lookup(key);
     if (local != null) {
@@ -900,6 +975,29 @@ class _LessonScreenState extends State<LessonScreen>
                                     color: RatelColors.textMuted, fontSize: 16),
                               ),
                             ),
+                      if (!widget.reviewMode) ...[
+                        const SizedBox(height: 14),
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 8,
+                          alignment: WrapAlignment.center,
+                          children: [
+                            _statChip(Icons.bolt, '+$earned XP', 'TOTAL',
+                                RatelColors.honey),
+                            _statChip(
+                                Icons.track_changes,
+                                '${(_correctCount * 100 ~/ widget.lesson.exercises.length)}%',
+                                accuracyTier(_correctCount * 100 ~/
+                                    widget.lesson.exercises.length),
+                                RatelColors.teal),
+                            _statChip(
+                                Icons.timer_outlined,
+                                '${_elapsed.inMinutes}:${(_elapsed.inSeconds % 60).toString().padLeft(2, '0')}',
+                                speedTier(_elapsed),
+                                const Color(0xFF4A7FB5)),
+                          ],
+                        ),
+                      ],
                       if (_bonusXp > 0) ...[
                         const SizedBox(height: 6),
                         Text('🎁 Surprise bonus +$_bonusXp XP!',

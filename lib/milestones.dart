@@ -62,3 +62,12 @@ String villainFor(int unitIndex, String eventVillain) =>
         : updatedAt.add(Duration(minutes: (h - hearts) * period.inMinutes)),
   );
 }
+
+/// Accuracy tier label for the completion chips.
+String accuracyTier(int pct) =>
+    pct >= 90 ? 'GREAT' : (pct >= 75 ? 'GOOD' : 'NICE');
+
+/// Speed tier label for the completion chips.
+String speedTier(Duration d) => d.inSeconds < 120
+    ? 'BLAZING'
+    : (d.inSeconds < 240 ? 'QUICK' : 'STEADY');
