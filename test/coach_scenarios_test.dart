@@ -7,10 +7,12 @@ void main() {
       (tester) async {
     final sent = <String>[];
     await tester.pumpWidget(MaterialApp(
-      home: CoachScreen(sender: (h) async {
-        sent.add(h.last.text);
-        return 'Of course! Welcome in.';
-      }),
+      home: Scaffold(
+        body: CoachScreen(sender: (h) async {
+          sent.add(h.last.text);
+          return 'Of course! Welcome in.';
+        }),
+      ),
     ));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Order at a café'), findsOneWidget);
