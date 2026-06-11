@@ -65,12 +65,15 @@ lp=[(m.group(1),m.start()) for m in re.finditer(r"Lesson\(\s*id:\s*'([^']+)'",sr
 EX=[]
 for k in range(len(lp)-1):
     lid,st=lp[k];en=lp[k+1][1];sg=src[st:en];xi=0
-    for em in re.finditer(r"Exercise\.(choice|wordBank|typed|listen)\(",sg):
+    for em in re.finditer(r"Exercise\.(choice|wordBank|typed|listen|matchPairs|dialogueOrder)\(",sg):
         et=em.group(1);op=sg.index('(',em.start());cp=mp(sg,op);b=sg[op+1:cp]
         ci=re.search(r"correctIndex:\s*(-?\d+)",b)
         EX.append(dict(lid=lid,exidx=xi,type=et,prompt=sa(b,'prompt'),sentence=sa(b,'sentence'),
-            options=la(b,'options'),correctIndex=int(ci.group(1)) if ci else None,
+            options=la(b,'options') or la(b,'lines') or la(b,'left'),
+            correctIndex=int(ci.group(1)) if ci else None,
             correctOrder=la(b,'correctOrder'),accepted=la(b,'accepted')));xi+=1
+def la_lines(e):
+    return e['correctOrder'] or e['options'] or []
 tasks=[]
 for e in EX:
     if e['type']=='choice':
@@ -88,6 +91,14 @@ for e in EX:
            f"In 1-2 short sentences (max 35 words), teach WHY the words go in this order (subject-verb-object, adjective before noun, etc.). "
            f"Give a real grammar reason a learner can reuse — not just 'arrange it this way'.")
         tasks.append((f"{e['lid']}:{e['exidx']}:wb",u))
+    elif e['type']=='matchPairs':
+        pass  # match boards never show a wrong banner -> no key
+    elif e['type']=='dialogueOrder':
+        cor='  /  '.join(la_lines(e))
+        u=(f"Task: put the lines of a short English conversation in order.\nThe correct order is: \"{cor}\"\n"
+           f"In 1-2 short sentences (max 35 words), teach WHY this order makes sense (question before answer, greeting first, reaction last). "
+           f"Give a reusable conversation-logic reason, not just 'this is the order'.")
+        tasks.append((f"{e['lid']}:{e['exidx']}:do",u))
     else:
         cor=(e['accepted'] or e['correctOrder'])[0]
         ctx=f"Question: {e['prompt']}"+(f"\nSentence: {e['sentence']}" if e['sentence'] else "")

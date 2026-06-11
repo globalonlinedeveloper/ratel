@@ -61,6 +61,11 @@ const Unit unit1 = Unit(
         prompt: 'Type the word for a person who teaches.',
         accepted: ['teacher'],
       ),
+      Exercise.matchPairs(
+        prompt: 'Match each person to their place',
+        left: ['teacher', 'doctor', 'student'],
+        right: ['school', 'hospital', 'classroom'],
+      ),
     ]),
     Lesson(id: 'u1l3', title: 'Family', exercises: [
       Exercise.choice(
@@ -88,6 +93,11 @@ const Unit unit1 = Unit(
       Exercise.listen(
         prompt: 'Type what you hear',
         accepted: ['Mother'],
+      ),
+      Exercise.matchPairs(
+        prompt: 'Match the family words',
+        left: ['mother', 'father', 'sister'],
+        right: ['mom', 'dad', 'girl sibling'],
       ),
     ]),
     Lesson(id: 'u1l4', title: 'Food & drink', exercises: [
@@ -182,6 +192,11 @@ const Unit unit2 = Unit(
         options: ['ten', 'tens', 'tenth', 'tenning'],
         correctIndex: 0,
       ),
+      Exercise.dialogueOrder(
+        prompt: 'Order the conversation',
+        lines: ['How old are you?', 'I am ten years old.', 'Wow, happy birthday!'],
+        correctOrder: ['How old are you?', 'I am ten years old.', 'Wow, happy birthday!'],
+      ),
     ]),
     Lesson(id: 'u2l2', title: 'Time & days', exercises: [
       Exercise.choice(
@@ -210,6 +225,11 @@ const Unit unit2 = Unit(
         sentence: 'We have class ___ the morning.',
         options: ['in', 'at', 'on', 'by'],
         correctIndex: 0,
+      ),
+      Exercise.dialogueOrder(
+        prompt: 'Order the conversation',
+        lines: ['What day is it today?', 'It is Monday.', 'Then we have English class!'],
+        correctOrder: ['What day is it today?', 'It is Monday.', 'Then we have English class!'],
       ),
     ]),
     Lesson(id: 'u2l3', title: 'Places in town', exercises: [

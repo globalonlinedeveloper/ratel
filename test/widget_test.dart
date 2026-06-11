@@ -148,27 +148,26 @@ void main() {
       for (final lesson in unit.lessons) {
         for (var i = 0; i < lesson.exercises.length; i++) {
           final ex = lesson.exercises[i];
-          if (ex.type == ExerciseType.choice) {
-            for (var j = 0; j < ex.options.length; j++) {
-              if (j == ex.correctIndex) continue;
-              final key = '${lesson.id}:$i:$j';
-              if (!map.containsKey(key) ||
-                  (map[key] as String).trim().isEmpty) {
-                missing.add(key);
+          void need(String key) {
+            if (!map.containsKey(key) ||
+                (map[key] as String).trim().isEmpty) {
+              missing.add(key);
+            }
+          }
+
+          switch (ex.type) {
+            case ExerciseType.choice:
+              for (var j = 0; j < ex.options.length; j++) {
+                if (j != ex.correctIndex) need('${lesson.id}:$i:$j');
               }
-            }
-          } else if (ex.type == ExerciseType.wordBank) {
-            final key = '${lesson.id}:$i:wb';
-            if (!map.containsKey(key) ||
-                (map[key] as String).trim().isEmpty) {
-              missing.add(key);
-            }
-          } else {
-            final key = '${lesson.id}:$i:ty';
-            if (!map.containsKey(key) ||
-                (map[key] as String).trim().isEmpty) {
-              missing.add(key);
-            }
+            case ExerciseType.wordBank:
+              need('${lesson.id}:$i:wb');
+            case ExerciseType.typed || ExerciseType.listen:
+              need('${lesson.id}:$i:ty');
+            case ExerciseType.dialogueOrder:
+              need('${lesson.id}:$i:do');
+            case ExerciseType.matchPairs:
+              break; // match boards never show a wrong banner
           }
         }
       }
