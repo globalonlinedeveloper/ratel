@@ -150,6 +150,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 250));
       }
     }
+    FlutterError.onError = old; // restore BEFORE expect (binding rule)
     expect(overflows, isEmpty,
         reason: overflows.join('\n────────\n'));
   });
