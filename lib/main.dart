@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'flags.dart';
+import 'strings.dart';
 import 'push.dart';
 import 'theme.dart';
 import 'config.dart';
@@ -43,6 +44,7 @@ Future<void> main() async {
   await loadThemeMode();
   await loadReduceMotion();
   await Flags.instance.load(); // remote config before dependent loads
+  await S.instance.load(); // server copy (in-code defaults if offline)
   await loadBattleMode();
   await ExplainStore.instance.load();
   await ContentStore.instance.load();

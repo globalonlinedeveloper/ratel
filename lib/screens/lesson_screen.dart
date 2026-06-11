@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../content.dart';
 import '../exercise_kit.dart';
 import '../flags.dart';
+import '../strings.dart';
 import '../push.dart';
 import '../widgets/battle_stage.dart';
 import '../widgets/milestone_card.dart';
@@ -203,12 +204,12 @@ class _LessonScreenState extends State<LessonScreen>
       _playlist = [..._playlist, ..._missedFirstPass];
       _missedFirstPass.clear();
       _fixPhase = true;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           behavior: SnackBarBehavior.floating,
-          margin: EdgeInsets.fromLTRB(16, 0, 16, 96),
-          duration: Duration(milliseconds: 2200),
-          content: Text(
-              "Let's fix your mistakes — no hearts at risk!")));
+          margin: const EdgeInsets.fromLTRB(16, 0, 16, 96),
+          duration: const Duration(milliseconds: 2200),
+          content: Text(S.instance.t('fix_phase_toast',
+              "Let's fix your mistakes — no hearts at risk!"))));
     }
     if (!_isLast) {
       setState(() {
@@ -306,7 +307,7 @@ class _LessonScreenState extends State<LessonScreen>
     final bool? quit = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("Wait, don't go!"),
+        title: Text(S.instance.t('quit_title', "Wait, don't go!")),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -315,7 +316,8 @@ class _LessonScreenState extends State<LessonScreen>
                 height: 96,
                 errorBuilder: (_, _, _) => const SizedBox(height: 8)),
             const SizedBox(height: 10),
-            const Text("Quit now and this lesson's progress is gone."),
+            Text(S.instance.t('quit_body',
+                "Quit now and this lesson's progress is gone.")),
           ],
         ),
         actions: [
