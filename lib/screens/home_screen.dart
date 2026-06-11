@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/motd_card.dart';
 import '../widgets/campaign_cards.dart';
 import '../widgets/hearts_sheet.dart';
+import '../widgets/daily_chest.dart';
 import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/mascot_anim.dart';
@@ -731,6 +732,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const DailyNudge(),
         const ReviewCard(),
         const DailyQuestsCard(),
+        const DailyChestCard(),
         const AnniversaryCard(),
         Expanded(
           child: SingleChildScrollView(

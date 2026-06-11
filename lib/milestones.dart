@@ -87,3 +87,11 @@ String fmtCountdown(Duration d) {
 
 /// +1 gem on every 5th correct-in-a-row (5, 10, 15...).
 int comboGemBonus(int combo) => combo > 0 && combo % 5 == 0 ? 1 : 0;
+
+/// Daily free chest: (gems, bonus label). Early birds (before 9:00) and
+/// night owls (22:00+) get an extra gem and a cheering label.
+(int, String) dailyChestReward(DateTime now) => now.hour < 9
+    ? (3, 'Early bird bonus!')
+    : now.hour >= 22
+        ? (3, 'Night owl bonus!')
+        : (2, '');

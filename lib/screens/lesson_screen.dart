@@ -18,6 +18,7 @@ import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/confetti.dart';
 import '../widgets/streak_flame.dart';
+import '../widgets/stagger.dart';
 import '../widgets/combo_glow.dart';
 import '../models.dart';
 import '../typed_match.dart';
@@ -480,6 +481,33 @@ class _LessonScreenState extends State<LessonScreen>
                                     fontWeight: FontWeight.w800,
                                     color: RatelColors.honey)),
                           ),
+                        ],
+                      ),
+                    ),
+                  ],
+                  if (_answered &&
+                      _isCorrect &&
+                      !_fixPhase &&
+                      !widget.reviewMode &&
+                      comboGemBonus(_combo) > 0) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                          color: context.tintC(RatelColors.teal),
+                          borderRadius: BorderRadius.circular(12)),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.diamond,
+                              size: 13, color: RatelColors.teal),
+                          SizedBox(width: 3),
+                          Text('+1',
+                              style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: RatelColors.teal)),
                         ],
                       ),
                     ),
@@ -1167,7 +1195,9 @@ class _LessonScreenState extends State<LessonScreen>
                             ),
                       if (!widget.reviewMode) ...[
                         const SizedBox(height: 14),
-                        Wrap(
+                        StaggeredIn(
+                            index: 3,
+                            child: Wrap(
                           spacing: 10,
                           runSpacing: 8,
                           alignment: WrapAlignment.center,
@@ -1189,7 +1219,7 @@ class _LessonScreenState extends State<LessonScreen>
                                 speedTier(_elapsed),
                                 const Color(0xFF4A7FB5)),
                           ],
-                        ),
+                        )),
                       ],
                       if (_bonusXp > 0) ...[
                         const SizedBox(height: 6),
