@@ -25,6 +25,7 @@ import '../milestones.dart';
 import '../guidebook.dart';
 import 'section_test_screen.dart';
 import 'timed_challenge_screen.dart';
+import 'report_queue_screen.dart';
 import '../models.dart';
 import '../content.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -641,6 +642,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   builder: (_) => const AdminScreen())),
               icon: const Icon(Icons.admin_panel_settings),
               label: const Text('Content admin'),
+            ),
+            const SizedBox(height: 8),
+            OutlinedButton.icon(
+              onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                      builder: (_) => const ReportQueueScreen())),
+              icon: const Icon(Icons.flag_outlined),
+              label: const Text('Report queue'),
             ),
           ],
           const SizedBox(height: 16),

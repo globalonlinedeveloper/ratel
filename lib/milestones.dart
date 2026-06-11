@@ -269,3 +269,41 @@ List<MonthBadge> monthlyBadges(
     MonthBadge('Lightning Badger', best >= 200),
   ];
 }
+
+/// One triage row: an exercise with its open-report tally.
+class ReportGroup {
+  const ReportGroup(
+      {required this.lessonId,
+      required this.exerciseIndex,
+      required this.count,
+      required this.reasons});
+
+  final String lessonId;
+  final int exerciseIndex;
+  final int count;
+  final String reasons; // distinct, joined
+
+  String get key => '$lessonId:$exerciseIndex';
+}
+
+/// Group raw report rows by exercise, most-reported first.
+List<ReportGroup> groupReports(List<Map<String, dynamic>> rows) {
+  final byKey = <String, List<Map<String, dynamic>>>{};
+  for (final r in rows) {
+    final k = '${r['lesson_id']}:${r['exercise_index']}';
+    (byKey[k] ??= []).add(r);
+  }
+  final groups = [
+    for (final e in byKey.entries)
+      ReportGroup(
+        lessonId: (e.value.first['lesson_id'] ?? '').toString(),
+        exerciseIndex:
+            (e.value.first['exercise_index'] as num?)?.toInt() ?? 0,
+        count: e.value.length,
+        reasons: {
+          for (final r in e.value) (r['reason'] ?? '').toString()
+        }.where((s) => s.isNotEmpty).join(' · '),
+      ),
+  ]..sort((a, b) => b.count.compareTo(a.count));
+  return groups;
+}
