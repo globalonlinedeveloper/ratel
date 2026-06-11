@@ -72,6 +72,7 @@ flutter:
     - assets/images/
     - assets/audio/
     - assets/explanations.json
+    - assets/explanations_ta.json
     - assets/battle/
 
   fonts:

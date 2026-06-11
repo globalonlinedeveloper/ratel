@@ -139,6 +139,22 @@ void main() {
     expect(find.byType(CustomPaint), findsWidgets);
   });
 
+  test('the Tamil explanation bundle stays in lockstep with English', () {
+    final en = json.decode(
+            File('assets/explanations.json').readAsStringSync())
+        as Map<String, dynamic>;
+    final ta = json.decode(
+            File('assets/explanations_ta.json').readAsStringSync())
+        as Map<String, dynamic>;
+    final missing = [
+      for (final k in en.keys)
+        if (!ta.containsKey(k) || (ta[k] as String).trim().isEmpty) k
+    ];
+    expect(missing, isEmpty,
+        reason: 'ta bundle missing ' + missing.length.toString() +
+            ' keys — run tool/gen_explanations_ta.py');
+  });
+
   test('every fixed wrong-answer has a pre-authored explanation (no API at runtime)', () {
     final f = File('assets/explanations.json');
     expect(f.existsSync(), isTrue, reason: 'assets/explanations.json missing');
