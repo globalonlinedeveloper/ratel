@@ -35,11 +35,13 @@ void main() {
     await tester.tap(find.byType(DropdownButton<int>));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
-    await tester.tap(find.text('06:30').last);
+    // the dropdown menu is a LAZY list centered on the current
+    // value - pick an adjacent hour that is certainly built
+    await tester.tap(find.text('14:30').last);
     await tester.pump(const Duration(milliseconds: 400));
     expect(
         appState.reminderHourUtc,
-        utcHourFromLocal(6, DateTime.now().timeZoneOffset));
+        utcHourFromLocal(14, DateTime.now().timeZoneOffset));
     await tester.pump(const Duration(seconds: 1));
   });
 }
