@@ -85,13 +85,15 @@ class _LessonScreenState extends State<LessonScreen>
   int _bonusXp = 0; // occasional surprise bonus on completion
   int _gemsEarned = 0; // combo milestones + flawless bonus
   bool _boosted = false; // 15-min double-XP window (daily chest)
-  late final int _scoreBefore = _scoreNow(); // captured at start
+  late final int _scoreBefore; // captured EAGERLY in initState
 
   late final AnimationController _fb; // answer feedback: pop on right, shake on wrong
 
   @override
   void initState() {
     super.initState();
+    _scoreBefore = _scoreNow(); // late-final-on-access would have
+    // captured the POST-completion score (the delta chip's bug)
     _applyListenPref();
     SharedPreferences.getInstance().then((p) {
       final until =
