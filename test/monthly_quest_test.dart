@@ -48,4 +48,14 @@ void main() {
     expect(find.textContaining('quest'), findsNothing);
     expect(appState.gems, 30);
   });
+
+  test('monthNameFor: Tamil transliterations for ta, English otherwise', () {
+    final june = DateTime(2026, 6, 1);
+    expect(monthNameFor(june, 'en'), 'June');
+    expect(monthNameFor(june, 'ta'), 'ஜூன்');
+    expect(monthNameFor(DateTime(2026, 12, 25), 'ta'), 'டிசம்பர்');
+    for (var m = 1; m <= 12; m++) {
+      expect(monthNameFor(DateTime(2026, m), 'ta'), isNotEmpty);
+    }
+  });
 }

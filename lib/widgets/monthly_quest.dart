@@ -108,8 +108,10 @@ class _MonthlyQuestCardState extends State<MonthlyQuestCard> {
                         : S.instance
                             .t('monthly_quest_title',
                                 '{month} quest: earn {goal} XP')
-                            .replaceAll('{month}',
-                                monthName(DateTime.now()))
+                            .replaceAll(
+                                '{month}',
+                                monthNameFor(DateTime.now(),
+                                    S.instance.locale))
                             .replaceAll('{goal}', '$_goal'),
                     style:
                         const TextStyle(fontWeight: FontWeight.w800)),

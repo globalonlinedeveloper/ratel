@@ -203,6 +203,15 @@ String monthName(DateTime d) => const [
       'August', 'September', 'October', 'November', 'December'
     ][d.month - 1];
 
+/// Locale-aware month name: Tamil transliterations when the app
+/// speaks Tamil, English otherwise. Pure — the caller passes locale.
+String monthNameFor(DateTime d, String locale) => locale == 'ta'
+    ? const [
+        'ஜனவரி', 'பிப்ரவரி', 'மார்ச்', 'ஏப்ரல்', 'மே', 'ஜூன்', 'ஜூலை',
+        'ஆகஸ்ட்', 'செப்டம்பர்', 'அக்டோபர்', 'நவம்பர்', 'டிசம்பர்'
+      ][d.month - 1]
+    : monthName(d);
+
 /// What a band MEANS - the can-do statement under the number.
 String canDoFor(String band) => switch (band) {
       'A1' => 'Can introduce yourself and handle everyday phrases.',
