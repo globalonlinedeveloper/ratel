@@ -114,6 +114,18 @@ extension RatelMotion on BuildContext {
 }
 
 /// ----- Battle mode (the duel layer over lessons), persisted -----
+/// Per-unit accent palette (cycles) — gives each unit a visual identity
+/// on the learn path instead of one monotone teal column.
+const List<Color> kUnitAccents = [
+  RatelColors.teal,
+  Color(0xFFB66A2E), // amber
+  Color(0xFF7B5EA7), // plum
+  Color(0xFF3E8E5A), // forest
+  Color(0xFF4A7FB5), // steel
+];
+
+Color unitAccent(int index) => kUnitAccents[index % kUnitAccents.length];
+
 final ValueNotifier<bool> battleModeNotifier = ValueNotifier<bool>(true);
 
 Future<void> loadBattleMode() async {

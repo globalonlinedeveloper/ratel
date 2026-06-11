@@ -248,6 +248,40 @@ class _LessonScreenState extends State<LessonScreen>
                       ),
                     ),
                   ),
+                  const SizedBox(width: 10),
+                  Text('${_index + 1}/$total',
+                      style: const TextStyle(
+                          color: RatelColors.textMuted,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700)),
+                  if (_combo >= 2) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 2),
+                      decoration: BoxDecoration(
+                          color: context.tintC(RatelColors.honey),
+                          borderRadius: BorderRadius.circular(12)),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.local_fire_department,
+                              size: 14, color: RatelColors.honey),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 220),
+                            transitionBuilder: (child, anim) => ScaleTransition(
+                                scale: anim, child: child),
+                            child: Text('×$_combo',
+                                key: ValueKey<int>(_combo),
+                                style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w800,
+                                    color: RatelColors.honey)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                   const SizedBox(width: 12),
                   const Icon(Icons.favorite, color: RatelColors.hearts, size: 20),
                   const SizedBox(width: 3),
@@ -263,7 +297,9 @@ class _LessonScreenState extends State<LessonScreen>
                       ? BattleStage(
                           controller: _battle,
                           villain: _villain,
-                          isBoss: _isBoss)
+                          isBoss: _isBoss,
+                          width: 196,
+                          height: 98)
                       : _mascotSlot(),
                   const SizedBox(width: 12),
                   Expanded(

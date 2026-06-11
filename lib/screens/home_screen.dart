@@ -531,6 +531,35 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  final GlobalKey _currentNodeKey = GlobalKey();
+  String? _autoScrolled;
+
+  static const List<String> _checkpointArt = [
+    'map', 'reading', 'trophyhold', 'determined', 'curious'
+  ];
+
+  Widget _checkpoint(int index) {
+    final String name = _checkpointArt[index % _checkpointArt.length];
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Expanded(
+              child: Divider(
+                  color: context.faintBorderC, indent: 28, endIndent: 14)),
+          Image.asset('assets/images/ratel-$name.webp',
+              width: 60,
+              height: 60,
+              errorBuilder: (_, _, _) =>
+                  const SizedBox(width: 60, height: 60)),
+          Expanded(
+              child: Divider(
+                  color: context.faintBorderC, indent: 14, endIndent: 28)),
+        ],
+      ),
+    );
+  }
+
   Widget _buildLearn(BuildContext context) {
     // Flatten every unit to find the single "current" lesson across the course.
     final List<Lesson> all = [for (final u in course) ...u.lessons];
@@ -541,8 +570,10 @@ class _HomeScreenState extends State<HomeScreen> {
     const List<double> offsets = [-50.0, 10.0, 50.0, 0.0, -40.0];
 
     final List<Widget> path = [];
-    for (final unit in course) {
-      path.add(_unitBanner(unit));
+    for (int u = 0; u < course.length; u++) {
+      final unit = course[u];
+      if (u > 0) path.add(_checkpoint(u));
+      path.add(_unitBanner(u, unit));
       path.add(const SizedBox(height: 14));
       for (int i = 0; i < unit.lessons.length; i++) {
         final Lesson l = unit.lessons[i];
@@ -550,11 +581,27 @@ class _HomeScreenState extends State<HomeScreen> {
             ? NodeState.done
             : (l.id == currentId ? NodeState.current : NodeState.locked);
         path.add(st == NodeState.current
-            ? _currentNode(context, l)
-            : _node(state: st, dx: offsets[i % offsets.length]));
-        path.add(const SizedBox(height: 18));
+            ? KeyedSubtree(key: _currentNodeKey, child: _currentNode(context, l))
+            : _node(
+                state: st,
+                dx: offsets[i % offsets.length],
+                title: l.title,
+                accent: unitAccent(u)));
+        path.add(const SizedBox(height: 14));
       }
     }
+    // bring the learner straight to where they left off
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (currentId != null &&
+          _autoScrolled != currentId &&
+          _currentNodeKey.currentContext != null) {
+        _autoScrolled = currentId;
+        Scrollable.ensureVisible(_currentNodeKey.currentContext!,
+            alignment: 0.35,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.easeOutCubic);
+      }
+    });
     path.add(_node(
         state: currentId == null ? NodeState.done : NodeState.locked,
         dx: -40,
@@ -644,36 +691,70 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _unitBanner(Unit unit) {
+  static const List<IconData> _unitIcons = [
+    Icons.menu_book, // 1 everyday basics
+    Icons.location_city, // 2 out and about
+    Icons.task_alt, // 3 getting things done
+    Icons.event, // 4 plans & connections
+    Icons.restaurant, // 5 daily life
+    Icons.headphones, // 6 listen & understand
+    Icons.work, // 7 work & school
+    Icons.forum, // 8 stories & opinions
+    Icons.flight, // 9 travel & places
+    Icons.favorite, // 10 health & feelings
+  ];
+
+  Widget _unitBanner(int index, Unit unit) {
+    final int done =
+        unit.lessons.where((l) => appState.isCompleted(l.id)).length;
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-          color: RatelColors.teal, borderRadius: BorderRadius.circular(14)),
+          color: unitAccent(index), borderRadius: BorderRadius.circular(14)),
       child: Row(
         children: [
-          const Icon(Icons.menu_book, color: Colors.white),
+          Icon(_unitIcons[index % _unitIcons.length], color: Colors.white),
           const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(unit.title,
-                  style: const TextStyle(color: Colors.white70, fontSize: 12)),
-              Text(unit.subtitle,
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 15)),
-            ],
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(unit.title,
+                    style:
+                        const TextStyle(color: Colors.white70, fontSize: 12)),
+                Text(unit.subtitle,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 15)),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(12)),
+            child: Text('$done/${unit.lessons.length}',
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700)),
           ),
         ],
       ),
     );
   }
 
-  Widget _node({required NodeState state, double dx = 0, bool trophy = false}) {
+  Widget _node(
+      {required NodeState state,
+      double dx = 0,
+      bool trophy = false,
+      String? title,
+      Color? accent}) {
     final (Color bg, IconData icon) = switch (state) {
-      NodeState.done => (RatelColors.teal, Icons.check),
+      NodeState.done => (accent ?? RatelColors.teal, Icons.check),
       NodeState.locked => (
           context.isDark ? const Color(0xFF3A3733) : const Color(0xFFD9D9D9),
           trophy ? Icons.emoji_events : Icons.lock
@@ -682,14 +763,36 @@ class _HomeScreenState extends State<HomeScreen> {
     };
     return Transform.translate(
       offset: Offset(dx, 0),
-      child: Container(
-        width: 62,
-        height: 62,
-        decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
-        child: Icon(icon,
-            color:
-                state == NodeState.locked ? RatelColors.textMuted : Colors.white,
-            size: 28),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 62,
+            height: 62,
+            decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+            child: Icon(icon,
+                color: state == NodeState.locked
+                    ? RatelColors.textMuted
+                    : Colors.white,
+                size: 28),
+          ),
+          if (title != null) ...[
+            const SizedBox(height: 4),
+            SizedBox(
+              width: 130,
+              child: Text(title,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: state == NodeState.locked
+                          ? RatelColors.textMuted
+                          : context.textC)),
+            ),
+          ],
+        ],
       ),
     );
   }
