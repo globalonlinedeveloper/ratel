@@ -752,6 +752,13 @@ class _HomeScreenState extends State<HomeScreen> {
         all.indexWhere((l) => !appState.isCompleted(l.id));
     final String? currentId =
         globalCurrent == -1 ? null : all[globalCurrent].id;
+    int curUnit = 0;
+    for (int u = 0; u < course.length; u++) {
+      if (course[u].lessons.any((l) => l.id == currentId)) {
+        curUnit = u;
+        break;
+      }
+    }
     const List<double> offsets = [-50.0, 10.0, 50.0, 0.0, -40.0];
 
     final List<Widget> path = [];
@@ -812,6 +819,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const PerfectWeekCard(),
         const MonthlyQuestCard(),
         const AnniversaryCard(),
+        if (currentId != null) _pinnedUnitBar(curUnit),
         Expanded(
           child: SingleChildScrollView(
             padding: const EdgeInsets.only(top: 12, bottom: 16),
@@ -1303,6 +1311,42 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     return false;
+  }
+
+  /// Always-visible 'you are here' bar above the scrolling path.
+  Widget _pinnedUnitBar(int u) {
+    final unit = course[u];
+    final int done =
+        unit.lessons.where((l) => appState.isCompleted(l.id)).length;
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: unitAccent(u),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(_unitIcons[u % _unitIcons.length],
+              color: Colors.white, size: 18),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text('Unit ${u + 1} · ${unit.subtitle}',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 13)),
+          ),
+          Text('$done/${unit.lessons.length}',
+              style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700)),
+        ],
+      ),
+    );
   }
 
   Widget _sectionBanner(int u) {
