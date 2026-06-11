@@ -14,6 +14,8 @@ bool canCheckAnswer(Exercise e,
     ExerciseType.choice => selected != null,
     ExerciseType.wordBank => pickedCount > 0,
     ExerciseType.typed || ExerciseType.listen => typed.trim().isNotEmpty,
+    // match-pairs: checkable once every pair is locked in
+    ExerciseType.matchPairs => pickedCount >= e.options.length,
   };
 }
 
@@ -26,6 +28,9 @@ bool gradeAnswer(Exercise e,
     ExerciseType.typed ||
     ExerciseType.listen =>
       typedAnswerMatches(typed, e.correctOrder),
+    // completing the board IS the success; mistakes en route are
+    // cosmetic (no hearts in matching - kindness by design)
+    ExerciseType.matchPairs => true,
   };
 }
 
@@ -37,6 +42,12 @@ String correctTextFor(Exercise e) {
     ExerciseType.typed ||
     ExerciseType.listen =>
       e.correctOrder.isNotEmpty ? e.correctOrder.first : '',
+    ExerciseType.matchPairs => [
+      for (int i = 0;
+          i < e.options.length && i < e.correctOrder.length;
+          i++)
+        '${e.options[i]} — ${e.correctOrder[i]}'
+    ].join(', '),
   };
 }
 
@@ -51,6 +62,7 @@ String userTextFor(Exercise e,
         final t = typed.trim();
         return t.isEmpty ? '(no answer)' : t;
       }(),
+    ExerciseType.matchPairs => 'all pairs matched',
   };
 }
 
@@ -60,5 +72,6 @@ String explainSuffixFor(Exercise e, {int? selected}) {
     ExerciseType.choice => '$selected',
     ExerciseType.wordBank => 'wb',
     ExerciseType.typed || ExerciseType.listen => 'ty',
+    ExerciseType.matchPairs => 'mp',
   };
 }

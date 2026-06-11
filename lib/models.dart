@@ -1,5 +1,5 @@
 /// Exercise types supported by the lesson player.
-enum ExerciseType { choice, wordBank, typed, listen }
+enum ExerciseType { choice, wordBank, typed, listen, matchPairs }
 
 /// A single exercise within a lesson.
 class Exercise {
@@ -41,6 +41,18 @@ class Exercise {
   /// A listening exercise ("type what you hear"): text-to-speech reads a short
   /// phrase aloud and the learner types it back. Graded like [Exercise.typed]
   /// (lenient match against [accepted], whose first entry is spoken).
+  /// Match the pairs: [left] aligns index-wise with [right]
+  /// (stored as options / correctOrder so DB columns reuse cleanly).
+  const Exercise.matchPairs({
+    required this.prompt,
+    required List<String> left,
+    required List<String> right,
+  })  : type = ExerciseType.matchPairs,
+        sentence = null,
+        options = left,
+        correctIndex = -1,
+        correctOrder = right;
+
   const Exercise.listen({
     required this.prompt,
     required List<String> accepted,

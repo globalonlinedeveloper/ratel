@@ -72,6 +72,9 @@ class _LessonScreenState extends State<LessonScreen>
 
   int? _selected; // choice
   List<int> _order = const []; // shuffled display order (choice)
+  int? _mLeft; // match-pairs: selected left item (original index)
+  Set<int> _mDone = {}; // match-pairs: locked pairs
+  List<int> _mLO = const [], _mRO = const []; // column shuffles
   final List<int> _picked = []; // word-bank: option indices in chosen order
   final TextEditingController _typedCtl =
       TextEditingController(); // typed answer
@@ -215,6 +218,10 @@ class _LessonScreenState extends State<LessonScreen>
         _selected = null;
         _picked.clear();
         _order = const [];
+        _mLeft = null;
+        _mDone = {};
+        _mLO = const [];
+        _mRO = const [];
         _typedCtl.clear();
         _explanation = null;
         _explaining = false;
@@ -255,7 +262,9 @@ class _LessonScreenState extends State<LessonScreen>
 
   bool get _canCheck => canCheckAnswer(_ex,
       selected: _selected,
-      pickedCount: _picked.length,
+      pickedCount: _ex.type == ExerciseType.matchPairs
+          ? _mDone.length
+          : _picked.length,
       typed: _typedCtl.text);
 
   /// Keyboard (web/desktop): 1-4 pick a choice, Enter checks / continues.
@@ -550,13 +559,13 @@ class _LessonScreenState extends State<LessonScreen>
                   animation: _fb,
                   builder: (context, child) => _feedbackWrap(child!),
                   child: SingleChildScrollView(
-                    child: _ex.type == ExerciseType.choice
-                        ? _choiceBody()
-                        : _ex.type == ExerciseType.listen
-                            ? _listenBody()
-                            : _ex.type == ExerciseType.wordBank
-                                ? _wordBankBody()
-                                : _typedBody(),
+                    child: switch (_ex.type) {
+                      ExerciseType.choice => _choiceBody(),
+                      ExerciseType.listen => _listenBody(),
+                      ExerciseType.wordBank => _wordBankBody(),
+                      ExerciseType.typed => _typedBody(),
+                      ExerciseType.matchPairs => _matchBody(),
+                    },
                   ),
                 ),
               ),
@@ -1002,6 +1011,89 @@ class _LessonScreenState extends State<LessonScreen>
           border: Border.all(color: context.faintBorderC),
         ),
         child: Text(text, style: const TextStyle(fontSize: 16)),
+      ),
+    );
+  }
+
+  // ---- match the pairs ----
+  Widget _matchBody() {
+    final int n = _ex.options.length;
+    if (_mLO.length != n) _mLO = displayOrder(n, _rng);
+    if (_mRO.length != n) _mRO = displayOrder(n, _rng);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Column(
+            children: [
+              for (final i in _mLO)
+                _mChip(_ex.options[i],
+                    done: _mDone.contains(i),
+                    sel: _mLeft == i,
+                    onTap: () => setState(() => _mLeft = i)),
+            ],
+          ),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            children: [
+              for (final i in _mRO)
+                _mChip(_ex.correctOrder[i],
+                    done: _mDone.contains(i),
+                    sel: false,
+                    onTap: () => _mPickRight(i)),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _mPickRight(int i) {
+    if (_mLeft == null) return;
+    if (_mLeft == i) {
+      Sfx.instance.tap();
+      setState(() {
+        _mDone = {..._mDone, i};
+        _mLeft = null;
+      });
+      // board complete -> grade through the normal path (always correct;
+      // mismatches en route are cosmetic, Duolingo-style)
+      if (_mDone.length == _ex.options.length && !_answered) _check();
+    } else {
+      // cosmetic miss: clear the selection, no heart, no state
+      setState(() => _mLeft = null);
+    }
+  }
+
+  Widget _mChip(String text,
+      {required bool done, required bool sel, VoidCallback? onTap}) {
+    final Color border = done
+        ? RatelColors.teal
+        : sel
+            ? RatelColors.honey
+            : context.faintBorderC;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: InkWell(
+        onTap: done || _answered ? null : onTap,
+        borderRadius: BorderRadius.circular(10),
+        child: Container(
+          width: double.infinity,
+          padding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+          decoration: BoxDecoration(
+            color: done ? context.tintC(RatelColors.teal) : context.surfaceC,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: border, width: done || sel ? 2 : 1),
+          ),
+          child: Text(text,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: 15,
+                  color: done ? context.mutedC : context.textC)),
+        ),
       ),
     );
   }
