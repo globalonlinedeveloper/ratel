@@ -154,3 +154,15 @@ String cefrFor(int score) => score < 25
 /// Points still needed to enter the next band (0 at B2).
 int toNextBand(int score) =>
     score < 25 ? 25 - score : score < 50 ? 50 - score : score < 75 ? 75 - score : 0;
+
+/// Convert a LOCAL wall-clock hour to the UTC hour the cron compares.
+int utcHourFromLocal(int localHour, Duration tzOffset) {
+  final h = (localHour - tzOffset.inHours) % 24;
+  return h < 0 ? h + 24 : h;
+}
+
+/// And back, for showing the stored value in local terms.
+int localHourFromUtc(int utcHour, Duration tzOffset) {
+  final h = (utcHour + tzOffset.inHours) % 24;
+  return h < 0 ? h + 24 : h;
+}

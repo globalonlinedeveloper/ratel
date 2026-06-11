@@ -474,6 +474,32 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
+          const SizedBox(height: 4),
+          ListTile(
+            dense: true,
+            leading: const Icon(Icons.schedule,
+                color: RatelColors.teal),
+            title: const Text('Remind me at'),
+            subtitle:
+                const Text('Daily streak reminder, your local time'),
+            trailing: DropdownButton<int>(
+              value: localHourFromUtc(appState.reminderHourUtc,
+                  DateTime.now().timeZoneOffset),
+              underline: const SizedBox.shrink(),
+              items: [
+                for (int h = 0; h < 24; h++)
+                  DropdownMenuItem(
+                      value: h,
+                      child: Text('${h.toString().padLeft(2, '0')}:30')),
+              ],
+              onChanged: (h) {
+                if (h == null) return;
+                appState.setReminderHour(utcHourFromLocal(
+                    h, DateTime.now().timeZoneOffset));
+                setState(() {});
+              },
+            ),
+          ),
           if (!kIsWeb) ...[
             const SizedBox(height: 4),
             FutureBuilder<String>(

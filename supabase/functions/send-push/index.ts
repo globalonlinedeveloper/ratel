@@ -84,6 +84,7 @@ Deno.serve(async (req: Request) => {
       const rows = await (await fetch(
         `${url}/rest/v1/profiles?select=fcm_token,display_name,current_streak` +
         `&fcm_token=not.is.null&current_streak=gt.0` +
+        `&reminder_hour_utc=eq.${new Date().getUTCHours()}` +
         `&last_active_date=eq.${y}&limit=500`,
         { headers: h })).json();
       let sent = 0;

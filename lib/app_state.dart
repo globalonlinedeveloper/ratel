@@ -11,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AppState extends ChangeNotifier {
   int xp = 0;
   int gems = 0;
+  int reminderHourUtc = 13; // when the streak nudge lands (UTC)
   int hearts = 5;
   DateTime heartsUpdatedAt = DateTime.now();
   int streak = 0;
@@ -62,7 +63,7 @@ class AppState extends ChangeNotifier {
     try {
       final row = await client
           .from('profiles')
-          .select('total_xp, current_streak, hearts, hearts_updated_at, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes, is_admin, onboarded, friend_code, broken_streak, broken_on, gems')
+          .select('total_xp, current_streak, hearts, hearts_updated_at, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes, is_admin, onboarded, friend_code, broken_streak, broken_on, gems, reminder_hour_utc')
           .eq('id', client.auth.currentUser!.id)
           .maybeSingle();
       if (row != null) {
@@ -78,6 +79,8 @@ class AppState extends ChangeNotifier {
         longestStreak = (row['longest_streak'] as int?) ?? longestStreak;
         streakFreezes = (row['streak_freezes'] as int?) ?? streakFreezes;
         gems = (row['gems'] as int?) ?? gems;
+        reminderHourUtc =
+            (row['reminder_hour_utc'] as int?) ?? reminderHourUtc;
         isAdmin = (row['is_admin'] as bool?) ?? false;
         onboarded = (row['onboarded'] as bool?) ?? true;
         friendCode = (row['friend_code'] as String?) ?? friendCode;
@@ -424,6 +427,19 @@ class AppState extends ChangeNotifier {
     notifyListeners();
     _persist();
     _logXpEvent(amount, reason);
+  }
+
+  /// Targeted write (not in _persist: it changes rarely).
+  Future<void> setReminderHour(int utcHour) async {
+    reminderHourUtc = utcHour;
+    notifyListeners();
+    final client = _client;
+    if (client == null) return;
+    try {
+      await client.from('profiles').update({
+        'reminder_hour_utc': utcHour,
+      }).eq('id', client.auth.currentUser!.id);
+    } catch (_) {}
   }
 
   void addGems(int n) {
