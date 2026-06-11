@@ -11,6 +11,11 @@ void main() {
     expect(f.flag('battle_default_on', true), isTrue);
     expect(f.intOf('xp_bonus_one_in', 5), 5);
     expect(f.str('motd', ''), '');
+    f.debugSet({'price_year': '', 'str_nudge_goal': ''});
+    expect(f.str('price_year', '\$59.99/yr'), '\$59.99/yr',
+        reason: 'seeded-empty must fall back to the default');
+    expect(f.str('str_nudge_goal', 'fallback'), 'fallback');
+    f.debugSet({});
     f.debugSet(
         {'battle_default_on': 'false', 'xp_bonus_one_in': '9', 'motd': 'Hi'});
     expect(f.flag('battle_default_on', true), isFalse);

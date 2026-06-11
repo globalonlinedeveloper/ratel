@@ -27,7 +27,12 @@ class Flags {
     }
   }
 
-  String str(String key, String def) => _v[key] ?? def;
+  /// Empty values mean "unset" — the in-code default applies. (A blank
+  /// seeded row once blanked the nudge banner and paywall prices.)
+  String str(String key, String def) {
+    final s = _v[key];
+    return (s == null || s.isEmpty) ? def : s;
+  }
 
   bool flag(String key, bool def) {
     final s = _v[key];
