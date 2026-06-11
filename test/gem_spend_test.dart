@@ -60,9 +60,11 @@ void main() {
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
     await tester.pump(const Duration(milliseconds: 600));
     await tester.tap(find.byKey(const Key('streak_stat')));
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pump(); // route in
+    await tester.pump(const Duration(milliseconds: 450)); // slide up
     expect(find.text('Freezes: 1/2'), findsOneWidget);
     await tester.tap(find.textContaining('Get one'));
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
     expect(appState.streakFreezes, 2);
     expect(appState.gems, 50);
