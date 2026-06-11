@@ -725,6 +725,23 @@ class _LessonScreenState extends State<LessonScreen>
             ),
           ),
         ),
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 14),
+            child: OutlinedButton.icon(
+              onPressed: () {
+                Sfx.instance.tap();
+                if (_ex.type == ExerciseType.listen &&
+                    _ex.correctOrder.isNotEmpty) {
+                  Tts.instance
+                      .speak(_ex.correctOrder.first, slow: true);
+                }
+              },
+              icon: const Text('🐢', style: TextStyle(fontSize: 16)),
+              label: const Text('Slower'),
+            ),
+          ),
+        ),
         _typedField('Type what you hear'),
       ],
     );

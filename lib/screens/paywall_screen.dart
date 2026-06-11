@@ -1,3 +1,4 @@
+import '../flags.dart';
 import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../app_state.dart';
@@ -39,7 +40,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
           Center(
             child: Column(
               children: [
-                const RatelMascot(pose: RatelPose.celebrate, size: 120),
+                Image.asset('assets/images/ratel-crown.webp',
+                    width: 120,
+                    height: 120,
+                    errorBuilder: (_, _, _) => const RatelMascot(
+                        pose: RatelPose.celebrate, size: 120)),
                 const SizedBox(height: 8),
                 Text(pro ? "You're Ratel Pro ✨" : 'Go fearless with Ratel Pro',
                     textAlign: TextAlign.center,
@@ -55,6 +60,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
               'Help build the fearless honey badger you love.'),
           _benefit(Icons.rocket_launch, 'Early access',
               'New features and content land for Pro first.'),
+          _compareTable(context),
           const SizedBox(height: 20),
           if (pro) ...[
             _card(
@@ -69,9 +75,15 @@ class _PaywallScreenState extends State<PaywallScreen> {
               child: Text(_busy ? 'Working…' : 'Cancel Pro'),
             ),
           ] else ...[
-            _plan('Yearly', '\$59.99/yr', 'Best value · ~\$5/mo', true),
+            _plan(
+                'Yearly',
+                Flags.instance.str('price_year', '\$59.99/yr'),
+                'Best value', true),
             const SizedBox(height: 10),
-            _plan('Monthly', '\$9.99/mo', 'Cancel anytime', false),
+            _plan(
+                'Monthly',
+                Flags.instance.str('price_month', '\$9.99/mo'),
+                'Cancel anytime', false),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
@@ -85,6 +97,15 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 'Test mode — no payment is taken yet. Real billing arrives with the app-store and web checkout.',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: RatelColors.textMuted, fontSize: 12)),
+            TextButton(
+              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text(
+                          'Restore arrives with the store build.'))),
+              child: const Text('Restore purchases',
+                  style: TextStyle(
+                      color: RatelColors.textMuted, fontSize: 12)),
+            ),
           ],
         ],
       ),
@@ -113,6 +134,52 @@ class _PaywallScreenState extends State<PaywallScreen> {
           ],
         ),
       );
+
+  Widget _compareTable(BuildContext context) {
+    TableRow row(String label, String free, String proV,
+            {bool head = false}) =>
+        TableRow(
+          children: [
+            for (final (i, t) in [label, free, proV].indexed)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    vertical: 8, horizontal: 8),
+                child: Text(t,
+                    textAlign:
+                        i == 0 ? TextAlign.left : TextAlign.center,
+                    style: TextStyle(
+                        fontSize: head ? 13 : 13.5,
+                        fontWeight: head || i == 2
+                            ? FontWeight.w800
+                            : FontWeight.w500,
+                        color: head
+                            ? RatelColors.textMuted
+                            : (i == 2 ? RatelColors.honey : null))),
+              ),
+          ],
+        );
+    return Container(
+      decoration: BoxDecoration(
+        color: context.surfaceC,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: context.borderC),
+      ),
+      child: Table(
+        columnWidths: const {
+          0: FlexColumnWidth(1.6),
+          1: FlexColumnWidth(1),
+          2: FlexColumnWidth(1),
+        },
+        children: [
+          row('', 'Free', 'Pro', head: true),
+          row('Hearts', '5 + regen', 'Unlimited'),
+          row('Coach messages', '20/day', '200/day'),
+          row('Every lesson & villain', '✓', '✓'),
+          row('Early features', '—', '✓'),
+        ],
+      ),
+    );
+  }
 
   Widget _plan(String name, String price, String note, bool best) => Container(
         padding: const EdgeInsets.all(14),

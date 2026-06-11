@@ -25,11 +25,13 @@ class Tts {
   }
 
   /// Speak [text]. Stops any current utterance first. No-op on failure.
-  Future<void> speak(String text) async {
+  /// [slow] = turtle replay for learners who need another pass.
+  Future<void> speak(String text, {bool slow = false}) async {
     if (text.trim().isEmpty) return;
     try {
       await _ensure();
       await _t.stop();
+      await _t.setSpeechRate(slow ? 0.26 : 0.45);
       await _t.speak(text);
     } catch (_) {
       // TTS unavailable on this platform/runtime — silently ignore.
