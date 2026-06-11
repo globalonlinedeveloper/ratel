@@ -442,6 +442,23 @@ class AppState extends ChangeNotifier {
     } catch (_) {}
   }
 
+  /// File a content report (fire-and-forget; offline = no-op).
+  Future<void> reportExercise({
+    required String lessonId,
+    required int exerciseIndex,
+    required String reason,
+  }) async {
+    final client = _client;
+    if (client == null) return;
+    try {
+      await client.from('exercise_reports').insert({
+        'lesson_id': lessonId,
+        'exercise_index': exerciseIndex,
+        'reason': reason,
+      });
+    } catch (_) {}
+  }
+
   void addGems(int n) {
     if (n <= 0) return;
     gems += n;

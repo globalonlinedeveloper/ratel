@@ -1284,6 +1284,53 @@ class _LessonScreenState extends State<LessonScreen>
     );
   }
 
+  // ---- report this exercise ----
+  void _reportSheet() {
+    const reasons = [
+      'My answer should be accepted',
+      'Something is wrong here',
+      'Audio problem',
+      'Typo or unnatural English',
+    ];
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text('Report this exercise',
+                  style: TextStyle(
+                      fontSize: 17, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 12),
+              for (final r in reasons)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: OutlinedButton(
+                    onPressed: () {
+                      appState.reportExercise(
+                        lessonId: widget.lesson.id,
+                        exerciseIndex: _eIdx,
+                        reason: r,
+                      );
+                      Navigator.of(ctx).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Thanks! The honey badger '
+                                  'is on it.')));
+                    },
+                    child: Text(r),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   // ---- bottom bar ----
   Widget _bottom() {
     if (!_answered) {
@@ -1330,6 +1377,13 @@ class _LessonScreenState extends State<LessonScreen>
                             : solutionText(_ex.sentence, _correctText())}',
                 style: TextStyle(color: c, fontWeight: FontWeight.w600),
               ),
+            ),
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              tooltip: 'Report this exercise',
+              onPressed: _reportSheet,
+              icon: const Icon(Icons.flag_outlined,
+                  size: 18, color: RatelColors.textMuted),
             ),
           ],
         ),
