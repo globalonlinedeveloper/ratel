@@ -73,7 +73,11 @@ void main() {
     await tester.tap(find.text('Finish'));
     await tester.pump(const Duration(milliseconds: 700));
     expect(find.text('BOOST'), findsOneWidget);
-    expect(find.text('+100 XP'), findsOneWidget); // 50 doubled
+    // the random surprise bonus makes the exact text flaky; assert
+    // the DOUBLING property instead: undoubled max = 70 XP
+    // (50 + bonus<=20), doubled min = 100 - disjoint ranges.
+    expect(appState.xp >= 100, isTrue,
+        reason: 'xp=${appState.xp} not doubled');
     await tester.pump(const Duration(seconds: 1));
   });
 
