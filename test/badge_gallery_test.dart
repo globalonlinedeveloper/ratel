@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/milestones.dart';
@@ -40,5 +42,27 @@ void main() {
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Quest Devotee'), findsOneWidget);
     expect(find.text('Lightning Badger'), findsOneWidget);
+  });
+
+  test('all six medallion assets ship in the bundle dir', () {
+    for (final f in [
+      'badge-quester', 'badge-devotee', 'badge-pweek',
+      'badge-wweek', 'badge-quick', 'badge-lightning'
+    ]) {
+      expect(File('assets/images/$f.webp').existsSync(), isTrue,
+          reason: '$f.webp missing');
+    }
+  });
+
+  testWidgets('earned badges render full-color art, locked are greyed',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+            body: BadgeGallery(
+                badgesOverride:
+                    monthlyBadges(quests: 1, weeks: 0, best: 0)))));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(Image), findsNWidgets(6)); // art for every chip
+    expect(find.byType(ColorFiltered), findsNWidgets(5)); // 5 locked
   });
 }

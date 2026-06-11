@@ -34,6 +34,38 @@ class BadgeGallery extends StatelessWidget {
     'Lightning Badger': Icons.flash_on,
   };
 
+  static const _assets = {
+    'Monthly Quester': 'assets/images/badge-quester.webp',
+    'Quest Devotee': 'assets/images/badge-devotee.webp',
+    'Perfect Week': 'assets/images/badge-pweek.webp',
+    'Week after Week': 'assets/images/badge-wweek.webp',
+    'Quick Thinker': 'assets/images/badge-quick.webp',
+    'Lightning Badger': 'assets/images/badge-lightning.webp',
+  };
+
+  static const _grey = ColorFilter.matrix(<double>[
+    0.2126, 0.7152, 0.0722, 0, 0,
+    0.2126, 0.7152, 0.0722, 0, 0,
+    0.2126, 0.7152, 0.0722, 0, 0,
+    0, 0, 0, 1, 0,
+  ]);
+
+  /// Medallion art by label; greyscale+dim when locked; the old
+  /// icon remains as the errorBuilder fallback.
+  Widget _art(MonthBadge b) {
+    final fallback = Icon(_icons[b.label] ?? Icons.star,
+        size: 16,
+        color: b.earned ? RatelColors.honey : RatelColors.textMuted);
+    final path = _assets[b.label];
+    if (path == null) return fallback;
+    final img = Image.asset(path,
+        width: 22, height: 22, errorBuilder: (_, __, ___) => fallback);
+    if (b.earned) return img;
+    return Opacity(
+        opacity: 0.45,
+        child: ColorFiltered(colorFilter: _grey, child: img));
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<MonthBadge>>(
@@ -71,11 +103,7 @@ class BadgeGallery extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(_icons[b.label] ?? Icons.star,
-                              size: 16,
-                              color: b.earned
-                                  ? RatelColors.honey
-                                  : RatelColors.textMuted),
+                          _art(b),
                           const SizedBox(width: 6),
                           Text(b.label,
                               style: TextStyle(
