@@ -191,7 +191,7 @@ class _CoachScreenState extends State<CoachScreen> {
             ),
           ),
         if (_msgs.length <= 1 && !_waiting)
-          if (_messages.isEmpty)
+          if (_msgs.length <= 1)
             SizedBox(
               height: 96,
               child: ListView(
