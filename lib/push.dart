@@ -45,6 +45,36 @@ class Push {
     } catch (_) {}
   }
 
+  /// 'On' | 'Off' | 'Not set' for the Profile row.
+  Future<String> statusLabel() async {
+    if (!_usable) return 'Off';
+    try {
+      final s =
+          await FirebaseMessaging.instance.getNotificationSettings();
+      switch (s.authorizationStatus) {
+        case AuthorizationStatus.authorized:
+        case AuthorizationStatus.provisional:
+          return 'On';
+        case AuthorizationStatus.denied:
+          return 'Off';
+        case AuthorizationStatus.notDetermined:
+          return 'Not set';
+      }
+    } catch (_) {}
+    return 'Off';
+  }
+
+  /// Direct re-ask from settings (not gated by the one-time prompt).
+  Future<void> requestAgain() async {
+    if (!_usable) return;
+    try {
+      final s = await FirebaseMessaging.instance.requestPermission();
+      if (s.authorizationStatus == AuthorizationStatus.authorized) {
+        await _saveToken();
+      }
+    } catch (_) {}
+  }
+
   Future<void> _saveToken() async {
     try {
       final client = Supabase.instance.client;

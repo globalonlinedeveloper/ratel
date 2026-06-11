@@ -1,3 +1,4 @@
+import 'package:in_app_review/in_app_review.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../app_state.dart';
@@ -42,6 +43,17 @@ class _StreakMilestoneCardState extends State<StreakMilestoneCard> {
       if (prefs.getBool('ms_done_$m') ?? false) return;
       await prefs.setBool('ms_done_$m', true);
       if (mounted) setState(() => _show = m);
+      if (m == 7 && !(prefs.getBool('review_asked') ?? false)) {
+        await prefs.setBool('review_asked', true);
+        Future.delayed(const Duration(milliseconds: 1600), () async {
+          try {
+            final review = InAppReview.instance;
+            if (await review.isAvailable()) {
+              await review.requestReview(); // the happiest moment
+            }
+          } catch (_) {}
+        });
+      }
     } catch (_) {
     } finally {
       _checking = false;

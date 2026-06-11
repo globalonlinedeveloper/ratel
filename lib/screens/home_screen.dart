@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
+import '../push.dart';
 import '../guest.dart';
 import '../widgets/save_account_sheet.dart';
 import '../widgets/streak_calendar.dart';
@@ -452,6 +454,35 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
+          if (!kIsWeb) ...[
+            const SizedBox(height: 4),
+            FutureBuilder<String>(
+              future: Push.instance.statusLabel(),
+              builder: (context, snap) {
+                final st = snap.data ?? '…';
+                return ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.notifications_active_outlined,
+                      color: RatelColors.honey),
+                  title: const Text('Daily streak reminders'),
+                  subtitle: Text(st == 'Off'
+                      ? 'Off — enable in system settings if asked before'
+                      : st),
+                  trailing: st == 'On'
+                      ? const Icon(Icons.check_circle,
+                          color: RatelColors.teal, size: 20)
+                      : TextButton(
+                          onPressed: () async {
+                            await Push.instance.requestAgain();
+                            if (context.mounted) {
+                              (context as Element).markNeedsBuild();
+                            }
+                          },
+                          child: const Text('Enable')),
+                );
+              },
+            ),
+          ],
           if (Config.hasSupabase) ...[
             const SizedBox(height: 12),
             OutlinedButton.icon(

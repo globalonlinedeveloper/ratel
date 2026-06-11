@@ -191,6 +191,53 @@ class _CoachScreenState extends State<CoachScreen> {
             ),
           ),
         if (_msgs.length <= 1 && !_waiting)
+          if (_messages.isEmpty)
+            SizedBox(
+              height: 96,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                children: [
+                  for (final sc in kCoachScenarios)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: InkWell(
+                        onTap: () => _send(sc.prompt),
+                        borderRadius: BorderRadius.circular(14),
+                        child: Container(
+                          width: 132,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: context.tintC(RatelColors.teal),
+                            borderRadius: BorderRadius.circular(14),
+                            border:
+                                Border.all(color: context.faintBorderC),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(sc.icon,
+                                  size: 20, color: RatelColors.teal),
+                              const Spacer(),
+                              Text('Roleplay',
+                                  style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: context.mutedC)),
+                              Text(sc.title,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w700)),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
           SizedBox(
             height: 44,
             child: ListView(
@@ -290,3 +337,28 @@ class _CoachScreenState extends State<CoachScreen> {
     );
   }
 }
+
+/// Conversation scenarios — practice REAL situations. Free (daily caps
+/// unchanged); Duolingo gates roleplay behind its top tier.
+class CoachScenario {
+  const CoachScenario(this.title, this.icon, this.prompt);
+
+  final String title;
+  final IconData icon;
+  final String prompt;
+}
+
+const List<CoachScenario> kCoachScenarios = [
+  CoachScenario('Order at a café', Icons.local_cafe,
+      "Let's roleplay! You are a friendly waiter at a café and I am a "
+      'customer ordering food. Please start the scene.'),
+  CoachScenario('Job interview', Icons.work,
+      "Let's roleplay! You are a kind interviewer and I am applying for a "
+      'job. Ask me your first question.'),
+  CoachScenario('Meet a new friend', Icons.emoji_people,
+      "Let's roleplay! We just met at a park. You start a friendly "
+      'conversation with me.'),
+  CoachScenario('At the doctor', Icons.medical_services,
+      "Let's roleplay! You are a caring doctor and I am your patient. "
+      'Ask me what is wrong.'),
+];
