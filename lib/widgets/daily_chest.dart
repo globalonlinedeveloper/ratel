@@ -55,6 +55,14 @@ class _DailyChestCardState extends State<DailyChestCard> {
     try {
       final p = await SharedPreferences.getInstance();
       await p.setString('daily_chest_day', _today());
+      if (bonus.isNotEmpty) {
+        // bonus moments also light a 15-minute double-XP boost
+        await p.setString(
+            'xp_boost_until',
+            DateTime.now()
+                .add(const Duration(minutes: 15))
+                .toIso8601String());
+      }
     } catch (_) {}
   }
 
@@ -79,7 +87,8 @@ class _DailyChestCardState extends State<DailyChestCard> {
                 Expanded(
                   child: Text(
                       '+$_paid gems!'
-                      '${_bonus.isEmpty ? '' : ' $_bonus'}'
+                      '${_bonus.isEmpty ? '' : ' $_bonus'
+                          ' Double XP for 15 minutes!'}'
                       ' See you tomorrow.',
                       style:
                           const TextStyle(fontWeight: FontWeight.w700)),

@@ -11,6 +11,7 @@ import '../widgets/motd_card.dart';
 import '../widgets/campaign_cards.dart';
 import '../widgets/hearts_sheet.dart';
 import '../widgets/daily_chest.dart';
+import '../widgets/perfect_week.dart';
 import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/mascot_anim.dart';
@@ -64,12 +65,25 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    SharedPreferences.getInstance().then((p) {
-      if (mounted) {
-        setState(() {
-          _listenOn = p.getBool('listen_on') ?? true;
-          _chests = (p.getStringList('chests') ?? const []).toSet();
-        });
+    SharedPreferences.getInstance().then((p) async {
+      if (!mounted) return;
+      setState(() {
+        _listenOn = p.getBool('listen_on') ?? true;
+        _chests = (p.getStringList('chests') ?? const []).toSet();
+      });
+      // weekly freeze drip: one free freeze per ISO week, cap 2
+      final String wk = weekKey(DateTime.now());
+      if (p.getString('freeze_grant_week') != wk) {
+        if (await appState.grantWeeklyFreeze()) {
+          await p.setString('freeze_grant_week', wk);
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text(
+                    'A free streak freeze arrived — stay fearless!')));
+          }
+        } else {
+          await p.setString('freeze_grant_week', wk);
+        }
       }
     });
     if (!appState.loaded) {
@@ -785,6 +799,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const ReviewCard(),
         const DailyQuestsCard(),
         const DailyChestCard(),
+        const PerfectWeekCard(),
         const AnniversaryCard(),
         Expanded(
           child: SingleChildScrollView(

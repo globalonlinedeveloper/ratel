@@ -174,3 +174,21 @@ String timeAgo(Duration d) {
   if (d.inDays < 1) return '${d.inHours}h ago';
   return '${d.inDays}d ago';
 }
+
+/// Whether a stored boost deadline is still in the future.
+bool boostActive(DateTime? until, DateTime now) =>
+    until != null && now.isBefore(until);
+
+/// ISO-ish week key (year + week number) for once-per-week grants.
+String weekKey(DateTime d) {
+  final int dayOfYear =
+      d.difference(DateTime(d.year)).inDays + 1;
+  final int week = ((dayOfYear - d.weekday + 10) ~/ 7);
+  return '${d.year}-w$week';
+}
+
+/// Seven straight days at or above the goal (oldest..today sums).
+bool perfectWeek(List<int> last7DayXp, int goal) =>
+    last7DayXp.length >= 7 &&
+    goal > 0 &&
+    last7DayXp.every((x) => x >= goal);

@@ -84,6 +84,7 @@ class _LessonScreenState extends State<LessonScreen>
   bool _explaining = false;
   int _bonusXp = 0; // occasional surprise bonus on completion
   int _gemsEarned = 0; // combo milestones + flawless bonus
+  bool _boosted = false; // 15-min double-XP window (daily chest)
 
   late final AnimationController _fb; // answer feedback: pop on right, shake on wrong
 
@@ -91,6 +92,13 @@ class _LessonScreenState extends State<LessonScreen>
   void initState() {
     super.initState();
     _applyListenPref();
+    SharedPreferences.getInstance().then((p) {
+      final until =
+          DateTime.tryParse(p.getString('xp_boost_until') ?? '');
+      if (mounted && boostActive(until, DateTime.now())) {
+        setState(() => _boosted = true);
+      }
+    });
     for (int u = 0; u < course.length; u++) {
       final unit = course[u];
       if (unit.lessons.any((l) => l.id == widget.lesson.id)) {
@@ -233,7 +241,8 @@ class _LessonScreenState extends State<LessonScreen>
         final oneIn = max(1, Flags.instance.intOf('xp_bonus_one_in', 5));
         _bonusXp =
             Random().nextInt(oneIn) == 0 ? (5 + Random().nextInt(16)) : 0;
-        final total = _correctCount * 10 + _bonusXp;
+        final total =
+            (_correctCount * 10 + _bonusXp) * (_boosted ? 2 : 1);
         final int badgesBefore =
             achievements.where((a) => isEarned(a, appState)).length;
         appState.completeLesson(widget.lesson.id, total);
@@ -488,6 +497,11 @@ class _LessonScreenState extends State<LessonScreen>
                         ],
                       ),
                     ),
+                  ],
+                  if (_boosted) ...[
+                    const SizedBox(width: 6),
+                    const Icon(Icons.flash_on,
+                        size: 16, color: RatelColors.coral),
                   ],
                   if (_answered &&
                       _isCorrect &&
@@ -1417,7 +1431,8 @@ class _LessonScreenState extends State<LessonScreen>
 
   // ---- completion ----
   Widget _completion(BuildContext context) {
-    final int earned = _correctCount * 10 + _bonusXp;
+    final int earned =
+        (_correctCount * 10 + _bonusXp) * (_boosted ? 2 : 1);
     final int total = widget.lesson.exercises.length;
     return Scaffold(
       body: SafeArea(
@@ -1519,6 +1534,9 @@ class _LessonScreenState extends State<LessonScreen>
                             if (_gemsEarned > 0)
                               _statChip(Icons.diamond, '+$_gemsEarned',
                                   'GEMS', RatelColors.teal),
+                            if (_boosted)
+                              _statChip(Icons.flash_on, '2x',
+                                  'BOOST', RatelColors.coral),
                             _statChip(
                                 Icons.track_changes,
                                 '${(_correctCount * 100 ~/ widget.lesson.exercises.length)}%',

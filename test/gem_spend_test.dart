@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
+import 'package:ratel/milestones.dart';
 import 'package:ratel/screens/home_screen.dart';
 import 'package:ratel/widgets/hearts_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -55,6 +56,8 @@ void main() {
   });
 
   testWidgets('streak sheet sells a freeze', (tester) async {
+    SharedPreferences.setMockInitialValues(
+        {'freeze_grant_week': weekKey(DateTime.now())});
     appState.streakFreezes = 1;
     appState.addGems(250);
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));

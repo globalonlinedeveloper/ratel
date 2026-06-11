@@ -442,6 +442,23 @@ class AppState extends ChangeNotifier {
     } catch (_) {}
   }
 
+  /// One free streak freeze per week up to the cap (targeted write;
+  /// the streak cron still owns decrements).
+  Future<bool> grantWeeklyFreeze() async {
+    if (streakFreezes >= 2) return false;
+    streakFreezes++;
+    notifyListeners();
+    final client = _client;
+    if (client != null) {
+      try {
+        await client.from('profiles').update({
+          'streak_freezes': streakFreezes,
+        }).eq('id', client.auth.currentUser!.id);
+      } catch (_) {}
+    }
+    return true;
+  }
+
   /// File a content report (fire-and-forget; offline = no-op).
   Future<void> reportExercise({
     required String lessonId,
