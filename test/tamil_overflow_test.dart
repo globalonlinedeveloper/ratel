@@ -111,16 +111,33 @@ void main() {
   testWidgets('full home tour in Tamil at 360px: scroll + every tab',
       (tester) async {
     _narrowTamil(tester);
+    // capture overflow details AT THROW TIME (creator file:line),
+    // tagged with the tour step — defunct-tree dumps name nothing
+    var step = 'boot';
+    final List<String> overflows = [];
+    final old = FlutterError.onError;
+    FlutterError.onError = (d) {
+      final s = d.toString();
+      if (s.contains('overflowed')) {
+        overflows.add(
+            'step=\$step\n\${s.split('\n').take(16).join('\n')}');
+      } else {
+        old?.call(d);
+      }
+    };
+    addTearDown(() => FlutterError.onError = old);
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
     await tester.pump(const Duration(milliseconds: 800));
     // full path scroll, top to bottom
     final scrollable = find.byType(Scrollable).first;
     for (var i = 0; i < 6; i++) {
+      step = 'path drag \$i';
       await tester.drag(scrollable, const Offset(0, -1600));
       await tester.pump(const Duration(milliseconds: 250));
     }
     // every bottom tab renders
     for (final tab in ['Practice', 'Coach', 'Profile']) {
+      step = 'tab \$tab';
       await tester.tap(find.text(tab).last);
       await tester.pump(const Duration(milliseconds: 700));
     }
@@ -128,9 +145,12 @@ void main() {
     final pScroll = find.byType(Scrollable);
     if (pScroll.evaluate().isNotEmpty) {
       for (var i = 0; i < 4; i++) {
+        step = 'profile drag \$i';
         await tester.drag(pScroll.first, const Offset(0, -1400));
         await tester.pump(const Duration(milliseconds: 250));
       }
     }
+    expect(overflows, isEmpty,
+        reason: overflows.join('\n────────\n'));
   });
 }
