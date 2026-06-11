@@ -130,3 +130,27 @@ CourseSection sectionForUnit(int u) {
 /// True when [u] is the first unit of its section (banner insertion).
 bool startsSection(int u) =>
     kSections.any((s) => s.firstUnit == u);
+
+/// 0-100 English Score: completion carries 90 points, streak up to 10.
+int englishScore(
+    {required int lessonsDone,
+    required int lessonsTotal,
+    required int streak}) {
+  final int total = lessonsTotal < 1 ? 1 : lessonsTotal;
+  final int done = lessonsDone > total ? total : lessonsDone;
+  final int s = streak < 0 ? 0 : (streak > 10 ? 10 : streak);
+  return done * 90 ~/ total + s;
+}
+
+/// CEFR band for a score: A1 <25, A2 <50, B1 <75, B2 otherwise.
+String cefrFor(int score) => score < 25
+    ? 'A1'
+    : score < 50
+        ? 'A2'
+        : score < 75
+            ? 'B1'
+            : 'B2';
+
+/// Points still needed to enter the next band (0 at B2).
+int toNextBand(int score) =>
+    score < 25 ? 25 - score : score < 50 ? 50 - score : score < 75 ? 75 - score : 0;

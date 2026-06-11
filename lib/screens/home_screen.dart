@@ -339,6 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 12),
+          _englishScoreCard(),
           const StreakCalendar(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
@@ -967,6 +968,86 @@ class _HomeScreenState extends State<HomeScreen> {
             },
             child: const Text('Practice — earn a heart'),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _englishScoreCard() {
+    final int totalLessons = [
+      for (final u in course) u.lessons.length
+    ].fold(0, (a, b) => a + b);
+    final int score = englishScore(
+        lessonsDone: appState.completedCount,
+        lessonsTotal: totalLessons,
+        streak: appState.streak);
+    final String band = cefrFor(score);
+    final int gap = toNextBand(score);
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: context.surfaceC,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: context.borderC),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.school_outlined,
+                  size: 18, color: RatelColors.teal),
+              const SizedBox(width: 8),
+              const Text('English Score',
+                  style:
+                      TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 10, vertical: 3),
+                decoration: BoxDecoration(
+                    color: context.tintC(RatelColors.teal),
+                    borderRadius: BorderRadius.circular(10)),
+                child: Text(band,
+                    style: const TextStyle(
+                        color: RatelColors.teal,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 13)),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              RollingNumber(score,
+                  style: const TextStyle(
+                      fontSize: 30, fontWeight: FontWeight.w800)),
+              const Text(' / 100',
+                  style: TextStyle(
+                      color: RatelColors.textMuted, fontSize: 13)),
+              const Spacer(),
+              if (gap > 0)
+                Text('$gap to ${cefrFor(score + gap)}',
+                    style: const TextStyle(
+                        color: RatelColors.textMuted, fontSize: 12)),
+            ],
+          ),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(6),
+            child: LinearProgressIndicator(
+              value: (score % 25) / 25,
+              minHeight: 6,
+              backgroundColor: context.tintC(RatelColors.teal),
+              color: RatelColors.teal,
+            ),
+          ),
+          const SizedBox(height: 6),
+          const Text('Grows as you complete lessons and keep your streak.',
+              style:
+                  TextStyle(color: RatelColors.textMuted, fontSize: 11.5)),
         ],
       ),
     );
