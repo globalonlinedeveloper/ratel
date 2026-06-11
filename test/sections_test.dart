@@ -30,7 +30,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 600));
     expect(find.text('First steps'), findsOneWidget);
     expect(find.text('A1'), findsOneWidget);
-    expect(find.textContaining('/3 units'), findsOneWidget);
+    // A1 and A2 both span 3 units; the path column is not lazy,
+    // so BOTH banners are in the tree
+    expect(find.textContaining('/3 units'), findsNWidgets(2));
+    expect(find.textContaining('/4 units'), findsOneWidget); // B1
     await tester.pump(const Duration(seconds: 1));
   });
 }
