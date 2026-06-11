@@ -13,6 +13,7 @@ import '../widgets/hearts_sheet.dart';
 import '../widgets/daily_chest.dart';
 import '../widgets/perfect_week.dart';
 import '../widgets/monthly_quest.dart';
+import '../widgets/smart_practice.dart';
 import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/mascot_anim.dart';
@@ -159,6 +160,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const Text('Practice',
             style: TextStyle(fontSize: 20, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
         const SizedBox(height: 12),
+        const SmartPracticeCard(),
         const MistakesReview(),
         const Text('Revisit lessons',
             style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),

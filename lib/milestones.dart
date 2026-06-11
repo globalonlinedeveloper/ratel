@@ -218,3 +218,23 @@ int currentEnglishScore(int completedCount, int totalLessons, int streak) =>
         lessonsTotal: totalLessons,
         streak: streak);
 
+
+/// Compose a smart drill from priority buckets: due reviews first, then
+/// fresh mistakes, then weak-area keys - deduped, capped at [cap].
+List<String> composeDrill({
+  required List<String> due,
+  required List<String> mistakes,
+  required List<String> weak,
+  int cap = 7,
+}) {
+  final seen = <String>{};
+  final out = <String>[];
+  for (final bucket in [due, mistakes, weak]) {
+    for (final k in bucket) {
+      if (k.isEmpty || !seen.add(k)) continue;
+      out.add(k);
+      if (out.length >= cap) return out;
+    }
+  }
+  return out;
+}

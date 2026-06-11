@@ -1549,11 +1549,19 @@ class _LessonScreenState extends State<LessonScreen>
                               _statChip(Icons.flash_on, '2x',
                                   'BOOST', RatelColors.coral),
                             if (_scoreNow() > _scoreBefore)
-                              _statChip(
-                                  Icons.school,
-                                  '$_scoreBefore → ${_scoreNow()}',
-                                  'SCORE',
-                                  const Color(0xFF7B5EA7)),
+                              TweenAnimationBuilder<int>(
+                                tween: IntTween(
+                                    begin: _scoreBefore,
+                                    end: _scoreNow()),
+                                duration: const Duration(
+                                    milliseconds: 900),
+                                curve: Curves.easeOutCubic,
+                                builder: (context, v, _) => _statChip(
+                                    Icons.school,
+                                    '$_scoreBefore → $v',
+                                    'SCORE',
+                                    const Color(0xFF7B5EA7)),
+                              ),
                             _statChip(
                                 Icons.track_changes,
                                 '${(_correctCount * 100 ~/ widget.lesson.exercises.length)}%',
