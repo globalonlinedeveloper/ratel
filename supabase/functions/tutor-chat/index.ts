@@ -131,7 +131,15 @@ Deno.serve(async (req: Request) => {
       },
       body: JSON.stringify({
         model: "gpt-4o-mini",
-        messages: [{ role: "system", content: SYSTEM }, ...msgs],
+        messages: [{
+          role: "system",
+          content: body.locale === "ta"
+            ? SYSTEM + "\n- The learner speaks Tamil. After any " +
+              "'Better:' correction, add a SHORT Tamil gloss of the " +
+              "correction in parentheses. Keep the conversation " +
+              "itself in English."
+            : SYSTEM,
+        }, ...msgs],
         max_tokens: 220,
         temperature: 0.7,
       }),

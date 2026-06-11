@@ -1504,7 +1504,12 @@ class _LessonScreenState extends State<LessonScreen>
                         child: _completionAnim(),
                       ),
                       const SizedBox(height: 16),
-                      Text(widget.reviewMode ? 'Review complete!' : 'Lesson complete!',
+                      Text(
+                          widget.reviewMode
+                              ? S.instance.t('review_complete',
+                                  'Review complete!')
+                              : S.instance.t('lesson_complete',
+                                  'Lesson complete!'),
                           style: const TextStyle(
                               fontSize: 24, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
                       const StreakMilestoneCard(),
@@ -1530,7 +1535,9 @@ class _LessonScreenState extends State<LessonScreen>
                                   fallbackPose: RatelPose.celebrate,
                                   size: 54),
                               const SizedBox(width: 8),
-                              Text('Unit complete!',
+                              Text(
+                                  S.instance.t('unit_complete',
+                                      'Unit complete!'),
                                   style: TextStyle(
                                       fontWeight: FontWeight.w700,
                                       color: context.textC)),

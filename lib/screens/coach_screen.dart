@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../widgets/mascot_anim.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
+import '../strings.dart';
 import '../config.dart';
 import '../widgets/ratel_mascot.dart';
 
@@ -60,6 +61,7 @@ class _CoachScreenState extends State<CoachScreen> {
     final res = await Supabase.instance.client.functions.invoke(
       'tutor-chat',
       body: {
+        'locale': S.instance.locale,
         'messages': [
           for (final m in history) {'role': m.role, 'content': m.text},
         ],

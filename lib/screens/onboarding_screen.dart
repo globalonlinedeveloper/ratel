@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../app_state.dart';
+import '../strings.dart';
 import '../widgets/ratel_mascot.dart';
 import 'placement_screen.dart';
 
@@ -44,6 +45,25 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 const SizedBox(height: 8),
                 const Center(child: RatelMascot(pose: RatelPose.wave, size: 130)),
                 const SizedBox(height: 8),
+                Center(
+                  child: SegmentedButton<String>(
+                    showSelectedIcon: false,
+                    style: const ButtonStyle(
+                        visualDensity: VisualDensity.compact),
+                    segments: const [
+                      ButtonSegment(
+                          value: 'en', label: Text('I speak English')),
+                      ButtonSegment(
+                          value: 'ta', label: Text('நான் தமிழ் பேசுகிறேன்')),
+                    ],
+                    selected: {S.instance.locale},
+                    onSelectionChanged: (sel) async {
+                      await S.instance.setLocale(sel.first);
+                      if (mounted) setState(() {});
+                    },
+                  ),
+                ),
+                const SizedBox(height: 12),
                 const Text('Welcome to Ratel!',
                     textAlign: TextAlign.center,
                     style:
