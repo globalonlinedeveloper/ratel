@@ -866,7 +866,14 @@ class _LessonScreenState extends State<LessonScreen>
         ),
         const SizedBox(height: 10),
         if (!_isCorrect) _explainBlock(),
-        _wideButton(_isLast ? 'Finish' : 'Continue', _next),
+        _wideButton(
+            _isLast &&
+                    (_fixPhase ||
+                        widget.reviewMode ||
+                        _missedFirstPass.isEmpty)
+                ? 'Finish'
+                : 'Continue',
+            _next),
       ],
     );
   }
