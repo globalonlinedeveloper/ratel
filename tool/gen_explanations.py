@@ -65,7 +65,7 @@ lp=[(m.group(1),m.start()) for m in re.finditer(r"Lesson\(\s*id:\s*'([^']+)'",sr
 EX=[]
 for k in range(len(lp)-1):
     lid,st=lp[k];en=lp[k+1][1];sg=src[st:en];xi=0
-    for em in re.finditer(r"Exercise\.(choice|wordBank|typed|listen|matchPairs|dialogueOrder)\(",sg):
+    for em in re.finditer(r"Exercise\.(choice|wordBank|typed|listen|matchPairs|dialogueOrder|multiBlank|listenRespond)\(",sg):
         et=em.group(1);op=sg.index('(',em.start());cp=mp(sg,op);b=sg[op+1:cp]
         ci=re.search(r"correctIndex:\s*(-?\d+)",b)
         EX.append(dict(lid=lid,exidx=xi,type=et,prompt=sa(b,'prompt'),sentence=sa(b,'sentence'),
@@ -93,6 +93,19 @@ for e in EX:
         tasks.append((f"{e['lid']}:{e['exidx']}:wb",u))
     elif e['type']=='matchPairs':
         pass  # match boards never show a wrong banner -> no key
+    elif e['type']=='multiBlank':
+        cor=', '.join(e['correctOrder'] or [])
+        u=(f"Task: fill the blanks in '{e.get('sentence') or ''}' in order.\nThe answers are: \"{cor}\"\n"
+           f"In 1-2 short sentences (max 35 words), teach WHY these words fit these blanks (meaning or grammar) so a learner can reuse the rule.")
+        tasks.append((f"{e['lid']}:{e['exidx']}:mb",u))
+    elif e['type']=='listenRespond':
+        ci=e['correctIndex'];cor=e['options'][ci]
+        for j,opt in enumerate(e['options']):
+            if j==ci:continue
+            u=(f"The learner HEARD: \"{e.get('sentence') or ''}\" and had to pick the best reply.\n"
+               f"They chose \"{opt}\"; the right reply is \"{cor}\".\n"
+               f"In 1-2 short sentences (max 35 words), teach WHY \"{cor}\" answers what was heard and what \"{opt}\" would answer instead.")
+            tasks.append((f"{e['lid']}:{e['exidx']}:{j}",u))
     elif e['type']=='dialogueOrder':
         cor='  /  '.join(la_lines(e))
         u=(f"Task: put the lines of a short English conversation in order.\nThe correct order is: \"{cor}\"\n"

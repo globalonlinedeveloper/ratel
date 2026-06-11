@@ -60,6 +60,20 @@ class ContentStore {
             sentence: e['sentence'] as String?,
             accepted: _strs(e['correct_order']));
       }
+      if (type == 'multi_blank') {
+        return Exercise.multiBlank(
+            prompt: prompt,
+            template: (e['sentence'] ?? '').toString(),
+            options: opts,
+            answers: _strs(e['correct_order']));
+      }
+      if (type == 'listen_respond') {
+        return Exercise.listenRespond(
+            prompt: prompt,
+            say: (e['sentence'] ?? '').toString(),
+            options: opts,
+            correctIndex: (e['correct_index'] as num?)?.toInt() ?? 0);
+      }
       if (type == 'dialogue') {
         return Exercise.dialogueOrder(
             prompt: prompt,

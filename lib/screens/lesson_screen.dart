@@ -550,7 +550,9 @@ class _LessonScreenState extends State<LessonScreen>
                 ],
               ),
               const SizedBox(height: 20),
-              if (_ex.sentence != null) ...[
+              if (_ex.sentence != null &&
+                  _ex.type != ExerciseType.listenRespond &&
+                  _ex.type != ExerciseType.multiBlank) ...[
                 Text(_ex.sentence!,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w600)),
@@ -568,6 +570,9 @@ class _LessonScreenState extends State<LessonScreen>
                       ExerciseType.typed => _typedBody(),
                       ExerciseType.matchPairs => _matchBody(),
                       ExerciseType.dialogueOrder => _dialogueBody(),
+                      ExerciseType.multiBlank => _multiBlankBody(),
+                      ExerciseType.listenRespond =>
+                        _listenRespondBody(),
                     },
                   ),
                 ),
@@ -950,6 +955,10 @@ class _LessonScreenState extends State<LessonScreen>
     if (_ex.type == ExerciseType.listen && _ex.correctOrder.isNotEmpty) {
       Tts.instance.speak(_ex.correctOrder.first);
     }
+    if (_ex.type == ExerciseType.listenRespond &&
+        (_ex.sentence ?? '').isNotEmpty) {
+      Tts.instance.speak(_ex.sentence!);
+    }
   }
 
   Widget _listenBody() {
@@ -1015,6 +1024,112 @@ class _LessonScreenState extends State<LessonScreen>
         ),
         child: Text(text, style: const TextStyle(fontSize: 16)),
       ),
+    );
+  }
+
+  // ---- multi-blank ----
+  Widget _multiBlankBody() {
+    final parts = (_ex.sentence ?? '').split('___');
+    final blanks = parts.length - 1;
+    final available = [
+      for (final i in _ensureOrder(_ex.options.length))
+        if (!_picked.contains(i)) i
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          runSpacing: 8,
+          children: [
+            for (int b = 0; b < parts.length; b++) ...[
+              if (parts[b].isNotEmpty)
+                Text(parts[b], style: const TextStyle(fontSize: 17)),
+              if (b < blanks)
+                b < _picked.length
+                    ? Padding(
+                        padding:
+                            const EdgeInsets.symmetric(horizontal: 2),
+                        child: InkWell(
+                          onTap: _answered
+                              ? null
+                              : () => setState(() =>
+                                  _picked.remove(_picked[b])),
+                          borderRadius: BorderRadius.circular(8),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: context.tintC(RatelColors.teal),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                  color: RatelColors.teal),
+                            ),
+                            child: Text(_ex.options[_picked[b]],
+                                style: const TextStyle(fontSize: 16)),
+                          ),
+                        ),
+                      )
+                    : Container(
+                        width: 64,
+                        height: 28,
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 2),
+                        decoration: BoxDecoration(
+                          border: Border(
+                              bottom: BorderSide(
+                                  color: context.borderC, width: 2)),
+                        ),
+                      ),
+            ],
+          ],
+        ),
+        const SizedBox(height: 18),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final idx in available)
+              _tile(_ex.options[idx],
+                  onTap: _answered ||
+                          _picked.length >= blanks
+                      ? null
+                      : () => setState(() => _picked.add(idx))),
+          ],
+        ),
+      ],
+    );
+  }
+
+  // ---- listen & respond ----
+  Widget _listenRespondBody() {
+    return Column(
+      children: [
+        Center(
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: 18),
+            child: FilledButton.icon(
+              onPressed: () {
+                Sfx.instance.tap();
+                _speakListen();
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: RatelColors.honey,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 28, vertical: 16),
+              ),
+              icon: const Icon(Icons.volume_up, size: 26),
+              label: const Text('Play', style: TextStyle(fontSize: 18)),
+            ),
+          ),
+        ),
+        const Padding(
+          padding: EdgeInsets.only(bottom: 10),
+          child: Text('Pick the best reply',
+              style: TextStyle(color: RatelColors.textMuted)),
+        ),
+        _choiceBody(),
+      ],
     );
   }
 
@@ -1210,7 +1325,9 @@ class _LessonScreenState extends State<LessonScreen>
                 _isCorrect
                     ? 'Correct!'
                     : 'Answer: '
-                        '${solutionText(_ex.sentence, _correctText())}',
+                        '${_ex.type == ExerciseType.multiBlank
+                            ? _correctText()
+                            : solutionText(_ex.sentence, _correctText())}',
                 style: TextStyle(color: c, fontWeight: FontWeight.w600),
               ),
             ),

@@ -166,6 +166,12 @@ void main() {
               need('${lesson.id}:$i:ty');
             case ExerciseType.dialogueOrder:
               need('${lesson.id}:$i:do');
+            case ExerciseType.multiBlank:
+              need('${lesson.id}:$i:mb');
+            case ExerciseType.listenRespond:
+              for (var j = 0; j < ex.options.length; j++) {
+                if (j != ex.correctIndex) need('${lesson.id}:$i:$j');
+              }
             case ExerciseType.matchPairs:
               break; // match boards never show a wrong banner
           }

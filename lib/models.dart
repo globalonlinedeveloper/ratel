@@ -6,6 +6,8 @@ enum ExerciseType {
   listen,
   matchPairs,
   dialogueOrder,
+  multiBlank,
+  listenRespond,
 }
 
 /// A single exercise within a lesson.
@@ -70,6 +72,28 @@ class Exercise {
         sentence = null,
         options = lines,
         correctIndex = -1;
+
+  /// Fill N blanks IN ORDER: [template] contains '___' per blank;
+  /// [answers] (subset of [options]) fill them left to right.
+  const Exercise.multiBlank({
+    required this.prompt,
+    required String template,
+    required this.options,
+    required List<String> answers,
+  })  : type = ExerciseType.multiBlank,
+        sentence = template,
+        correctIndex = -1,
+        correctOrder = answers;
+
+  /// Hear a line (never shown), pick the right RESPONSE.
+  const Exercise.listenRespond({
+    required this.prompt,
+    required String say,
+    required this.options,
+    required this.correctIndex,
+  })  : type = ExerciseType.listenRespond,
+        sentence = say,
+        correctOrder = const [];
 
   const Exercise.listen({
     required this.prompt,

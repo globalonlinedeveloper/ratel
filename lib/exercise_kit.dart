@@ -18,6 +18,10 @@ bool canCheckAnswer(Exercise e,
     ExerciseType.matchPairs => pickedCount >= e.options.length,
     // dialogue: every line must be placed before checking
     ExerciseType.dialogueOrder => pickedCount >= e.options.length,
+    // multi-blank: one tile per blank in the template
+    ExerciseType.multiBlank =>
+      pickedCount >= '___'.allMatches(e.sentence ?? '').length,
+    ExerciseType.listenRespond => selected != null,
   };
 }
 
@@ -27,8 +31,10 @@ bool gradeAnswer(Exercise e,
   return switch (e.type) {
     ExerciseType.choice => selected == e.correctIndex,
     ExerciseType.wordBank ||
-    ExerciseType.dialogueOrder =>
+    ExerciseType.dialogueOrder ||
+    ExerciseType.multiBlank =>
       listEquals(pickedWords, e.correctOrder),
+    ExerciseType.listenRespond => selected == e.correctIndex,
     ExerciseType.typed ||
     ExerciseType.listen =>
       typedAnswerMatches(typed, e.correctOrder),
@@ -53,6 +59,14 @@ String correctTextFor(Exercise e) {
         '${e.options[i]} — ${e.correctOrder[i]}'
     ].join(', '),
     ExerciseType.dialogueOrder => e.correctOrder.join('  ·  '),
+    ExerciseType.multiBlank => () {
+      var s = e.sentence ?? '';
+      for (final a in e.correctOrder) {
+        s = s.replaceFirst('___', a);
+      }
+      return s;
+    }(),
+    ExerciseType.listenRespond => e.options[e.correctIndex],
   };
 }
 
@@ -69,6 +83,9 @@ String userTextFor(Exercise e,
       }(),
     ExerciseType.matchPairs => 'all pairs matched',
     ExerciseType.dialogueOrder => pickedWords.join('  ·  '),
+    ExerciseType.multiBlank => pickedWords.join(', '),
+    ExerciseType.listenRespond =>
+      selected != null ? e.options[selected] : '(no answer)',
   };
 }
 
@@ -80,5 +97,8 @@ String explainSuffixFor(Exercise e, {int? selected}) {
     ExerciseType.typed || ExerciseType.listen => 'ty',
     ExerciseType.matchPairs => 'mp',
     ExerciseType.dialogueOrder => 'do',
+    ExerciseType.multiBlank => 'mb',
+    // choice-style key: the wrong RESPONSE teaches the same way
+    ExerciseType.listenRespond => '$selected',
   };
 }

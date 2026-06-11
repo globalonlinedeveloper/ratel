@@ -13,7 +13,8 @@ and mirror the unit into lib/content.dart (offline fallback), then push.
 """
 import json, os, re, sys, urllib.request
 
-TYPES = {"choice", "wordBank", "typed", "listen", "match", "dialogue"}
+TYPES = {"choice", "wordBank", "typed", "listen", "match", "dialogue",
+         "multi_blank", "listen_respond"}
 
 
 def validate(u):
@@ -67,6 +68,20 @@ def validate(u):
             elif t == "match":
                 if not (2 <= len(opts) <= 5 and len(opts) == len(cord)):
                     bad.append(f"{w}: match needs equal left/right (2-5)")
+            elif t == "multi_blank":
+                blanks = str(e.get("sentence", "")).count("___")
+                if blanks < 1 or len(cord) != blanks:
+                    bad.append(f"{w}: answers must match ___ count")
+                if not set(cord) <= set(opts):
+                    bad.append(f"{w}: answers must come from options")
+            elif t == "listen_respond":
+                ci = e.get("correct_index")
+                if not str(e.get("sentence", "")).strip():
+                    bad.append(f"{w}: needs the spoken sentence")
+                if not (isinstance(opts, list) and 2 <= len(opts) <= 5
+                        and isinstance(ci, int)
+                        and 0 <= ci < len(opts)):
+                    bad.append(f"{w}: bad options/correct_index")
             elif t == "dialogue":
                 if not (2 <= len(cord) <= 5 and sorted(opts) == sorted(cord)):
                     bad.append(f"{w}: dialogue lines must equal the order")
