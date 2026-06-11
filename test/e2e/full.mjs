@@ -184,4 +184,22 @@ await browser.close(); if(server) server.close();
 console.log(`email=${email} token=${token?'yes':'no'} cleaned=${cleaned} consoleErrors=${consoleErrors.length}`);
 consoleErrors.slice(0,5).forEach(e=>console.log('  ce:',e.slice(0,140)));
 if(problems.length){console.error('E2E FAIL:\n - '+problems.join('\n - '));process.exit(1);}
+
+// ---- GUEST FUNNEL (server-side guard): anonymous signup -> convert keeps
+// the SAME uid -> cleanup. Guards the Anonymous-sign-ins setting + the
+// updateUser conversion path on every push.
+try{
+  const g=await fetch(`${SUPA_URL}/auth/v1/signup`,{method:'POST',headers:{apikey:SUPA_ANON,'Content-Type':'application/json'},body:'{}'});
+  const gj=await g.json();
+  if(!g.ok||!gj?.user?.is_anonymous) throw new Error('anonymous signup failed: '+g.status);
+  const guid=gj.user.id, gtok=gj.access_token;
+  const gmail=`e2e-guest+${Date.now()}@example.com`;
+  const conv=await fetch(`${SUPA_URL}/auth/v1/user`,{method:'PUT',headers:{apikey:SUPA_ANON,Authorization:`Bearer ${gtok}`,'Content-Type':'application/json'},body:JSON.stringify({email:gmail,password:'GuestPass!234'})});
+  const cj=await conv.json();
+  if(!conv.ok) throw new Error('guest conversion failed: '+conv.status);
+  if(cj?.id!==guid && cj?.user?.id!==guid) throw new Error('conversion changed the uid — progress would be lost!');
+  await fetch(`${SUPA_URL}/rest/v1/rpc/delete_self`,{method:'POST',headers:{apikey:SUPA_ANON,Authorization:`Bearer ${gtok}`,'Content-Type':'application/json'},body:'{}'});
+  console.log('guest funnel: anonymous -> converted (same uid) -> cleaned');
+}catch(e){problems.push('guest funnel: '+e.message);}
+
 console.log('E2E PASS: signup -> full lesson -> +50 XP -> persisted -> cleaned up');
