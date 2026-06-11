@@ -78,7 +78,8 @@ class _LessonScreenState extends State<LessonScreen>
     for (int u = 0; u < course.length; u++) {
       final unit = course[u];
       if (unit.lessons.any((l) => l.id == widget.lesson.id)) {
-        _villain = villainForUnit(u);
+        _villain =
+            villainFor(u, Flags.instance.str('event_villain', ''));
         if (unit.lessons.last.id == widget.lesson.id) _isBoss = true;
       }
     }

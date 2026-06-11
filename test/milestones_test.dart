@@ -15,6 +15,14 @@ void main() {
     expect(moved, isTrue);
   });
 
+  test('event villain override (valid id wins, junk falls back)', () {
+    expect(villainFor(0, 'frostgolem'), 'frostgolem');
+    expect(villainFor(9, 'pumpkincrow'), 'pumpkincrow');
+    expect(villainFor(9, 'firecrackerimp'), 'firecrackerimp');
+    expect(villainFor(0, ''), 'cobra');
+    expect(villainFor(9, 'notavillain'), 'vulture');
+  });
+
   test('villain roster maps unit tiers', () {
     expect(villainForUnit(0), 'cobra');
     expect(villainForUnit(1), 'cobra');

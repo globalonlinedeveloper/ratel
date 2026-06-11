@@ -29,3 +29,17 @@ String? pickReaction(int combo, int roll) {
 /// otherwise the right answer is always the first tile (gameable).
 List<int> displayOrder(int n, Random rng) =>
     List<int>.generate(n, (i) => i)..shuffle(rng);
+
+/// Villain ids with shipped battle art (incl. event-only villains).
+const Set<String> kBattleVillains = {
+  'cobra', 'scorpion', 'bees', 'jackal', 'vulture',
+  'frostgolem', 'pumpkincrow', 'firecrackerimp',
+};
+
+/// Event override: a valid `event_villain` remote flag replaces the unit's
+/// villain for the duration of an event (flip in app_flags, no redeploy).
+/// Unknown/empty values fall back to the normal unit roster.
+String villainFor(int unitIndex, String eventVillain) =>
+    kBattleVillains.contains(eventVillain)
+        ? eventVillain
+        : villainForUnit(unitIndex);
