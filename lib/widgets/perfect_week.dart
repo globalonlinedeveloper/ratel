@@ -78,6 +78,7 @@ class _PerfectWeekCardState extends State<PerfectWeekCard> {
     try {
       final p = await SharedPreferences.getInstance();
       await p.setString('pweek_done', weekKey(DateTime.now()));
+      await p.setInt('pweek_count', (p.getInt('pweek_count') ?? 0) + 1);
     } catch (_) {}
   }
 

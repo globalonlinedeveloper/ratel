@@ -73,6 +73,8 @@ class _MonthlyQuestCardState extends State<MonthlyQuestCard> {
     try {
       final p = await SharedPreferences.getInstance();
       await p.setString('mquest_done', monthKey(DateTime.now()));
+      await p.setInt(
+          'mquest_count', (p.getInt('mquest_count') ?? 0) + 1);
     } catch (_) {}
   }
 

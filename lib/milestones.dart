@@ -248,3 +248,24 @@ String? friendCodeFromUri(Uri uri) {
 /// Timed challenge pays +1 gem per 5 correct (kind, not farmable:
 /// the clock is the cap).
 int timedGems(int correct) => correct < 0 ? 0 : correct ~/ 5;
+
+/// A monthly-system badge: label, icon-ish tag, earned?
+class MonthBadge {
+  const MonthBadge(this.label, this.earned);
+  final String label;
+  final bool earned;
+}
+
+/// Six badges from quest/week counts and the timed best. Icon-rendered
+/// today; generated art slots in later by the same labels.
+List<MonthBadge> monthlyBadges(
+    {required int quests, required int weeks, required int best}) {
+  return [
+    MonthBadge('Monthly Quester', quests >= 1),
+    MonthBadge('Quest Devotee', quests >= 3),
+    MonthBadge('Perfect Week', weeks >= 1),
+    MonthBadge('Week after Week', weeks >= 4),
+    MonthBadge('Quick Thinker', best >= 100),
+    MonthBadge('Lightning Badger', best >= 200),
+  ];
+}

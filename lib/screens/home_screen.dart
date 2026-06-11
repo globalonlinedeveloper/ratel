@@ -14,6 +14,7 @@ import '../widgets/daily_chest.dart';
 import '../widgets/perfect_week.dart';
 import '../widgets/monthly_quest.dart';
 import '../widgets/smart_practice.dart';
+import '../widgets/badge_gallery.dart';
 import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/mascot_anim.dart';
@@ -429,6 +430,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 8),
           const WeakAreasSummary(),
           const AchievementsView(),
+          const BadgeGallery(),
           const SizedBox(height: 8),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
