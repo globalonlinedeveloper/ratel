@@ -81,8 +81,12 @@ void main() {
     await tester.pumpWidget(
         const MaterialApp(home: LessonScreen(lesson: lesson)));
     await tester.pump(const Duration(milliseconds: 400));
-    await tester.tap(find.byIcon(Icons.close));
+    await tester.tap(find.text('Hello'));
+    await tester.pump(const Duration(milliseconds: 150));
+    await tester.tap(find.text('Check'));
     await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.byIcon(Icons.close));
+    await tester.pump(const Duration(milliseconds: 350));
     expect(find.text('இருங்கள், போகாதீர்கள்!'), findsOneWidget);
     expect(
         find.textContaining('இந்தப் பாடத்தின்'), findsOneWidget);
@@ -99,7 +103,8 @@ void main() {
       MonthlyQuestCard(),
     ]))));
     await tester.pump(const Duration(milliseconds: 600));
-    expect(find.text('வணக்கம்! இன்று ஒரு பாடம் முடிப்போமா?'),
+    // motd needs an admin flag; the chest CTA is the live ta probe
+    expect(find.text('தினசரி பெட்டி — திறக்க தட்டவும்!'),
         findsOneWidget);
   });
 

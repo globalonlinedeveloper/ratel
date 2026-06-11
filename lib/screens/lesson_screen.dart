@@ -1529,12 +1529,13 @@ class _LessonScreenState extends State<LessonScreen>
                                   fallbackPose: RatelPose.celebrate,
                                   size: 54),
                               const SizedBox(width: 8),
-                              Text(
-                                  S.instance.t('unit_complete',
-                                      'Unit complete!'),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      color: context.textC)),
+                              Flexible(
+                                  child: Text(
+                                      S.instance.t('unit_complete',
+                                          'Unit complete!'),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                      color: context.textC))),
                             ],
                           ),
                         ),
@@ -1549,10 +1550,11 @@ class _LessonScreenState extends State<LessonScreen>
                                   fallbackPose: RatelPose.celebrate,
                                   size: 54),
                               const SizedBox(width: 8),
-                              Text('New achievement earned!',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                      color: context.textC)),
+                              Flexible(
+                                  child: Text('New achievement earned!',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          color: context.textC))),
                             ],
                           ),
                         ),

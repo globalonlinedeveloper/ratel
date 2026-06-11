@@ -412,8 +412,9 @@ class _HomeScreenState extends State<HomeScreen> {
           const StreakCalendar(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 const Icon(Icons.ac_unit, size: 15, color: RatelColors.teal),
                 Text(' ${appState.streakFreezes} freezes',
@@ -749,9 +750,12 @@ class _HomeScreenState extends State<HomeScreen> {
               : Icon(icon, color: color, size: 26),
           const SizedBox(width: 10),
           Expanded(
-            child: Column(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 RollingNumber(value,
                     style: const TextStyle(
@@ -760,6 +764,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: const TextStyle(
                         color: RatelColors.textMuted, fontSize: 12)),
               ],
+            ),
             ),
           ),
         ],

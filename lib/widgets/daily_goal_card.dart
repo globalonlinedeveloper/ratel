@@ -36,10 +36,11 @@ class DailyGoalCard extends StatelessWidget {
                   : const Icon(Icons.flag,
                       color: RatelColors.honey, size: 20),
               const SizedBox(width: 8),
-              const Text('Daily goal',
-                  style:
-                      TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
-              const Spacer(),
+              const Expanded(
+                child: Text('Daily goal',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w700, fontSize: 16)),
+              ),
               Text('$today / $goal XP',
                   style: TextStyle(
                       fontWeight: FontWeight.w600,
