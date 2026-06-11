@@ -692,16 +692,10 @@ class _LessonScreenState extends State<LessonScreen>
     }
     final bool perfect = !widget.reviewMode &&
         _correctCount >= widget.lesson.exercises.length;
-    return Image.asset(
-      perfect
-          ? 'assets/images/ratel-perfect-anim.webp'
-          : 'assets/images/ratel-jump.webp',
-      width: 170,
-      height: 170,
-      filterQuality: FilterQuality.medium,
-      errorBuilder: (_, _, _) =>
-          const RatelMascot(pose: RatelPose.celebrate, size: 170),
-    );
+    return RatelActionAnim(
+        action: perfect ? 'perfect' : 'jump',
+        fallbackPose: RatelPose.celebrate,
+        size: 170);
   }
 
   Widget _mascotSlot() {
