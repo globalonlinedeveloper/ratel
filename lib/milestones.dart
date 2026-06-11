@@ -43,3 +43,22 @@ String villainFor(int unitIndex, String eventVillain) =>
     kBattleVillains.contains(eventVillain)
         ? eventVillain
         : villainForUnit(unitIndex);
+
+/// Heart regeneration: +1 per [period] elapsed since [updatedAt], capped.
+/// Returns the new count and the carried-forward timestamp (so partial
+/// progress toward the next heart is never lost).
+({int hearts, DateTime updatedAt}) regenHearts(
+    int hearts, DateTime updatedAt, DateTime now,
+    {int cap = 5, Duration period = const Duration(hours: 2)}) {
+  if (hearts >= cap) return (hearts: cap, updatedAt: now);
+  final int gained =
+      now.difference(updatedAt).inMinutes ~/ period.inMinutes;
+  if (gained <= 0) return (hearts: hearts, updatedAt: updatedAt);
+  final int h = (hearts + gained) > cap ? cap : hearts + gained;
+  return (
+    hearts: h,
+    updatedAt: h >= cap
+        ? now
+        : updatedAt.add(Duration(minutes: (h - hearts) * period.inMinutes)),
+  );
+}

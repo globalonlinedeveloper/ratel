@@ -1,6 +1,7 @@
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import '../widgets/motd_card.dart';
+import '../widgets/hearts_sheet.dart';
 import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/mascot_anim.dart';
@@ -152,8 +153,14 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: InkWell(
-              onTap: () =>
-                  Navigator.of(context).push(ratelRoute(LessonScreen(lesson: l))),
+              onTap: () {
+                if (appState.hearts <= 0 && !appState.isPro) {
+                  showHeartsSheet(context);
+                  return;
+                }
+                Navigator.of(context)
+                    .push(ratelRoute(LessonScreen(lesson: l)));
+              },
               borderRadius: BorderRadius.circular(14),
               child: Container(
                 padding: const EdgeInsets.all(16),
@@ -818,9 +825,16 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 6),
               GestureDetector(
-                onTap: () => Navigator.of(context).push(
-                  ratelRoute(LessonScreen(lesson: lesson)),
-                ),
+                onTap: () {
+                  if (appState.hearts <= 0 && !appState.isPro) {
+                    showHeartsSheet(context,
+                        onPractice: () => setState(() => _tab = 1));
+                    return;
+                  }
+                  Navigator.of(context).push(
+                    ratelRoute(LessonScreen(lesson: lesson)),
+                  );
+                },
                 child: Pulse(
                   child: Container(
                     width: 66,

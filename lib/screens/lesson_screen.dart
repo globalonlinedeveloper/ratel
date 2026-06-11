@@ -205,6 +205,8 @@ class _LessonScreenState extends State<LessonScreen>
             u.lessons.every((l) => appState.isCompleted(l.id)));
         Analytics.lessonComplete(widget.lesson.id, total, _correctCount,
             widget.lesson.exercises.length);
+      } else {
+        appState.earnHeart(); // practicing your mistakes restores one
       }
       Sfx.instance.complete();
       setState(() => _finished = true);

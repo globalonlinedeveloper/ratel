@@ -1,3 +1,4 @@
+import 'milestones.dart';
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -10,6 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class AppState extends ChangeNotifier {
   int xp = 0;
   int hearts = 5;
+  DateTime heartsUpdatedAt = DateTime.now();
   int streak = 0;
   int dailyGoalXp = 50;
   int todayXp = 0;
@@ -59,13 +61,17 @@ class AppState extends ChangeNotifier {
     try {
       final row = await client
           .from('profiles')
-          .select('total_xp, current_streak, hearts, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes, is_admin, onboarded, friend_code, broken_streak, broken_on')
+          .select('total_xp, current_streak, hearts, hearts_updated_at, completed_lessons, display_name, daily_goal_xp, longest_streak, streak_freezes, is_admin, onboarded, friend_code, broken_streak, broken_on')
           .eq('id', client.auth.currentUser!.id)
           .maybeSingle();
       if (row != null) {
         xp = (row['total_xp'] as int?) ?? xp;
         streak = (row['current_streak'] as int?) ?? streak;
         hearts = (row['hearts'] as int?) ?? hearts;
+        heartsUpdatedAt = DateTime.tryParse(
+                (row['hearts_updated_at'] ?? '').toString()) ??
+            heartsUpdatedAt;
+        applyHeartRegen();
         displayName = (row['display_name'] as String?) ?? displayName;
         dailyGoalXp = (row['daily_goal_xp'] as int?) ?? dailyGoalXp;
         longestStreak = (row['longest_streak'] as int?) ?? longestStreak;
@@ -325,9 +331,40 @@ class AppState extends ChangeNotifier {
   void loseHeart() {
     if (isPro) return; // Pro: unlimited hearts
     if (hearts > 0) {
+      if (hearts == 5) heartsUpdatedAt = DateTime.now(); // start the clock
       hearts -= 1;
       notifyListeners();
     }
+  }
+
+  /// Apply time-based regeneration (+1 heart / 2h, cap 5).
+  void applyHeartRegen() {
+    final r = regenHearts(hearts, heartsUpdatedAt, DateTime.now());
+    final bool changed = r.hearts != hearts;
+    hearts = r.hearts;
+    heartsUpdatedAt = r.updatedAt;
+    if (changed) {
+      notifyListeners();
+      _persist();
+    }
+  }
+
+  /// Earned heart (mistake-drill completion). Capped at 5.
+  void earnHeart() {
+    if (hearts >= 5) return;
+    hearts += 1;
+    if (hearts >= 5) heartsUpdatedAt = DateTime.now();
+    notifyListeners();
+    _persist();
+  }
+
+  /// Time until the next regenerated heart (null when full or Pro).
+  Duration? get nextHeartIn {
+    if (isPro || hearts >= 5) return null;
+    final d = heartsUpdatedAt
+        .add(const Duration(hours: 2))
+        .difference(DateTime.now());
+    return d.isNegative ? Duration.zero : d;
   }
 
   void refillHearts() {
@@ -408,6 +445,7 @@ class AppState extends ChangeNotifier {
         'total_xp': xp,
         'current_streak': streak,
         'hearts': hearts,
+        'hearts_updated_at': heartsUpdatedAt.toIso8601String(),
         'completed_lessons': _completed.toList(),
       }).eq('id', client.auth.currentUser!.id);
     } catch (_) {

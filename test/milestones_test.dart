@@ -3,6 +3,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/milestones.dart';
 
 void main() {
+  test('regenHearts: +1 per 2h, cap 5, remainder carries', () {
+    final t0 = DateTime(2026, 1, 1, 0, 0);
+    var r = regenHearts(3, t0, t0.add(const Duration(minutes: 119)));
+    expect(r.hearts, 3);
+    expect(r.updatedAt, t0);
+    r = regenHearts(3, t0, t0.add(const Duration(hours: 2)));
+    expect(r.hearts, 4);
+    r = regenHearts(3, t0, t0.add(const Duration(hours: 3)));
+    expect(r.hearts, 4); // remainder kept: clock moved exactly +2h
+    expect(r.updatedAt, t0.add(const Duration(hours: 2)));
+    r = regenHearts(0, t0, t0.add(const Duration(hours: 24)));
+    expect(r.hearts, 5);
+    r = regenHearts(5, t0, t0.add(const Duration(hours: 24)));
+    expect(r.hearts, 5);
+  });
+
   test('displayOrder is a complete permutation and not always identity',
       () {
     final rng = Random(7);
