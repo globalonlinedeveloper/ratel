@@ -151,8 +151,8 @@ void main() {
         if (!ta.containsKey(k) || (ta[k] as String).trim().isEmpty) k
     ];
     expect(missing, isEmpty,
-        reason: 'ta bundle missing ' + missing.length.toString() +
-            ' keys — run tool/gen_explanations_ta.py');
+        reason: 'ta bundle missing ${missing.length} keys — '
+            'run tool/gen_explanations_ta.py');
   });
 
   test('every fixed wrong-answer has a pre-authored explanation (no API at runtime)', () {
