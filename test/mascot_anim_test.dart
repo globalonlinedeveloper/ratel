@@ -8,13 +8,13 @@ import 'package:ratel/widgets/ratel_mascot.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  test('all 24 action loops are bundled (full-body library)', () async {
+  test('all 25 action loops are bundled (full-body library)', () async {
     for (final name in [
       'jump', 'perfect', 'karate', 'listening', 'crying', 'dustoff',
       'flex', 'trophy', 'thumbsup', 'sleeping', 'morningstretch',
       'medalbite', 'tired', 'shrugok', 'digging', 'honeyjar',
       'snakestare', 'headphones', 'gradcap', 'partyhat', 'nod',
-      'fistpump', 'wink',
+      'fistpump', 'wink', 'teacher',
     ]) {
       final path = name == 'jump'
           ? 'assets/images/ratel-jump.webp'
