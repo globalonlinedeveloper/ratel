@@ -66,13 +66,13 @@ class _HeartsSheetState extends State<_HeartsSheet> {
         if (mounted) Navigator.of(context).maybePop();
       });
     }
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(24, 4, 24, 28),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const RatelActionAnim(
-              action: 'tired', fallbackPose: RatelPose.oops, size: 96),
+              action: 'tired', fallbackPose: RatelPose.oops, size: 84),
           const SizedBox(height: 10),
           const Text("You're out of hearts",
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
