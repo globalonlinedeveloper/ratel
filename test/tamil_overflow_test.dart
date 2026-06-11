@@ -91,11 +91,11 @@ void main() {
   testWidgets('home cards read Tamil at 360px, no overflow',
       (tester) async {
     _narrowTamil(tester);
-    await tester.pumpWidget(const MaterialApp(
+    await tester.pumpWidget(MaterialApp(
         home: Scaffold(
             body: ListView(children: [
-      MotdCard(),
-      DailyChestCard(),
+      const MotdCard(),
+      const DailyChestCard(),
       MonthlyQuestCard(),
     ]))));
     await tester.pump(const Duration(milliseconds: 600));
