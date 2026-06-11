@@ -25,6 +25,11 @@ void main() {
   testWidgets('tapping a unit banner opens its guidebook', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
     await tester.pump(const Duration(milliseconds: 600));
+    // let the path's auto-scroll animation finish (the scrollable
+    // ignores pointers while animating), then settle the target
+    await tester.pump(const Duration(milliseconds: 700));
+    await tester
+        .ensureVisible(find.text(builtInCourse.first.subtitle).first);
     await tester.tap(find.text(builtInCourse.first.subtitle).first);
     await tester.pump(); // sheet route in
     await tester.pump(const Duration(milliseconds: 450)); // slide up
