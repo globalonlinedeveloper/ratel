@@ -1,10 +1,10 @@
 import '../guest.dart';
 import '../widgets/save_account_sheet.dart';
 import 'dart:math';
-import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../content.dart';
+import '../exercise_kit.dart';
 import '../flags.dart';
 import '../push.dart';
 import '../widgets/battle_stage.dart';
@@ -21,7 +21,6 @@ import '../widgets/streak_flame.dart';
 import '../widgets/stagger.dart';
 import '../widgets/combo_glow.dart';
 import '../models.dart';
-import '../typed_match.dart';
 import '../tts.dart';
 import '../app_state.dart';
 import '../sfx.dart';
@@ -124,15 +123,10 @@ class _LessonScreenState extends State<LessonScreen>
   bool get _isLast => _index == _playlist.length - 1;
 
   void _check() {
-    final bool correct;
-    if (_ex.type == ExerciseType.choice) {
-      correct = _selected == _ex.correctIndex;
-    } else if (_ex.type == ExerciseType.wordBank) {
-      final chosen = _picked.map((i) => _ex.options[i]).toList();
-      correct = listEquals(chosen, _ex.correctOrder);
-    } else {
-      correct = typedAnswerMatches(_typedCtl.text, _ex.correctOrder);
-    }
+    final bool correct = gradeAnswer(_ex,
+        selected: _selected,
+        pickedWords: [for (final i in _picked) _ex.options[i]],
+        typed: _typedCtl.text);
     setState(() {
       _answered = true;
       _isCorrect = correct;
@@ -259,11 +253,10 @@ class _LessonScreenState extends State<LessonScreen>
     }
   }
 
-  bool get _canCheck => _ex.type == ExerciseType.choice
-      ? _selected != null
-      : _ex.type == ExerciseType.wordBank
-          ? _picked.isNotEmpty
-          : _typedCtl.text.trim().isNotEmpty;
+  bool get _canCheck => canCheckAnswer(_ex,
+      selected: _selected,
+      pickedCount: _picked.length,
+      typed: _typedCtl.text);
 
   /// Keyboard (web/desktop): 1-4 pick a choice, Enter checks / continues.
   KeyEventResult _onKey(FocusNode node, KeyEvent e) {
@@ -696,33 +689,18 @@ class _LessonScreenState extends State<LessonScreen>
     return _isCorrect ? 'Nice — fearless!' : 'No fear — that is how we learn.';
   }
 
-  String _correctText() {
-    if (_ex.type == ExerciseType.choice) return _ex.options[_ex.correctIndex];
-    if (_ex.type == ExerciseType.typed || _ex.type == ExerciseType.listen) {
-      return _ex.correctOrder.isNotEmpty ? _ex.correctOrder.first : '';
-    }
-    return _ex.correctOrder.join(' ');
-  }
+  String _correctText() => correctTextFor(_ex);
 
-  String _userText() {
-    if (_ex.type == ExerciseType.choice) {
-      return _selected != null ? _ex.options[_selected!] : '(no answer)';
-    }
-    if (_ex.type == ExerciseType.typed || _ex.type == ExerciseType.listen) {
-      final t = _typedCtl.text.trim();
-      return t.isEmpty ? '(no answer)' : t;
-    }
-    return _picked.map((i) => _ex.options[i]).join(' ');
-  }
+  String _userText() => userTextFor(_ex,
+      selected: _selected,
+      pickedWords: [for (final i in _picked) _ex.options[i]],
+      typed: _typedCtl.text);
 
   /// Explain a wrong answer: the bundled asset first (free/offline), then a
   /// one-time server generate-and-cache for content not in the bundle.
   Future<void> _explain() async {
-    final key = _ex.type == ExerciseType.choice
-        ? '${widget.lesson.id}:$_eIdx:$_selected'
-        : _ex.type == ExerciseType.wordBank
-            ? '${widget.lesson.id}:$_eIdx:wb'
-            : '${widget.lesson.id}:$_eIdx:ty';
+    final key = '${widget.lesson.id}:$_eIdx:'
+        '${explainSuffixFor(_ex, selected: _selected)}';
     // Bundled seed first: free, instant, offline; covers all current content.
     final local = ExplainStore.instance.lookup(key);
     if (local != null) {
