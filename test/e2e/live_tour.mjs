@@ -78,8 +78,8 @@ try {
   // guest entry — Tamil label first, English fallback
   const guestTa = ta.getByText('முதலில் முயற்சித்துப் பார்க்கிறேன்');
   const guestEn = ta.getByText('Just let me try it');
-  if (await guestTa.count()) await guestTa.first.click();
-  else if (await guestEn.count()) await guestEn.first.click();
+  if (await guestTa.count()) await guestTa.first().click();
+  else if (await guestEn.count()) await guestEn.first().click();
   await ta.waitForTimeout(4000);
   await ta.screenshot({ path: 'ta-home-1.png' });
   for (let i = 0; i < 3; i++) {
@@ -89,7 +89,7 @@ try {
   }
   const prof = ta.getByText('Profile');
   if (await prof.count()) {
-    await prof.first.click();
+    await prof.first().click();
     await ta.waitForTimeout(2500);
     await ta.screenshot({ path: 'ta-profile-1.png' });
     for (let i = 0; i < 2; i++) {
