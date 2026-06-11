@@ -12,6 +12,7 @@ import '../widgets/campaign_cards.dart';
 import '../widgets/hearts_sheet.dart';
 import '../widgets/daily_chest.dart';
 import '../widgets/perfect_week.dart';
+import '../widgets/monthly_quest.dart';
 import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/mascot_anim.dart';
@@ -800,6 +801,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const DailyQuestsCard(),
         const DailyChestCard(),
         const PerfectWeekCard(),
+        const MonthlyQuestCard(),
         const AnniversaryCard(),
         Expanded(
           child: SingleChildScrollView(

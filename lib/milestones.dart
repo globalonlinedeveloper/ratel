@@ -192,3 +192,13 @@ bool perfectWeek(List<int> last7DayXp, int goal) =>
     last7DayXp.length >= 7 &&
     goal > 0 &&
     last7DayXp.every((x) => x >= goal);
+
+/// Month key for once-per-month grants ('2026-06').
+String monthKey(DateTime d) =>
+    '${d.year}-${d.month.toString().padLeft(2, '0')}';
+
+/// Display name of the month for quest copy.
+String monthName(DateTime d) => const [
+      'January', 'February', 'March', 'April', 'May', 'June', 'July',
+      'August', 'September', 'October', 'November', 'December'
+    ][d.month - 1];
