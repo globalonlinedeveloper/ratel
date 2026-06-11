@@ -53,6 +53,57 @@ ok('app shell renders', semNodes > 3, `${semNodes} semantic nodes`);
 ok('guest entry visible', guest > 0);
 ok('no page errors', errors.length === 0, errors.join(' | '));
 await page.screenshot({ path: 'live-tour.png' });
+
+// 4. TAMIL LEG: locale=ta end-to-end — guest entry, home + profile,
+// full-page scroll with screenshots (reviewed by a human/Claude after).
+try {
+  const ctx = await browser.newContext(
+      { viewport: { width: 412, height: 915 } });
+  await ctx.addInitScript(() =>
+    localStorage.setItem('flutter.app_locale', '"ta"'));
+  const ta = await ctx.newPage();
+  const taErrors = [];
+  ta.on('pageerror', (e) => taErrors.push(String(e).slice(0, 120)));
+  await ta.goto(`${LIVE}?cb=ta${Date.now()}`);
+  await ta.waitForTimeout(9000);
+  for (let i = 0; i < 12; i++) {
+    await ta.evaluate(() =>
+      document.querySelector('flt-semantics-placeholder')?.click());
+    await ta.waitForTimeout(700);
+    if (await ta.locator(
+        'flt-semantics-host [aria-label], flt-semantics-host span')
+        .count() > 3) break;
+  }
+  await ta.screenshot({ path: 'ta-auth.png' });
+  // guest entry — Tamil label first, English fallback
+  const guestTa = ta.getByText('முதலில் முயற்சித்துப் பார்க்கிறேன்');
+  const guestEn = ta.getByText('Just let me try it');
+  if (await guestTa.count()) await guestTa.first.click();
+  else if (await guestEn.count()) await guestEn.first.click();
+  await ta.waitForTimeout(4000);
+  await ta.screenshot({ path: 'ta-home-1.png' });
+  for (let i = 0; i < 3; i++) {
+    await ta.mouse.wheel(0, 1400);
+    await ta.waitForTimeout(800);
+    await ta.screenshot({ path: `ta-home-${i + 2}.png` });
+  }
+  const prof = ta.getByText('Profile');
+  if (await prof.count()) {
+    await prof.first.click();
+    await ta.waitForTimeout(2500);
+    await ta.screenshot({ path: 'ta-profile-1.png' });
+    for (let i = 0; i < 2; i++) {
+      await ta.mouse.wheel(0, 1400);
+      await ta.waitForTimeout(800);
+      await ta.screenshot({ path: `ta-profile-${i + 2}.png` });
+    }
+  }
+  ok('tamil leg: no page errors', taErrors.length === 0,
+     taErrors.join(' | '));
+  await ctx.close();
+} catch (e) {
+  ok('tamil leg ran', false, String(e).slice(0, 140));
+}
 await browser.close();
 
 if (fails.length) {
