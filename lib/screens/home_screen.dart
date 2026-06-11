@@ -17,6 +17,8 @@ import '../widgets/mascot_anim.dart';
 import '../theme.dart';
 import '../flags.dart';
 import '../milestones.dart';
+import '../placement.dart';
+import 'section_test_screen.dart';
 import '../models.dart';
 import '../content.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -1145,6 +1147,17 @@ class _HomeScreenState extends State<HomeScreen> {
     Icons.favorite, // 10 health & feelings
   ];
 
+  /// Locked = some lesson in an earlier unit is still incomplete.
+  bool _sectionLocked(CourseSection s) {
+    if (s.firstUnit == 0) return false;
+    for (int i = 0; i < s.firstUnit && i < course.length; i++) {
+      for (final l in course[i].lessons) {
+        if (!appState.isCompleted(l.id)) return true;
+      }
+    }
+    return false;
+  }
+
   Widget _sectionBanner(int u) {
     final s = sectionForUnit(u);
     final int last =
@@ -1192,11 +1205,19 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
-          Text('$unitsDone/$total units',
-              style: const TextStyle(
-                  color: RatelColors.textMuted,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w700)),
+          if (_sectionLocked(s))
+            TextButton(
+              onPressed: () => Navigator.of(context)
+                  .push(ratelRoute(SectionTestScreen(section: s)))
+                  .then((_) => setState(() {})),
+              child: const Text('Test out'),
+            )
+          else
+            Text('$unitsDone/$total units',
+                style: const TextStyle(
+                    color: RatelColors.textMuted,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700)),
         ],
       ),
     );

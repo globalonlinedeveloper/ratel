@@ -49,3 +49,36 @@ int unitsToSkipFor(int correct, int total) {
 List<String> lessonIdsForUnits(int n) => [
       for (final unit in course.take(n)) ...unit.lessons.map((l) => l.id),
     ];
+
+/// Probes for a SECTION test-out: up to [cap] choice exercises sampled
+/// evenly across the units being skipped (0..firstUnit-1). By lesson id
+/// via the course walk, so content edits don't break it.
+List<PlacementProbe> sectionProbes(int firstUnit, {int cap = 8}) {
+  final probes = <PlacementProbe>[];
+  final units = course.take(firstUnit).toList();
+  if (units.isEmpty) return probes;
+  // walk lessons round-robin across units so coverage spreads
+  int li = 0;
+  while (probes.length < cap) {
+    bool any = false;
+    for (final unit in units) {
+      if (li >= unit.lessons.length) continue;
+      any = true;
+      final lesson = unit.lessons[li];
+      for (final ex in lesson.exercises) {
+        if (ex.type == ExerciseType.choice) {
+          probes.add(PlacementProbe(lesson.id, ex));
+          break;
+        }
+      }
+      if (probes.length >= cap) break;
+    }
+    if (!any) break;
+    li++;
+  }
+  return probes;
+}
+
+/// Pass rule for a section test-out: at least 85% correct.
+bool sectionTestPassed(int correct, int total) =>
+    total > 0 && correct * 100 >= total * 85;
