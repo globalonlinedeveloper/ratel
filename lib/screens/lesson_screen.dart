@@ -688,14 +688,14 @@ class _LessonScreenState extends State<LessonScreen>
 
   Widget _completionAnim() {
     if (context.reduceMotion) {
-      return const RatelMascot(pose: RatelPose.celebrate, size: 170);
+      return const RatelMascot(pose: RatelPose.celebrate, size: 132);
     }
     final bool perfect = !widget.reviewMode &&
         _correctCount >= widget.lesson.exercises.length;
     return RatelActionAnim(
         action: perfect ? 'perfect' : 'jump',
         fallbackPose: RatelPose.celebrate,
-        size: 170);
+        size: 132);
   }
 
   Widget _mascotSlot() {
