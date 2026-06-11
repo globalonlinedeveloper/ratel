@@ -7,7 +7,7 @@ set -euo pipefail
 PKG=io.github.globalonlinedeveloper.ratel
 
 echo "== install =="
-adb install -r app-release.apk
+adb install -r app-x86_64-release.apk
 
 echo "== INTERNET permission (regression guard) =="
 adb shell dumpsys package $PKG | grep -q "android.permission.INTERNET: granted=true" \
