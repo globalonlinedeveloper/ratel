@@ -27,17 +27,10 @@ void main() {
   });
 
   testWidgets('save-account sheet validates input', (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Builder(
-        builder: (ctx) => ElevatedButton(
-            onPressed: () => showSaveAccountSheet(ctx),
-            child: const Text('open')),
-      ),
-    ));
-    await tester.tap(find.text('open'));
-    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpWidget(const MaterialApp(
+        home: Scaffold(body: SaveAccountSheetBody())));
+    await tester.pump(const Duration(milliseconds: 300));
     expect(find.text('Save your progress'), findsOneWidget);
-    await tester.ensureVisible(find.text('Save my progress'));
     await tester.tap(find.text('Save my progress'));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.textContaining('valid email'), findsOneWidget);

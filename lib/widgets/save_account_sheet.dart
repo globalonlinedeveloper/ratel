@@ -14,19 +14,20 @@ Future<void> showSaveAccountSheet(BuildContext context) {
     builder: (ctx) => Padding(
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-      child: const _SaveAccountSheet(),
+      child: const SaveAccountSheetBody(),
     ),
   );
 }
 
-class _SaveAccountSheet extends StatefulWidget {
-  const _SaveAccountSheet();
+/// Public for direct widget-testing (modal geometry eats test taps).
+class SaveAccountSheetBody extends StatefulWidget {
+  const SaveAccountSheetBody({super.key});
 
   @override
-  State<_SaveAccountSheet> createState() => _SaveAccountSheetState();
+  State<SaveAccountSheetBody> createState() => _SaveAccountSheetState();
 }
 
-class _SaveAccountSheetState extends State<_SaveAccountSheet> {
+class _SaveAccountSheetState extends State<SaveAccountSheetBody> {
   final _name = TextEditingController();
   final _email = TextEditingController();
   final _password = TextEditingController();
