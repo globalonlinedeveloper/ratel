@@ -59,7 +59,7 @@ class BadgeGallery extends StatelessWidget {
     final path = _assets[b.label];
     if (path == null) return fallback;
     final img = Image.asset(path,
-        width: 22, height: 22, errorBuilder: (_, __, ___) => fallback);
+        width: 22, height: 22, errorBuilder: (_, _, _) => fallback);
     if (b.earned) return img;
     return Opacity(
         opacity: 0.45,
