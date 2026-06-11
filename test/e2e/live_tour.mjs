@@ -81,6 +81,12 @@ try {
   if (await guestTa.count()) await guestTa.first().click();
   else if (await guestEn.count()) await guestEn.first().click();
   await ta.waitForTimeout(4000);
+  // guest entry lands on onboarding — finish it to reach home
+  const start = ta.getByText('Start learning');
+  if (await start.count()) {
+    await start.first().click();
+    await ta.waitForTimeout(5000);
+  }
   await ta.screenshot({ path: 'ta-home-1.png' });
   for (let i = 0; i < 3; i++) {
     await ta.mouse.wheel(0, 1400);
