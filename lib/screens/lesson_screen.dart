@@ -1484,10 +1484,10 @@ class _LessonScreenState extends State<LessonScreen>
           children: [
             Positioned.fill(
               child: Center(
-                child: Padding(
+                child: SingleChildScrollView(
                   padding: const EdgeInsets.all(24),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
                       TweenAnimationBuilder<double>(
                         tween: Tween(begin: 0.6, end: 1.0),

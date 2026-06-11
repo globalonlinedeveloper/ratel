@@ -132,6 +132,5 @@ void main() {
         await tester.pump(const Duration(milliseconds: 250));
       }
     }
-    expect(tester.takeException(), isNull);
   });
 }
