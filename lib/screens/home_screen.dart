@@ -1621,7 +1621,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           const SizedBox(width: 12),
-          const RatelMascot(pose: RatelPose.encourage, size: 72),
+          const RatelActionAnim(
+              action: 'walk',
+              fallbackPose: RatelPose.encourage,
+              size: 72),
         ],
       ),
     );
