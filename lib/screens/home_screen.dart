@@ -1112,6 +1112,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 6),
+          Text(canDoFor(band),
+              style: const TextStyle(
+                  fontSize: 12.5, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 2),
           const Text('Grows as you complete lessons and keep your streak.',
               style:
                   TextStyle(color: RatelColors.textMuted, fontSize: 11.5)),

@@ -20,14 +20,19 @@ void main() {
   testWidgets('monthly quest shows progress, pays once at the goal',
       (tester) async {
     await tester.pumpWidget(const MaterialApp(
-        home: Scaffold(body: MonthlyQuestCard(monthXp: 400))));
+        home: Scaffold(
+            body: MonthlyQuestCard(
+                key: ValueKey('a'), monthXp: 400))));
     await tester.pump(const Duration(milliseconds: 300));
     expect(find.textContaining('quest: earn 1000 XP'), findsOneWidget);
     expect(find.text('400 / 1000 XP'), findsOneWidget);
     expect(find.text('+30 gems'), findsNothing); // not earned yet
-    // earned state
+    // earned state (NEW KEY: same type at the same position would
+    // reuse the State and skip initState's load - the gotcha)
     await tester.pumpWidget(const MaterialApp(
-        home: Scaffold(body: MonthlyQuestCard(monthXp: 1200))));
+        home: Scaffold(
+            body: MonthlyQuestCard(
+                key: ValueKey('b'), monthXp: 1200))));
     await tester.pump(const Duration(milliseconds: 300));
     await tester.tap(find.text('+30 gems'));
     await tester.pump(const Duration(milliseconds: 300));

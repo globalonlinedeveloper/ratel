@@ -202,3 +202,19 @@ String monthName(DateTime d) => const [
       'January', 'February', 'March', 'April', 'May', 'June', 'July',
       'August', 'September', 'October', 'November', 'December'
     ][d.month - 1];
+
+/// What a band MEANS - the can-do statement under the number.
+String canDoFor(String band) => switch (band) {
+      'A1' => 'Can introduce yourself and handle everyday phrases.',
+      'A2' => 'Can manage routine tasks and simple conversations.',
+      'B1' => 'Can discuss familiar topics and handle travel English.',
+      _ => 'Can hold confident, spontaneous conversations.',
+    };
+
+/// Course-wide English Score for the CURRENT app state.
+int currentEnglishScore(int completedCount, int totalLessons, int streak) =>
+    englishScore(
+        lessonsDone: completedCount,
+        lessonsTotal: totalLessons,
+        streak: streak);
+

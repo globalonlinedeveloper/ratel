@@ -3,10 +3,20 @@ import 'package:flutter/services.dart';
 
 import '../app_state.dart';
 import '../theme.dart';
+import '../content.dart';
+import '../milestones.dart';
 import '../widgets/streak_flame.dart';
 
 /// A shareable streak card: a screenshot-worthy visual + one-tap copy of the
 /// invite text (image export ships with the store build).
+String shareScoreLine() {
+  final int totalLessons = [
+    for (final u in course) u.lessons.length
+  ].fold(0, (a, b) => a + b);
+  final int score = currentEnglishScore(
+      appState.completedCount, totalLessons, appState.streak);
+  return '$score/100 (${cefrFor(score)})';
+}
 Future<void> showShareCard(BuildContext context) {
   return showDialog(
     context: context,
@@ -65,6 +75,8 @@ Future<void> showShareCard(BuildContext context) {
             onPressed: () {
               Clipboard.setData(ClipboardData(
                   text:
+                      "My Ratel English Score: "
+                      '${shareScoreLine()}. '
                       "I'm on a ${appState.streak}-day English streak with "
                       'Ratel the honey badger! Join me — add my friend code '
                       '${appState.friendCode} at '

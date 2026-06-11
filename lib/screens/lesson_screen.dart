@@ -85,6 +85,7 @@ class _LessonScreenState extends State<LessonScreen>
   int _bonusXp = 0; // occasional surprise bonus on completion
   int _gemsEarned = 0; // combo milestones + flawless bonus
   bool _boosted = false; // 15-min double-XP window (daily chest)
+  late final int _scoreBefore = _scoreNow(); // captured at start
 
   late final AnimationController _fb; // answer feedback: pop on right, shake on wrong
 
@@ -1298,6 +1299,14 @@ class _LessonScreenState extends State<LessonScreen>
     );
   }
 
+  int _scoreNow() {
+    final int totalLessons = [
+      for (final u in course) u.lessons.length
+    ].fold(0, (a, b) => a + b);
+    return currentEnglishScore(
+        appState.completedCount, totalLessons, appState.streak);
+  }
+
   // ---- report this exercise ----
   void _reportSheet() {
     const reasons = [
@@ -1537,6 +1546,12 @@ class _LessonScreenState extends State<LessonScreen>
                             if (_boosted)
                               _statChip(Icons.flash_on, '2x',
                                   'BOOST', RatelColors.coral),
+                            if (_scoreNow() > _scoreBefore)
+                              _statChip(
+                                  Icons.school,
+                                  '$_scoreBefore → ${_scoreNow()}',
+                                  'SCORE',
+                                  const Color(0xFF7B5EA7)),
                             _statChip(
                                 Icons.track_changes,
                                 '${(_correctCount * 100 ~/ widget.lesson.exercises.length)}%',
