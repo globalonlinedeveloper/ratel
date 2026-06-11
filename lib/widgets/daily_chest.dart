@@ -99,17 +99,19 @@ class _DailyChestCardState extends State<DailyChestCard> {
           : InkWell(
               onTap: _claim,
               borderRadius: BorderRadius.circular(14),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.redeem, color: RatelColors.honey),
-                  SizedBox(width: 10),
+                  const Icon(Icons.redeem, color: RatelColors.honey),
+                  const SizedBox(width: 10),
                   Expanded(
                     child: Text(
                         S.instance.t('daily_chest_cta',
                             'Daily chest — tap to open!'),
-                        style: TextStyle(fontWeight: FontWeight.w700)),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w700)),
                   ),
-                  Icon(Icons.chevron_right, color: RatelColors.textMuted),
+                  const Icon(Icons.chevron_right,
+                      color: RatelColors.textMuted),
                 ],
               ),
             ),
