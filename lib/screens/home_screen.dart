@@ -852,13 +852,6 @@ class _HomeScreenState extends State<HomeScreen> {
             Text('${appState.streak}-day streak',
                 style: const TextStyle(
                     fontSize: 18, fontWeight: FontWeight.w800)),
-            const StreakCalendar(),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(24, 2, 24, 8),
-              child: Text("Practice every day so your streak won't break!",
-                  style: TextStyle(
-                      color: RatelColors.textMuted, fontSize: 13)),
-            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(24, 0, 24, 18),
               child: Row(
@@ -892,6 +885,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                 ],
               ),
+            ),
+            const StreakCalendar(),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(24, 2, 24, 8),
+              child: Text("Practice every day so your streak won't break!",
+                  style: TextStyle(
+                      color: RatelColors.textMuted, fontSize: 13)),
             ),
           ],
         ),
