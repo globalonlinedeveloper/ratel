@@ -6,6 +6,7 @@ import '../widgets/streak_calendar.dart';
 import '../widgets/share_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/motd_card.dart';
 import '../widgets/campaign_cards.dart';
 import '../widgets/hearts_sheet.dart';
@@ -51,9 +52,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _tab = 0;
 
+  bool _listenOn = true;
+
   @override
   void initState() {
     super.initState();
+    SharedPreferences.getInstance().then((p) {
+      if (mounted) {
+        setState(() => _listenOn = p.getBool('listen_on') ?? true);
+      }
+    });
     if (!appState.loaded) {
       appState.sync();
     }
@@ -385,6 +393,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   onChanged: (v) {
                     Sfx.instance.setMusicOn(v);
                     setState(() {});
+                  },
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Listening exercises'),
+                  subtitle: const Text('Type-what-you-hear questions'),
+                  secondary: const Icon(Icons.hearing_outlined),
+                  value: _listenOn,
+                  onChanged: (v) async {
+                    setState(() => _listenOn = v);
+                    try {
+                      final p = await SharedPreferences.getInstance();
+                      await p.setBool('listen_on', v);
+                    } catch (_) {}
                   },
                 ),
                 SwitchListTile(

@@ -3,6 +3,7 @@ import '../widgets/save_account_sheet.dart';
 import 'dart:math';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../content.dart';
 import '../flags.dart';
 import '../push.dart';
@@ -84,6 +85,7 @@ class _LessonScreenState extends State<LessonScreen>
   @override
   void initState() {
     super.initState();
+    _applyListenPref();
     for (int u = 0; u < course.length; u++) {
       final unit = course[u];
       if (unit.lessons.any((l) => l.id == widget.lesson.id)) {
@@ -247,12 +249,152 @@ class _LessonScreenState extends State<LessonScreen>
     }
   }
 
+  bool get _canCheck => _ex.type == ExerciseType.choice
+      ? _selected != null
+      : _ex.type == ExerciseType.wordBank
+          ? _picked.isNotEmpty
+          : _typedCtl.text.trim().isNotEmpty;
+
+  /// Keyboard (web/desktop): 1-4 pick a choice, Enter checks / continues.
+  KeyEventResult _onKey(FocusNode node, KeyEvent e) {
+    if (e is! KeyDownEvent || _finished) return KeyEventResult.ignored;
+    final k = e.logicalKey;
+    if (k == LogicalKeyboardKey.enter ||
+        k == LogicalKeyboardKey.numpadEnter) {
+      if (_answered) {
+        _next();
+        return KeyEventResult.handled;
+      }
+      if (_canCheck) {
+        _check();
+        return KeyEventResult.handled;
+      }
+      return KeyEventResult.ignored;
+    }
+    if (_answered || _ex.type != ExerciseType.choice) {
+      return KeyEventResult.ignored;
+    }
+    const digits = [
+      LogicalKeyboardKey.digit1,
+      LogicalKeyboardKey.digit2,
+      LogicalKeyboardKey.digit3,
+      LogicalKeyboardKey.digit4,
+    ];
+    final d = digits.indexOf(k);
+    if (d >= 0 && d < _ex.options.length) {
+      Sfx.instance.tap();
+      setState(() => _selected = _ensureOrder(_ex.options.length)[d]);
+      return KeyEventResult.handled;
+    }
+    return KeyEventResult.ignored;
+  }
+
+  /// X / system back with progress at stake: a gentle confirm first.
+  Future<void> _confirmQuit() async {
+    final bool? quit = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Wait, don't go!"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset('assets/images/ratel-crying-anim.webp',
+                width: 96,
+                height: 96,
+                errorBuilder: (_, _, _) => const SizedBox(height: 8)),
+            const SizedBox(height: 10),
+            const Text("Quit now and this lesson's progress is gone."),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: const Text('Quit'),
+          ),
+          FilledButton(
+            style:
+                FilledButton.styleFrom(backgroundColor: RatelColors.teal),
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('Keep learning'),
+          ),
+        ],
+      ),
+    );
+    if (quit == true && mounted) Navigator.of(context).pop();
+  }
+
+  /// Skip = an escape hatch, not a failure: reveal the answer, charge no
+  /// heart, and (first pass) queue the item for the fix phase.
+  void _skip() {
+    Sfx.instance.tap();
+    setState(() {
+      _answered = true;
+      _isCorrect = false;
+      _combo = 0;
+      _reaction = null;
+      if (_fixPhase) {
+        final a = (_fixAttempts[_eIdx] ?? 0) + 1;
+        _fixAttempts[_eIdx] = a;
+        if (a < 2) _playlist.add(_eIdx);
+      } else if (!widget.reviewMode) {
+        _missedFirstPass.add(_eIdx);
+      }
+    });
+  }
+
+  /// "Can't listen right now": reveal this one kindly (no penalty, no
+  /// queue) and drop every not-yet-played listening item from the lesson.
+  void _muteListens() {
+    Sfx.instance.tap();
+    setState(() {
+      final ex = widget.lesson.exercises;
+      _playlist = [
+        for (int k = 0; k < _playlist.length; k++)
+          if (k <= _index ||
+              ex[_playlist[k]].type != ExerciseType.listen)
+            _playlist[k]
+      ];
+      _missedFirstPass
+          .removeWhere((i) => ex[i].type == ExerciseType.listen);
+      _answered = true;
+      _isCorrect = false;
+      _combo = 0;
+      _reaction = null;
+    });
+  }
+
+  /// Persistent Profile switch: listening exercises off filters them out
+  /// of the playlist before the first answer.
+  Future<void> _applyListenPref() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (prefs.getBool('listen_on') ?? true) return;
+      if (!mounted || _index > 0 || _answered) return;
+      setState(() {
+        final ex = widget.lesson.exercises;
+        final keep = [
+          for (final i in _playlist)
+            if (ex[i].type != ExerciseType.listen) i
+        ];
+        if (keep.isNotEmpty) _playlist = keep;
+      });
+    } catch (_) {}
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_finished) return _completion(context);
     final int total = _playlist.length;
     final double progress = (_answered ? _index + 1 : _index) / total;
-    return Scaffold(
+    return Focus(
+      autofocus: true,
+      onKeyEvent: _onKey,
+      child: PopScope(
+        canPop: _index == 0 && !_answered && !_fixPhase,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _confirmQuit();
+        },
+        child: Scaffold(
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -395,6 +537,8 @@ class _LessonScreenState extends State<LessonScreen>
           ),
           IgnorePointer(child: ComboGlow(combo: _combo)),
         ],
+      ),
+        ),
       ),
     );
   }
@@ -820,6 +964,12 @@ class _LessonScreenState extends State<LessonScreen>
             ),
           ),
         ),
+        Center(
+          child: TextButton(
+            onPressed: _muteListens,
+            child: const Text("Can't listen right now"),
+          ),
+        ),
         _typedField('Type what you hear'),
       ],
     );
@@ -844,12 +994,30 @@ class _LessonScreenState extends State<LessonScreen>
   // ---- bottom bar ----
   Widget _bottom() {
     if (!_answered) {
-      final bool canCheck = _ex.type == ExerciseType.choice
-          ? _selected != null
-          : _ex.type == ExerciseType.wordBank
-              ? _picked.isNotEmpty
-              : _typedCtl.text.trim().isNotEmpty;
-      return _wideButton('Check', canCheck ? _check : null);
+      return Row(
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16)),
+              onPressed: _skip,
+              child: const Text('Skip'),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            flex: 2,
+            child: FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: RatelColors.teal,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+              ),
+              onPressed: _canCheck ? _check : null,
+              child: const Text('Check'),
+            ),
+          ),
+        ],
+      );
     }
     final Color c = _isCorrect ? RatelColors.teal : RatelColors.coral;
     return Column(
@@ -861,7 +1029,10 @@ class _LessonScreenState extends State<LessonScreen>
             const SizedBox(width: 8),
             Expanded(
               child: Text(
-                _isCorrect ? 'Correct!' : 'Answer: ${_correctText()}',
+                _isCorrect
+                    ? 'Correct!'
+                    : 'Answer: '
+                        '${solutionText(_ex.sentence, _correctText())}',
                 style: TextStyle(color: c, fontWeight: FontWeight.w600),
               ),
             ),

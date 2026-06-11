@@ -71,3 +71,9 @@ String accuracyTier(int pct) =>
 String speedTier(Duration d) => d.inSeconds < 120
     ? 'BLAZING'
     : (d.inSeconds < 240 ? 'QUICK' : 'STEADY');
+
+/// Full corrected sentence for the wrong-answer banner ('___' filled in).
+String solutionText(String? sentence, String answer) {
+  final s = sentence ?? '';
+  return s.contains('___') ? s.replaceFirst('___', answer) : answer;
+}
