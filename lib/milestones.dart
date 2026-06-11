@@ -77,3 +77,10 @@ String solutionText(String? sentence, String answer) {
   final s = sentence ?? '';
   return s.contains('___') ? s.replaceFirst('___', answer) : answer;
 }
+
+/// m:ss countdown formatting for heart-regen style timers.
+String fmtCountdown(Duration d) {
+  final int m = d.inMinutes;
+  final int sec = d.inSeconds % 60;
+  return '$m:${sec.toString().padLeft(2, '0')}';
+}

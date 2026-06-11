@@ -413,6 +413,16 @@ class AppState extends ChangeNotifier {
     touchStreak();
   }
 
+  /// One-time bonus XP (chest rewards, promos): persists and logs,
+  /// but doesn't touch lesson counters or the streak.
+  void addBonusXp(int amount, {String reason = 'chest'}) {
+    xp += amount;
+    todayXp += amount;
+    notifyListeners();
+    _persist();
+    _logXpEvent(amount, reason);
+  }
+
   /// Log a single exercise attempt (fire-and-forget) for mistake analysis.
   /// Only runs when signed in; user_id is filled by the DB default (auth.uid()).
   Future<void> logAttempt({

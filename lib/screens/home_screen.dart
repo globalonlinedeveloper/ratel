@@ -14,6 +14,7 @@ import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/mascot_anim.dart';
 import '../theme.dart';
+import '../milestones.dart';
 import '../models.dart';
 import '../content.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -53,13 +54,17 @@ class _HomeScreenState extends State<HomeScreen> {
   int _tab = 0;
 
   bool _listenOn = true;
+  Set<String> _chests = {};
 
   @override
   void initState() {
     super.initState();
     SharedPreferences.getInstance().then((p) {
       if (mounted) {
-        setState(() => _listenOn = p.getBool('listen_on') ?? true);
+        setState(() {
+          _listenOn = p.getBool('listen_on') ?? true;
+          _chests = (p.getStringList('chests') ?? const []).toSet();
+        });
       }
     });
     if (!appState.loaded) {
@@ -682,12 +687,18 @@ class _HomeScreenState extends State<HomeScreen> {
             : (l.id == currentId ? NodeState.current : NodeState.locked);
         path.add(st == NodeState.current
             ? KeyedSubtree(key: _currentNodeKey, child: _currentNode(context, l))
-            : _node(
-                state: st,
-                dx: offsets[i % offsets.length],
-                title: l.title,
-                accent: unitAccent(u)));
+            : GestureDetector(
+                onTap: () => _nodePopup(l, st, u),
+                child: _node(
+                    state: st,
+                    dx: offsets[i % offsets.length],
+                    title: l.title,
+                    accent: unitAccent(u))));
         path.add(const SizedBox(height: 14));
+        if (i == 2) {
+          path.add(_chestNode(u, unit));
+          path.add(const SizedBox(height: 14));
+        }
       }
     }
     // bring the learner straight to where they left off
@@ -727,6 +738,174 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Done nodes invite a single-lesson review; locked nodes explain.
+  void _nodePopup(Lesson lesson, NodeState state, int u) {
+    final bool done = state == NodeState.done;
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(lesson.title),
+        content: Text(done
+            ? 'You aced this one. A quick practice keeps it fresh!'
+            : 'Complete the path above to unlock!'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Close')),
+          if (done)
+            FilledButton(
+              style: FilledButton.styleFrom(backgroundColor: unitAccent(u)),
+              onPressed: () {
+                Navigator.of(ctx).pop();
+                if (appState.hearts <= 0 && !appState.isPro) {
+                  showHeartsSheet(context,
+                      onPractice: () => setState(() => _tab = 1));
+                  return;
+                }
+                Navigator.of(context).push(ratelRoute(
+                    LessonScreen(lesson: lesson, reviewMode: true)));
+              },
+              child: const Text('Practice again'),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _chestNode(int u, Unit unit) {
+    final bool ready =
+        unit.lessons.take(3).every((l) => appState.isCompleted(l.id));
+    final bool claimed = _chests.contains('$u');
+    final Color grey =
+        context.isDark ? const Color(0xFF3A3733) : const Color(0xFFD9D9D9);
+    final Widget core = Container(
+      key: Key('chest_$u'),
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+          color: ready && !claimed ? RatelColors.honey : grey,
+          shape: BoxShape.circle),
+      child: Icon(claimed ? Icons.check : Icons.redeem,
+          color: ready && !claimed ? Colors.white : RatelColors.textMuted,
+          size: 26),
+    );
+    return GestureDetector(
+      onTap: () => _chestTap(u, ready, claimed),
+      child: Transform.translate(
+          offset: const Offset(40, 0),
+          child: ready && !claimed ? Pulse(child: core) : core),
+    );
+  }
+
+  Future<void> _chestTap(int u, bool ready, bool claimed) async {
+    if (claimed) return;
+    if (!ready) {
+      showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('A reward chest!'),
+          content: const Text('Finish the three lessons above to open it.'),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: const Text('OK')),
+          ],
+        ),
+      );
+      return;
+    }
+    setState(() => _chests = {..._chests, '$u'});
+    appState.addBonusXp(20);
+    try {
+      final p = await SharedPreferences.getInstance();
+      await p.setStringList('chests', _chests.toList());
+    } catch (_) {}
+    if (!mounted) return;
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('You found 20 XP!'),
+        content: const Text('The honey badger approves. Keep going!'),
+        actions: [
+          FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Claim')),
+        ],
+      ),
+    );
+  }
+
+  void _streakPopover() {
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text('${appState.streak}-day streak'),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            StreakCalendar(),
+            SizedBox(height: 10),
+            Text("Practice every day so your streak won't break!",
+                style:
+                    TextStyle(color: RatelColors.textMuted, fontSize: 13)),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Close')),
+        ],
+      ),
+    );
+  }
+
+  void _heartsPopover() {
+    final Duration? next = appState.nextHeartIn;
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Hearts'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                for (int i = 0; i < 5; i++)
+                  Icon(
+                      appState.isPro || i < appState.hearts
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      color: RatelColors.hearts,
+                      size: 26),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Text(
+                appState.isPro
+                    ? 'Unlimited hearts with Ratel Pro'
+                    : (appState.hearts >= 5 || next == null)
+                        ? 'Hearts full — go get them!'
+                        : 'Next heart in ${fmtCountdown(next)}',
+                style: const TextStyle(color: RatelColors.textMuted)),
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Close')),
+          FilledButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              setState(() => _tab = 1);
+            },
+            child: const Text('Practice — earn a heart'),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _header() {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
@@ -744,21 +923,33 @@ class _HomeScreenState extends State<HomeScreen> {
           const Text('English',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
           const Spacer(),
-          _streakStat(appState.streak),
+          InkWell(
+            key: const Key('streak_stat'),
+            borderRadius: BorderRadius.circular(8),
+            onTap: _streakPopover,
+            child: _streakStat(appState.streak),
+          ),
           const SizedBox(width: 12),
           _numStat(Icons.bolt, appState.xp, RatelColors.honey),
           const SizedBox(width: 12),
-          appState.isPro
-              ? Row(mainAxisSize: MainAxisSize.min, children: const [
-                  Icon(Icons.favorite, color: RatelColors.hearts, size: 18),
-                  SizedBox(width: 3),
-                  Text('∞',
-                      style: TextStyle(
-                          color: RatelColors.hearts,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16)),
-                ])
-              : _numStat(Icons.favorite, appState.hearts, RatelColors.hearts),
+          InkWell(
+            key: const Key('hearts_stat'),
+            borderRadius: BorderRadius.circular(8),
+            onTap: _heartsPopover,
+            child: appState.isPro
+                ? Row(mainAxisSize: MainAxisSize.min, children: const [
+                    Icon(Icons.favorite,
+                        color: RatelColors.hearts, size: 18),
+                    SizedBox(width: 3),
+                    Text('∞',
+                        style: TextStyle(
+                            color: RatelColors.hearts,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16)),
+                  ])
+                : _numStat(
+                    Icons.favorite, appState.hearts, RatelColors.hearts),
+          ),
         ],
       ),
     );
