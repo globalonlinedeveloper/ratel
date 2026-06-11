@@ -67,11 +67,44 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.w700)),
             ),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(16, 0, 16, 4),
-              child: Text('This week · top 5 advance · resets Monday',
-                  style: TextStyle(color: RatelColors.textMuted)),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+              child: Row(
+                children: [
+                  const Text('This week · top 5 advance',
+                      style: TextStyle(color: RatelColors.textMuted)),
+                  const Spacer(),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 8, vertical: 3),
+                    decoration: BoxDecoration(
+                        color: context.tintC(RatelColors.coral),
+                        borderRadius: BorderRadius.circular(10)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.timer_outlined,
+                            size: 13, color: RatelColors.coral),
+                        const SizedBox(width: 3),
+                        Text(resetCountdownLabel(DateTime.now().toUtc()),
+                            style: const TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w700,
+                                color: RatelColors.coral)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
+            if (rows.isNotEmpty && rows.length < 5)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
+                child: Text(
+                    'Quiet week — invite friends from Profile and race them!',
+                    style: TextStyle(
+                        color: context.mutedC, fontSize: 12.5)),
+              ),
             Builder(builder: (context) {
               final int myRank =
                   rows.indexWhere((r) => r['user_id'] == myId) + 1;
@@ -195,4 +228,19 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
           Expanded(child: body),
         ],
       );
+}
+
+/// "Resets in 2d 14h" — time until next Monday 00:00 UTC (roll_leagues cron).
+/// Pure for testability.
+String resetCountdownLabel(DateTime nowUtc) {
+  int daysAhead = (DateTime.monday - nowUtc.weekday) % 7;
+  DateTime next = DateTime.utc(nowUtc.year, nowUtc.month, nowUtc.day)
+      .add(Duration(days: daysAhead));
+  if (!next.isAfter(nowUtc)) next = next.add(const Duration(days: 7));
+  final d = next.difference(nowUtc);
+  if (d.inDays >= 1) return 'Resets in ${d.inDays}d ${d.inHours % 24}h';
+  if (d.inHours >= 1) {
+    return 'Resets in ${d.inHours}h ${d.inMinutes % 60}m';
+  }
+  return 'Resets in ${d.inMinutes}m';
 }

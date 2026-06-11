@@ -1,5 +1,6 @@
 import '../guest.dart';
 import '../widgets/save_account_sheet.dart';
+import '../widgets/streak_calendar.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
 import '../widgets/motd_card.dart';
@@ -34,7 +35,6 @@ import '../widgets/daily_quests_card.dart';
 import '../widgets/achievements_view.dart';
 import '../widgets/daily_goal_card.dart';
 import '../widgets/pulse.dart';
-import '../widgets/stagger.dart';
 
 enum NodeState { done, current, locked }
 
@@ -133,7 +133,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildPractice() {
-    final List<Lesson> lessons = [for (final u in course) ...u.lessons];
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -147,13 +146,61 @@ class _HomeScreenState extends State<HomeScreen> {
         const Text('Replay any lesson to sharpen up.',
             style: TextStyle(color: RatelColors.textMuted)),
         const SizedBox(height: 12),
-        ...List.generate(lessons.length, (i) {
-          final Lesson l = lessons[i];
-          final bool done = appState.isCompleted(l.id);
-          return StaggeredIn(
-            index: i,
-            child: Padding(
-            padding: const EdgeInsets.only(bottom: 10),
+        ...List.generate(course.length, (u) {
+          final unit = course[u];
+          final int doneCount =
+              unit.lessons.where((l) => appState.isCompleted(l.id)).length;
+          final bool hasCurrent =
+              unit.lessons.any((l) => !appState.isCompleted(l.id)) &&
+                  (u == 0 ||
+                      course[u - 1]
+                          .lessons
+                          .every((l) => appState.isCompleted(l.id)));
+          return Container(
+            margin: const EdgeInsets.only(bottom: 10),
+            decoration: BoxDecoration(
+              color: context.surfaceC,
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: context.borderC),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Theme(
+              data: Theme.of(context)
+                  .copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                initiallyExpanded: hasCurrent,
+                leading: CircleAvatar(
+                  radius: 16,
+                  backgroundColor: unitAccent(u),
+                  child: Text('${u + 1}',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13)),
+                ),
+                title: Text(unit.subtitle,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700, fontSize: 15)),
+                subtitle: Text('$doneCount/${unit.lessons.length} lessons',
+                    style: const TextStyle(
+                        color: RatelColors.textMuted, fontSize: 12)),
+                children: [
+                  for (final l in unit.lessons) _practiceRow(context, l),
+                ],
+              ),
+            ),
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _practiceRow(BuildContext context, Lesson l) {
+    final bool done = appState.isCompleted(l.id);
+    {
+      {
+          return Padding(
+            padding: EdgeInsets.zero,
             child: InkWell(
               onTap: () {
                 if (appState.hearts <= 0 && !appState.isPro) {
@@ -165,16 +212,12 @@ class _HomeScreenState extends State<HomeScreen> {
               },
               borderRadius: BorderRadius.circular(14),
               child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: context.surfaceC,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: context.borderC),
-                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
                     CircleAvatar(
-                      radius: 18,
+                      radius: 16,
                       backgroundColor:
                           done ? RatelColors.teal : RatelColors.honey,
                       child: Icon(done ? Icons.check : Icons.play_arrow,
@@ -200,10 +243,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-          ));
-        }),
-      ],
-    );
+          );
+      }
+    }
   }
 
   Widget _buildProfile() {
@@ -292,6 +334,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 12),
+          const StreakCalendar(),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
             child: Row(
