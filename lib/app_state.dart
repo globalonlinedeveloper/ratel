@@ -510,7 +510,10 @@ class AppState extends ChangeNotifier {
       await client.from('profiles').update({
         'total_xp': xp,
         'gems': gems,
-        'current_streak': streak,
+        // current_streak is OWNED by touch_streak/repair/crons —
+        // writing the client's copy here raced the RPC (the gem
+        // award's extra _persist could land AFTER touch_streak and
+        // clobber the fresh streak back to 0; E2E caught it).
         'hearts': hearts,
         'hearts_updated_at': heartsUpdatedAt.toIso8601String(),
         'completed_lessons': _completed.toList(),
