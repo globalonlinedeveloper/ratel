@@ -20,6 +20,14 @@ String keyPhraseFor(Lesson l) {
       ExerciseType.listen =>
         e.correctOrder.isNotEmpty ? e.correctOrder.first : '',
       ExerciseType.matchPairs => '',
+      ExerciseType.multiBlank => () {
+        var t = e.sentence ?? '';
+        for (final a in e.correctOrder) {
+          t = t.replaceFirst('___', a);
+        }
+        return t;
+      }(),
+      ExerciseType.listenRespond => e.sentence ?? '',
     };
     if (t.isNotEmpty) return t;
   }
