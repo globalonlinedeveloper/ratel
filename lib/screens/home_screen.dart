@@ -164,7 +164,9 @@ class _HomeScreenState extends State<HomeScreen> {
               border: Border.all(color: context.borderC),
             ),
             clipBehavior: Clip.antiAlias,
-            child: Theme(
+            child: Material(
+              type: MaterialType.transparency,
+              child: Theme(
               data: Theme.of(context)
                   .copyWith(dividerColor: Colors.transparent),
               child: ExpansionTile(
@@ -188,6 +190,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   for (final l in unit.lessons) _practiceRow(context, l),
                 ],
               ),
+            ),
             ),
           );
         }),
@@ -791,9 +794,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
     return GestureDetector(
       onTap: () => _chestTap(u, ready, claimed),
-      child: Transform.translate(
-          offset: const Offset(40, 0),
-          child: ready && !claimed ? Pulse(child: core) : core),
+      child: _shift(40, ready && !claimed ? Pulse(child: core) : core),
     );
   }
 
@@ -836,25 +837,25 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _streakPopover() {
-    showDialog<void>(
+    showModalBottomSheet<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('${appState.streak}-day streak'),
-        content: const Column(
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            StreakCalendar(),
-            SizedBox(height: 10),
-            Text("Practice every day so your streak won't break!",
-                style:
-                    TextStyle(color: RatelColors.textMuted, fontSize: 13)),
+            Text('${appState.streak}-day streak',
+                style: const TextStyle(
+                    fontSize: 18, fontWeight: FontWeight.w800)),
+            const StreakCalendar(),
+            const Padding(
+              padding: EdgeInsets.fromLTRB(24, 2, 24, 20),
+              child: Text("Practice every day so your streak won't break!",
+                  style: TextStyle(
+                      color: RatelColors.textMuted, fontSize: 13)),
+            ),
           ],
         ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Close')),
-        ],
       ),
     );
   }
@@ -1039,6 +1040,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  /// Horizontal path offset via LAYOUT (Padding), not paint
+  /// (Transform.translate), so hit-testing matches what's drawn.
+  Widget _shift(double dx, Widget child) => Padding(
+        padding: EdgeInsets.only(
+            left: dx > 0 ? dx * 2 : 0, right: dx < 0 ? -dx * 2 : 0),
+        child: child,
+      );
+
   Widget _node(
       {required NodeState state,
       double dx = 0,
@@ -1053,9 +1062,9 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       NodeState.current => (RatelColors.honey, Icons.star),
     };
-    return Transform.translate(
-      offset: Offset(dx, 0),
-      child: Column(
+    return _shift(
+      dx,
+      Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
