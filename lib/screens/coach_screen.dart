@@ -190,8 +190,7 @@ class _CoachScreenState extends State<CoachScreen> {
               ],
             ),
           ),
-        if (_msgs.length <= 1 && !_waiting)
-          if (_msgs.length <= 1)
+        if (_msgs.length <= 1 && !_waiting) ...[
             SizedBox(
               height: 96,
               child: ListView(
@@ -213,24 +212,27 @@ class _CoachScreenState extends State<CoachScreen> {
                             border:
                                 Border.all(color: context.faintBorderC),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(sc.icon,
-                                  size: 20, color: RatelColors.teal),
-                              const Spacer(),
-                              Text('Roleplay',
-                                  style: TextStyle(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w700,
-                                      color: context.mutedC)),
-                              Text(sc.title,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.w700)),
-                            ],
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Icon(sc.icon,
+                                    size: 20, color: RatelColors.teal),
+                                const SizedBox(height: 8),
+                                Text('Roleplay',
+                                    style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w700,
+                                        color: context.mutedC)),
+                                Text(sc.title,
+                                    style: const TextStyle(
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w700)),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -255,6 +257,7 @@ class _CoachScreenState extends State<CoachScreen> {
               ],
             ),
           ),
+        ],
         SafeArea(
           top: false,
           child: Padding(
