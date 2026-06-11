@@ -17,7 +17,7 @@ import '../widgets/mascot_anim.dart';
 import '../theme.dart';
 import '../flags.dart';
 import '../milestones.dart';
-import '../placement.dart';
+import '../guidebook.dart';
 import 'section_test_screen.dart';
 import '../models.dart';
 import '../content.dart';
@@ -1147,6 +1147,71 @@ class _HomeScreenState extends State<HomeScreen> {
     Icons.favorite, // 10 health & feelings
   ];
 
+  void _showGuidebook(int index, Unit unit) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.menu_book, color: unitAccent(index)),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text('Guidebook · ${unit.subtitle}',
+                        style: const TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.w800)),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              const Text('Key phrases from this unit',
+                  style: TextStyle(
+                      color: RatelColors.textMuted, fontSize: 12.5)),
+              const SizedBox(height: 12),
+              for (final (i, entry)
+                  in guidebookFor(unit).indexed) ...[
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                        appState.isCompleted(unit.lessons[i].id)
+                            ? Icons.check_circle
+                            : Icons.radio_button_unchecked,
+                        size: 18,
+                        color: appState.isCompleted(unit.lessons[i].id)
+                            ? RatelColors.teal
+                            : RatelColors.textMuted),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(entry.$1,
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14)),
+                          Text(entry.$2,
+                              style: TextStyle(
+                                  color: context.mutedC, fontSize: 13)),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   /// Locked = some lesson in an earlier unit is still incomplete.
   bool _sectionLocked(CourseSection s) {
     if (s.firstUnit == 0) return false;
@@ -1226,7 +1291,9 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _unitBanner(int index, Unit unit) {
     final int done =
         unit.lessons.where((l) => appState.isCompleted(l.id)).length;
-    return Container(
+    return GestureDetector(
+      onTap: () => _showGuidebook(index, unit),
+      child: Container(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -1262,6 +1329,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontWeight: FontWeight.w700)),
           ),
         ],
+      ),
       ),
     );
   }
