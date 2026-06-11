@@ -35,9 +35,11 @@ class DailyQuestsCard extends StatelessWidget {
                   : const Icon(Icons.flag_circle,
                       color: RatelColors.honey, size: 18),
               const SizedBox(width: 6),
-              Text('Daily quests ($done/${quests.length})',
-                  style:
-                      const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
+              Expanded(
+                child: Text('Daily quests ($done/${quests.length})',
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700, fontSize: 15)),
+              ),
             ],
           ),
           const SizedBox(height: 8),
