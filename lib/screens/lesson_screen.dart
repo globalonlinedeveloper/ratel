@@ -200,6 +200,9 @@ class _LessonScreenState extends State<LessonScreen>
       _missedFirstPass.clear();
       _fixPhase = true;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.fromLTRB(16, 0, 16, 96),
+          duration: Duration(milliseconds: 2200),
           content: Text(
               "Let's fix your mistakes — no hearts at risk!")));
     }

@@ -47,6 +47,9 @@ void main() {
     await _go(tester, 'Continue');
     expect(find.text('FIXING MISTAKES'), findsOneWidget);
     expect(find.text('6/6'), findsOneWidget); // playlist grew by the miss
+    // drain the fix-phase toast so nothing overlays the bottom bar
+    await tester.pump(const Duration(milliseconds: 2400));
+    await tester.pump(const Duration(milliseconds: 350));
     // missing AGAIN in fix phase costs no heart
     await _answer(tester, 'Chair');
     expect(appState.hearts, 4);
