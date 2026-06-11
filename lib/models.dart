@@ -8,6 +8,7 @@ enum ExerciseType {
   dialogueOrder,
   multiBlank,
   listenRespond,
+  chat,
 }
 
 /// A single exercise within a lesson.
@@ -94,6 +95,18 @@ class Exercise {
   })  : type = ExerciseType.listenRespond,
         sentence = say,
         correctOrder = const [];
+
+  /// A character speaks ([npcLine], shown as a bubble); the learner
+  /// TYPES a free reply, graded leniently against [accepted].
+  const Exercise.chat({
+    required this.prompt,
+    required String npcLine,
+    required List<String> accepted,
+  })  : type = ExerciseType.chat,
+        sentence = npcLine,
+        options = const [],
+        correctIndex = -1,
+        correctOrder = accepted;
 
   const Exercise.listen({
     required this.prompt,

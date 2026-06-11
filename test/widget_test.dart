@@ -168,6 +168,8 @@ void main() {
               need('${lesson.id}:$i:do');
             case ExerciseType.multiBlank:
               need('${lesson.id}:$i:mb');
+            case ExerciseType.chat:
+              need('${lesson.id}:$i:ch');
             case ExerciseType.listenRespond:
               for (var j = 0; j < ex.options.length; j++) {
                 if (j != ex.correctIndex) need('${lesson.id}:$i:$j');

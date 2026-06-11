@@ -28,6 +28,8 @@ String keyPhraseFor(Lesson l) {
         return t;
       }(),
       ExerciseType.listenRespond => e.sentence ?? '',
+      ExerciseType.chat =>
+        e.correctOrder.isNotEmpty ? e.correctOrder.first : '',
     };
     if (t.isNotEmpty) return t;
   }

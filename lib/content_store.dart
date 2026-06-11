@@ -60,6 +60,12 @@ class ContentStore {
             sentence: e['sentence'] as String?,
             accepted: _strs(e['correct_order']));
       }
+      if (type == 'chat') {
+        return Exercise.chat(
+            prompt: prompt,
+            npcLine: (e['sentence'] ?? '').toString(),
+            accepted: _strs(e['correct_order']));
+      }
       if (type == 'multi_blank') {
         return Exercise.multiBlank(
             prompt: prompt,

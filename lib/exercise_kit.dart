@@ -22,6 +22,7 @@ bool canCheckAnswer(Exercise e,
     ExerciseType.multiBlank =>
       pickedCount >= '___'.allMatches(e.sentence ?? '').length,
     ExerciseType.listenRespond => selected != null,
+    ExerciseType.chat => typed.trim().isNotEmpty,
   };
 }
 
@@ -35,6 +36,7 @@ bool gradeAnswer(Exercise e,
     ExerciseType.multiBlank =>
       listEquals(pickedWords, e.correctOrder),
     ExerciseType.listenRespond => selected == e.correctIndex,
+    ExerciseType.chat => typedAnswerMatches(typed, e.correctOrder),
     ExerciseType.typed ||
     ExerciseType.listen =>
       typedAnswerMatches(typed, e.correctOrder),
@@ -67,6 +69,8 @@ String correctTextFor(Exercise e) {
       return s;
     }(),
     ExerciseType.listenRespond => e.options[e.correctIndex],
+    ExerciseType.chat =>
+      e.correctOrder.isNotEmpty ? e.correctOrder.first : '',
   };
 }
 
@@ -86,6 +90,10 @@ String userTextFor(Exercise e,
     ExerciseType.multiBlank => pickedWords.join(', '),
     ExerciseType.listenRespond =>
       selected != null ? e.options[selected] : '(no answer)',
+    ExerciseType.chat => () {
+        final t = typed.trim();
+        return t.isEmpty ? '(no answer)' : t;
+      }(),
   };
 }
 
@@ -100,5 +108,6 @@ String explainSuffixFor(Exercise e, {int? selected}) {
     ExerciseType.multiBlank => 'mb',
     // choice-style key: the wrong RESPONSE teaches the same way
     ExerciseType.listenRespond => '$selected',
+    ExerciseType.chat => 'ch',
   };
 }

@@ -14,7 +14,7 @@ and mirror the unit into lib/content.dart (offline fallback), then push.
 import json, os, re, sys, urllib.request
 
 TYPES = {"choice", "wordBank", "typed", "listen", "match", "dialogue",
-         "multi_blank", "listen_respond"}
+         "multi_blank", "listen_respond", "chat"}
 
 
 def validate(u):
@@ -74,6 +74,12 @@ def validate(u):
                     bad.append(f"{w}: answers must match ___ count")
                 if not set(cord) <= set(opts):
                     bad.append(f"{w}: answers must come from options")
+            elif t == "chat":
+                if not str(e.get("sentence", "")).strip():
+                    bad.append(f"{w}: chat needs the NPC line")
+                if not (isinstance(cord, list) and cord
+                        and all(str(a).strip() for a in cord)):
+                    bad.append(f"{w}: chat needs accepted replies")
             elif t == "listen_respond":
                 ci = e.get("correct_index")
                 if not str(e.get("sentence", "")).strip():

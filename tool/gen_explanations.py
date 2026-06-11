@@ -65,7 +65,7 @@ lp=[(m.group(1),m.start()) for m in re.finditer(r"Lesson\(\s*id:\s*'([^']+)'",sr
 EX=[]
 for k in range(len(lp)-1):
     lid,st=lp[k];en=lp[k+1][1];sg=src[st:en];xi=0
-    for em in re.finditer(r"Exercise\.(choice|wordBank|typed|listen|matchPairs|dialogueOrder|multiBlank|listenRespond)\(",sg):
+    for em in re.finditer(r"Exercise\.(choice|wordBank|typed|listen|matchPairs|dialogueOrder|multiBlank|listenRespond|chat)\(",sg):
         et=em.group(1);op=sg.index('(',em.start());cp=mp(sg,op);b=sg[op+1:cp]
         ci=re.search(r"correctIndex:\s*(-?\d+)",b)
         EX.append(dict(lid=lid,exidx=xi,type=et,prompt=sa(b,'prompt'),sentence=sa(b,'sentence'),
@@ -98,6 +98,12 @@ for e in EX:
         u=(f"Task: fill the blanks in '{e.get('sentence') or ''}' in order.\nThe answers are: \"{cor}\"\n"
            f"In 1-2 short sentences (max 35 words), teach WHY these words fit these blanks (meaning or grammar) so a learner can reuse the rule.")
         tasks.append((f"{e['lid']}:{e['exidx']}:mb",u))
+    elif e['type']=='chat':
+        cor=(e['accepted'] or e['correctOrder'] or [''])[0]
+        u=(f"A character said: \"{e.get('sentence') or ''}\" and the learner had to TYPE a reply.\n"
+           f"A good reply is: \"{cor}\"\n"
+           f"In 1-2 short sentences (max 35 words), teach what makes a natural reply here (the question being answered, the polite form) so the learner can build their own.")
+        tasks.append((f"{e['lid']}:{e['exidx']}:ch",u))
     elif e['type']=='listenRespond':
         ci=e['correctIndex'];cor=e['options'][ci]
         for j,opt in enumerate(e['options']):

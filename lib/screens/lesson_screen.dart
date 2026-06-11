@@ -273,6 +273,41 @@ class _LessonScreenState extends State<LessonScreen>
     }
   }
 
+  Widget _chatBody() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            const RatelMascot(pose: RatelPose.speak, size: 52),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 14, vertical: 10),
+                decoration: BoxDecoration(
+                  color: context.tintC(RatelColors.honey),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(14),
+                    topRight: Radius.circular(14),
+                    bottomRight: Radius.circular(14),
+                    bottomLeft: Radius.circular(4),
+                  ),
+                  border: Border.all(color: context.faintBorderC),
+                ),
+                child: Text(_ex.sentence ?? '',
+                    style: const TextStyle(fontSize: 16)),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        _typedField('Type your reply'),
+      ],
+    );
+  }
+
   bool get _canCheck => canCheckAnswer(_ex,
       selected: _selected,
       pickedCount: _ex.type == ExerciseType.matchPairs
@@ -569,7 +604,8 @@ class _LessonScreenState extends State<LessonScreen>
               const SizedBox(height: 20),
               if (_ex.sentence != null &&
                   _ex.type != ExerciseType.listenRespond &&
-                  _ex.type != ExerciseType.multiBlank) ...[
+                  _ex.type != ExerciseType.multiBlank &&
+                  _ex.type != ExerciseType.chat) ...[
                 Text(_ex.sentence!,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w600)),
@@ -590,6 +626,7 @@ class _LessonScreenState extends State<LessonScreen>
                       ExerciseType.multiBlank => _multiBlankBody(),
                       ExerciseType.listenRespond =>
                         _listenRespondBody(),
+                      ExerciseType.chat => _chatBody(),
                     },
                   ),
                 ),
