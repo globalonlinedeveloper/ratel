@@ -14,6 +14,7 @@ import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/mascot_anim.dart';
 import '../theme.dart';
+import '../flags.dart';
 import '../milestones.dart';
 import '../models.dart';
 import '../content.dart';
@@ -851,10 +852,44 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 18, fontWeight: FontWeight.w800)),
             const StreakCalendar(),
             const Padding(
-              padding: EdgeInsets.fromLTRB(24, 2, 24, 20),
+              padding: EdgeInsets.fromLTRB(24, 2, 24, 8),
               child: Text("Practice every day so your streak won't break!",
                   style: TextStyle(
                       color: RatelColors.textMuted, fontSize: 13)),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 18),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.ac_unit,
+                      color: RatelColors.teal, size: 18),
+                  const SizedBox(width: 6),
+                  Text('Freezes: ${appState.streakFreezes}/2',
+                      style: const TextStyle(
+                          fontSize: 13, fontWeight: FontWeight.w600)),
+                  const SizedBox(width: 10),
+                  if (appState.streakFreezes < 2)
+                    TextButton(
+                      onPressed: () async {
+                        final bool ok = await appState.buyStreakFreeze(
+                            cost: Flags.instance
+                                .intOf('gem_freeze_cost', 200));
+                        if (ctx.mounted) Navigator.of(ctx).pop();
+                        if (!mounted) return;
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text(ok
+                                    ? 'Streak freeze added!'
+                                    : 'Not enough gems yet — '
+                                        'keep learning!')));
+                      },
+                      child: Text('Get one · '
+                          '${Flags.instance.intOf('gem_freeze_cost', 200)}'
+                          ' gems'),
+                    ),
+                ],
+              ),
             ),
           ],
         ),
@@ -892,6 +927,30 @@ class _HomeScreenState extends State<HomeScreen> {
                         ? 'Hearts full — go get them!'
                         : 'Next heart in ${fmtCountdown(next)}',
                 style: const TextStyle(color: RatelColors.textMuted)),
+            if (!appState.isPro && appState.hearts < 5) ...[
+              const SizedBox(height: 12),
+              FilledButton.tonalIcon(
+                onPressed: () {
+                  final int cost =
+                      Flags.instance.intOf('gem_refill_cost', 350);
+                  Navigator.of(ctx).pop();
+                  if (appState.gems >= cost) {
+                    appState.refillHearts();
+                    appState.spendGems(cost);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text(
+                                'Not enough gems yet — keep learning!')));
+                  }
+                },
+                icon: const Icon(Icons.diamond,
+                    color: RatelColors.teal, size: 18),
+                label: Text('Refill hearts · '
+                    '${Flags.instance.intOf('gem_refill_cost', 350)}'
+                    ' gems'),
+              ),
+            ],
           ],
         ),
         actions: [

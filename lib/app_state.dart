@@ -433,6 +433,24 @@ class AppState extends ChangeNotifier {
     _persist();
   }
 
+  /// Buy a streak freeze with gems (cap 2). True on success. Writes
+  /// streak_freezes in a TARGETED update (the streak cron owns
+  /// decrements; keeping it out of _persist avoids clobbering).
+  Future<bool> buyStreakFreeze({int cost = 200}) async {
+    if (streakFreezes >= 2 || gems < cost) return false;
+    streakFreezes++;
+    spendGems(cost); // notifies + persists the gem balance
+    final client = _client;
+    if (client != null) {
+      try {
+        await client.from('profiles').update({
+          'streak_freezes': streakFreezes,
+        }).eq('id', client.auth.currentUser!.id);
+      } catch (_) {}
+    }
+    return true;
+  }
+
   /// False (and no change) when the balance can't cover [cost].
   bool spendGems(int cost) {
     if (cost <= 0 || gems < cost) return false;

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../app_state.dart';
+import '../flags.dart';
 import '../screens/paywall_screen.dart';
 import '../theme.dart';
 import '../widgets/mascot_anim.dart';
@@ -93,6 +94,25 @@ class _HeartsSheetState extends State<_HeartsSheet> {
             icon: const Icon(Icons.fitness_center),
             label: const Text('Practice mistakes — earn a heart'),
           ),
+          if (appState.gems >=
+              Flags.instance.intOf('gem_refill_cost', 350)) ...[
+            const SizedBox(height: 10),
+            FilledButton.tonalIcon(
+              style: FilledButton.styleFrom(
+                  minimumSize: const Size.fromHeight(48)),
+              onPressed: () {
+                // refill BEFORE spending: the spend's _persist then
+                // carries hearts=5 and the new balance together.
+                appState.refillHearts();
+                appState.spendGems(
+                    Flags.instance.intOf('gem_refill_cost', 350));
+              },
+              icon: const Icon(Icons.diamond, color: RatelColors.teal),
+              label: Text('Refill now · '
+                  '${Flags.instance.intOf('gem_refill_cost', 350)}'
+                  ' gems'),
+            ),
+          ],
           const SizedBox(height: 10),
           OutlinedButton.icon(
             style: OutlinedButton.styleFrom(
