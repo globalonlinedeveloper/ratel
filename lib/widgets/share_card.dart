@@ -78,7 +78,9 @@ Future<void> showShareCard(BuildContext context) {
                       "My Ratel English Score: "
                       '${shareScoreLine()}. '
                       "I'm on a ${appState.streak}-day English streak with "
-                      'Ratel the honey badger! Join me — add my friend code '
+                      'Ratel the honey badger! Join me: '
+                      'https://globalonlinedeveloper.github.io/ratel/'
+                      '?friend=${appState.friendCode} — or add my friend code '
                       '${appState.friendCode} at '
                       'https://globalonlinedeveloper.github.io/ratel/'));
               Navigator.of(ctx).pop();

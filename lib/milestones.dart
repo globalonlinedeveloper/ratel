@@ -238,3 +238,9 @@ List<String> composeDrill({
   }
   return out;
 }
+
+/// The ?friend=CODE parameter from a share link (null when absent).
+String? friendCodeFromUri(Uri uri) {
+  final c = (uri.queryParameters['friend'] ?? '').trim().toUpperCase();
+  return c.isEmpty ? null : c;
+}

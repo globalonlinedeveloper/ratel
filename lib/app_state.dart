@@ -1,5 +1,6 @@
 import 'milestones.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// App-wide state: XP, hearts, streak, and completed lessons.
@@ -440,6 +441,28 @@ class AppState extends ChangeNotifier {
         'reminder_hour_utc': utcHour,
       }).eq('id', client.auth.currentUser!.id);
     } catch (_) {}
+  }
+
+  /// Redeem a share-link friend code ONCE (no-op offline/signed-out;
+  /// the pref clears either way so it never loops).
+  Future<String?> redeemPendingFriendCode() async {
+    String? code;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      code = prefs.getString('pending_friend_code');
+      if (code == null || code.isEmpty) return null;
+      await prefs.remove('pending_friend_code');
+    } catch (_) {
+      return null;
+    }
+    final client = _client;
+    if (client == null) return null;
+    try {
+      await client.rpc('add_friend', params: {'p_code': code});
+      return code;
+    } catch (_) {
+      return null; // own/unknown/duplicate code: stay quiet
+    }
   }
 
   /// One free streak freeze per week up to the cap (targeted write;

@@ -11,9 +11,11 @@ class FeedItem {
       {required this.name,
       required this.amount,
       required this.reason,
-      required this.at});
+      required this.at,
+      this.friendId = ''});
 
   factory FeedItem.fromRow(Map<String, dynamic> r) => FeedItem(
+        friendId: (r['friend_id'] ?? '').toString(),
         name: (r['display_name'] ?? 'Badger').toString(),
         amount: (r['amount'] as num?)?.toInt() ?? 0,
         reason: (r['reason'] ?? '').toString(),
@@ -25,6 +27,7 @@ class FeedItem {
   final int amount;
   final String reason;
   final DateTime at;
+  final String friendId; // '' for cheer-received rows
 }
 
 /// Read-only friend activity. Kind by design: no rankings here, just
@@ -57,15 +60,29 @@ class _FriendsFeedState extends State<FriendsFeed> {
       return;
     }
     try {
-      final rows = await Supabase.instance.client
-          .rpc('friends_feed')
-          .timeout(const Duration(seconds: 5));
-      if (mounted) {
-        setState(() => _items = [
-              for (final r in rows as List)
-                FeedItem.fromRow(r as Map<String, dynamic>),
-            ]);
-      }
+      final c = Supabase.instance.client;
+      final rows =
+          await c.rpc('friends_feed').timeout(const Duration(seconds: 5));
+      List<dynamic> cheers = const [];
+      try {
+        cheers = await c
+            .rpc('my_cheers')
+            .timeout(const Duration(seconds: 4)) as List;
+      } catch (_) {}
+      final items = [
+        for (final r in rows as List)
+          FeedItem.fromRow(r as Map<String, dynamic>),
+        for (final r in cheers)
+          FeedItem(
+              name: ((r as Map)['display_name'] ?? 'A friend')
+                  .toString(),
+              amount: 0,
+              reason: 'cheer',
+              at: DateTime.tryParse(
+                      (r['created_at'] ?? '').toString()) ??
+                  DateTime.now()),
+      ]..sort((a, b) => b.at.compareTo(a.at));
+      if (mounted) setState(() => _items = items);
     } catch (_) {
       if (mounted) setState(() => _items = const []);
     }
@@ -89,10 +106,23 @@ class _FriendsFeedState extends State<FriendsFeed> {
     );
   }
 
+  final Set<String> _cheered = {};
+
+  Future<void> _cheer(FeedItem it) async {
+    setState(() => _cheered.add(it.friendId));
+    try {
+      await Supabase.instance.client
+          .from('feed_cheers')
+          .insert({'to_user': it.friendId});
+    } catch (_) {} // once-per-day unique: a repeat just no-ops
+  }
+
   Widget _row(BuildContext context, FeedItem it) {
-    final String what = it.reason == 'chest'
-        ? 'opened a chest (+${it.amount} XP)'
-        : 'earned ${it.amount} XP';
+    final String what = it.reason == 'cheer'
+        ? 'cheered you on!'
+        : it.reason == 'chest'
+            ? 'opened a chest (+${it.amount} XP)'
+            : 'earned ${it.amount} XP';
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -112,6 +142,20 @@ class _FriendsFeedState extends State<FriendsFeed> {
             child: Text('${it.name} $what',
                 style: const TextStyle(fontSize: 13.5)),
           ),
+          if (it.reason != 'cheer' && it.friendId.isNotEmpty)
+            IconButton(
+              visualDensity: VisualDensity.compact,
+              tooltip: 'Cheer',
+              onPressed: _cheered.contains(it.friendId)
+                  ? null
+                  : () => _cheer(it),
+              icon: Icon(
+                  _cheered.contains(it.friendId)
+                      ? Icons.celebration
+                      : Icons.celebration_outlined,
+                  size: 18,
+                  color: RatelColors.honey),
+            ),
           Text(timeAgo(DateTime.now().difference(it.at)),
               style: const TextStyle(
                   color: RatelColors.textMuted, fontSize: 11.5)),

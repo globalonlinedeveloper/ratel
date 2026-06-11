@@ -91,6 +91,13 @@ class _HomeScreenState extends State<HomeScreen> {
     if (!appState.loaded) {
       appState.sync();
     }
+    appState.redeemPendingFriendCode().then((code) {
+      if (code != null && mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Friend added from your invite link '
+                '($code)!')));
+      }
+    });
   }
 
   @override
