@@ -7,6 +7,9 @@ import '../theme.dart';
 
 /// Earned/locked badge chips from the monthly systems (quests, perfect
 /// weeks, the timed best). Icon-based; generated art swaps in later.
+String _badgeKey(String label) =>
+    'badge_${label.toLowerCase().replaceAll(' ', '_')}';
+
 class BadgeGallery extends StatelessWidget {
   const BadgeGallery({super.key, this.badgesOverride});
 
@@ -106,7 +109,7 @@ class BadgeGallery extends StatelessWidget {
                         children: [
                           _art(b),
                           const SizedBox(width: 6),
-                          Text(b.label,
+                          Text(S.instance.t(_badgeKey(b.label), b.label),
                               style: TextStyle(
                                   fontSize: 12.5,
                                   fontWeight: FontWeight.w700,

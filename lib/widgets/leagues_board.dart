@@ -242,9 +242,19 @@ String resetCountdownLabel(DateTime nowUtc) {
       .add(Duration(days: daysAhead));
   if (!next.isAfter(nowUtc)) next = next.add(const Duration(days: 7));
   final d = next.difference(nowUtc);
-  if (d.inDays >= 1) return 'Resets in ${d.inDays}d ${d.inHours % 24}h';
-  if (d.inHours >= 1) {
-    return 'Resets in ${d.inHours}h ${d.inMinutes % 60}m';
+  if (d.inDays >= 1) {
+    return S.instance
+        .t('resets_dh', 'Resets in {d}d {h}h')
+        .replaceAll('{d}', '${d.inDays}')
+        .replaceAll('{h}', '${d.inHours % 24}');
   }
-  return 'Resets in ${d.inMinutes}m';
+  if (d.inHours >= 1) {
+    return S.instance
+        .t('resets_hm', 'Resets in {h}h {m}m')
+        .replaceAll('{h}', '${d.inHours}')
+        .replaceAll('{m}', '${d.inMinutes % 60}');
+  }
+  return S.instance
+      .t('resets_m', 'Resets in {m}m')
+      .replaceAll('{m}', '${d.inMinutes}');
 }

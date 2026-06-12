@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config.dart';
+import '../milestones.dart';
+import '../strings.dart';
 import '../theme.dart';
 
 /// Month grid of practice days (from xp_events) — makes the streak VISIBLE.
@@ -50,11 +52,6 @@ class _StreakCalendarState extends State<StreakCalendar> {
     } catch (_) {}
   }
 
-  static const _months = [
-    'January', 'February', 'March', 'April', 'May', 'June', 'July',
-    'August', 'September', 'October', 'November', 'December'
-  ];
-
   @override
   Widget build(BuildContext context) {
     final now = DateTime.now();
@@ -76,7 +73,11 @@ class _StreakCalendarState extends State<StreakCalendar> {
               const Icon(Icons.calendar_month,
                   size: 18, color: RatelColors.coral),
               const SizedBox(width: 8),
-              Text('${_months[now.month - 1]} practice',
+              Text(
+                  S.instance
+                      .t('month_practice', '{m} practice')
+                      .replaceAll('{m}',
+                          monthNameFor(now, S.instance.locale)),
                   style: const TextStyle(
                       fontWeight: FontWeight.w700, fontSize: 14)),
             ],

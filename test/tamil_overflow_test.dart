@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
 import 'package:ratel/models.dart';
@@ -203,6 +204,38 @@ const Map<String, String> _ta = {
   'set_auto': 'ஆட்டோ',
   'set_light': 'வெளிச்சம்',
   'set_dark': 'இருட்டு',
+  // Inc 136+137 keys (QA #2 ta-leak batch)
+  'streak_title': 'Streak',
+  'coach_sub': 'Ratel-உடன் உண்மையான உரையாடல் பயிற்சி',
+  'coach_left': 'இன்று இன்னும் {n} மெசேஜ்கள்',
+  'coach_hint': 'English-இல் தட்டச்சு செய்யவும்...',
+  'chip_day': 'என் இன்றைய நாள்',
+  'chip_food': 'எனக்குப் பிடித்த உணவு',
+  'chip_family': 'என் குடும்பம்',
+  'chip_place': 'எனக்குப் பிடித்த இடம்',
+  'scn_cafe': 'கஃபேயில் ஆர்டர் செய்யுங்கள்',
+  'scn_interview': 'வேலை நேர்காணல்',
+  'scn_friend': 'புதிய நண்பரைச் சந்தியுங்கள்',
+  'scn_doctor': 'மருத்துவரிடம்',
+  'nudge_risk': 'இன்று ஒரு பாடம் முடித்து உங்கள் {n}-நாள் streak-ஐக் காப்பாற்றுங்கள்.',
+  'nudge_goal': 'இன்றைய இலக்கை அடைய இன்னும் {n} XP.',
+  'resets_dh': 'ரீசெட்: {d}நா {h}ம',
+  'resets_hm': 'ரீசெட்: {h}ம {m}நி',
+  'resets_m': 'ரீசெட்: {m}நி',
+  'goal_reached': 'இலக்கு எட்டியது — அருமை!',
+  'earn_more': 'இன்று இன்னும் {n} XP சம்பாதியுங்கள்',
+  'month_practice': '{m} பயிற்சி',
+  'cefr_a1': 'உங்களை அறிமுகம் செய்யவும் அன்றாட சொற்றொடர்களைக் கையாளவும் முடியும்.',
+  'cefr_a2': 'அன்றாட வேலைகளையும் எளிய உரையாடல்களையும் சமாளிக்க முடியும்.',
+  'cefr_b1': 'பழகிய தலைப்புகளில் பேசவும் பயண English-ஐக் கையாளவும் முடியும்.',
+  'cefr_b2': 'தன்னம்பிக்கையுடன் இயல்பான உரையாடல் நடத்த முடியும்.',
+  'unit_n': 'யூனிட் {n}',
+  'badge_monthly_quester': 'மாதச் சாதனையாளர்',
+  'badge_quest_devotee': 'சவால் ஆர்வலர்',
+  'badge_perfect_week': 'முழுமையான வாரம்',
+  'badge_week_after_week': 'வாரந்தோறும் வெற்றி',
+  'badge_quick_thinker': 'விரைவு சிந்தனையாளர்',
+  'badge_lightning_badger': 'மின்னல் தேன் கரடி',
   'set_remind': 'நினைவூட்டும் நேரம்',
   'set_remind_sub': 'தினசரி streak நினைவூட்டல், உங்கள் உள்ளூர் நேரம்',
   'set_push': 'தினசரி streak நினைவூட்டல்கள்',
@@ -411,6 +444,24 @@ void main() {
     FlutterError.onError = old; // restore BEFORE expect (binding rule)
     expect(overflows, isEmpty,
         reason: overflows.join('\n────────\n'));
+  });
+
+  testWidgets('theme segment stays single-line Tamil at 360px (no mid-word wrap)',
+      (tester) async {
+    _narrowTamil(tester);
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await tester.pump(const Duration(milliseconds: 800));
+    await tester.tap(find.byIcon(Icons.person_outline));
+    await tester.pump(const Duration(milliseconds: 700));
+    // settings sit deep in the profile scroll (lazy build — scroll first)
+    await tester.scrollUntilVisible(find.text('வெளிச்சம்'), 400,
+        scrollable: find.byType(Scrollable).first);
+    await tester.pump(const Duration(milliseconds: 300));
+    for (final label in ['ஆட்டோ', 'வெளிச்சம்', 'இருட்டு']) {
+      final p = tester.renderObject<RenderParagraph>(find.text(label));
+      expect(p.size.height, lessThan(26),
+          reason: '$label wrapped to >1 line in the theme segment');
+    }
   });
 
   testWidgets('friends feed rows read Tamil at 360px, no overflow',

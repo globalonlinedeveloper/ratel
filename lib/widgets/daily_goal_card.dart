@@ -59,7 +59,12 @@ class DailyGoalCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 6),
-          Text(met ? 'Goal reached — nice work!' : 'Earn ${goal - today} more XP today',
+          Text(
+              met
+                  ? S.instance.t('goal_reached', 'Goal reached — nice work!')
+                  : S.instance
+                      .t('earn_more', 'Earn {n} more XP today')
+                      .replaceAll('{n}', '${goal - today}'),
               style: const TextStyle(color: RatelColors.textMuted, fontSize: 13)),
         ],
       ),

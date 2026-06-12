@@ -452,7 +452,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 _statCardNum(Icons.bolt, appState.xp,
                     S.instance.t('stat_xp', 'Total XP'),
                     RatelColors.honey),
-                _statCardNum(Icons.favorite, appState.hearts, 'Hearts',
+                _statCardNum(Icons.favorite, appState.hearts,
+                    S.instance.t('hearts_title', 'Hearts'),
                     RatelColors.hearts),
                 _statCardNum(Icons.task_alt, appState.completedCount,
                     S.instance.t('stat_lessons', 'Lessons done'),
@@ -608,15 +609,24 @@ class _HomeScreenState extends State<HomeScreen> {
                       ButtonSegment(
                           value: ThemeMode.system,
                           icon: const Icon(Icons.brightness_auto_outlined),
-                          label: Text(S.instance.t('set_auto', 'Auto'))),
+                          label: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child:
+                                  Text(S.instance.t('set_auto', 'Auto')))),
                       ButtonSegment(
                           value: ThemeMode.light,
                           icon: const Icon(Icons.light_mode_outlined),
-                          label: Text(S.instance.t('set_light', 'Light'))),
+                          label: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                  S.instance.t('set_light', 'Light')))),
                       ButtonSegment(
                           value: ThemeMode.dark,
                           icon: const Icon(Icons.dark_mode_outlined),
-                          label: Text(S.instance.t('set_dark', 'Dark'))),
+                          label: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child:
+                                  Text(S.instance.t('set_dark', 'Dark')))),
                     ],
                     selected: {themeModeNotifier.value},
                     onSelectionChanged: (s) {
@@ -1370,7 +1380,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 6),
-          Text(canDoFor(band),
+          Text(
+              S.instance.t(
+                  'cefr_${band.toLowerCase()}', canDoFor(band)),
               style: const TextStyle(
                   fontSize: 12.5, fontWeight: FontWeight.w600)),
           const SizedBox(height: 2),
@@ -1709,7 +1721,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(unit.title,
+                Text(
+                    S.instance
+                        .t('unit_n', 'Unit {n}')
+                        .replaceAll('{n}', '${index + 1}'),
                     style:
                         const TextStyle(color: Colors.white70, fontSize: 12)),
                 Text(unit.subtitle,

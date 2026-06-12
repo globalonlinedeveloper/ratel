@@ -45,6 +45,9 @@ class _CoachScreenState extends State<CoachScreen> {
     'My family',
     'My favorite place',
   ];
+  static const List<String> _starterKeys = [
+    'chip_day', 'chip_food', 'chip_family', 'chip_place',
+  ];
 
   @override
   void dispose() {
@@ -156,8 +159,11 @@ class _CoachScreenState extends State<CoachScreen> {
                             fontSize: 18, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
                     Text(
                       left == null
-                          ? 'Real conversation practice with Ratel'
-                          : '$left messages left today',
+                          ? S.instance.t('coach_sub',
+                              'Real conversation practice with Ratel')
+                          : S.instance
+                              .t('coach_left', '{n} messages left today')
+                              .replaceAll('{n}', '$left'),
                       style: const TextStyle(
                           color: RatelColors.textMuted, fontSize: 12),
                     ),
@@ -229,7 +235,7 @@ class _CoachScreenState extends State<CoachScreen> {
                                         fontSize: 10,
                                         fontWeight: FontWeight.w700,
                                         color: context.mutedC)),
-                                Text(sc.title,
+                                Text(S.instance.t(sc.sKey, sc.title),
                                     style: const TextStyle(
                                         fontSize: 12.5,
                                         fontWeight: FontWeight.w700)),
@@ -248,12 +254,16 @@ class _CoachScreenState extends State<CoachScreen> {
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 12),
               children: [
-                for (final s in _starters)
+                for (var i = 0; i < _starters.length; i++)
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 4),
                     child: ActionChip(
-                      label: Text(s),
-                      onPressed: () => _send("Let's talk about: $s"),
+                      // chip label localizes; the sent message stays English
+                      // (the Coach conversation IS the English practice).
+                      label: Text(S.instance
+                          .t(_starterKeys[i], _starters[i])),
+                      onPressed: () =>
+                          _send("Let's talk about: ${_starters[i]}"),
                     ),
                   ),
               ],
@@ -274,7 +284,8 @@ class _CoachScreenState extends State<CoachScreen> {
                     textInputAction: TextInputAction.send,
                     onSubmitted: _send,
                     decoration: InputDecoration(
-                      hintText: 'Type in English...',
+                      hintText:
+                          S.instance.t('coach_hint', 'Type in English...'),
                       isDense: true,
                       contentPadding: const EdgeInsets.symmetric(
                           horizontal: 14, vertical: 12),
@@ -346,24 +357,25 @@ class _CoachScreenState extends State<CoachScreen> {
 /// Conversation scenarios — practice REAL situations. Free (daily caps
 /// unchanged); Duolingo gates roleplay behind its top tier.
 class CoachScenario {
-  const CoachScenario(this.title, this.icon, this.prompt);
+  const CoachScenario(this.title, this.icon, this.prompt, {this.sKey = ''});
 
   final String title;
   final IconData icon;
-  final String prompt;
+  final String prompt; // sent to the LLM — stays English by design
+  final String sKey; // app_strings key for the card title
 }
 
 const List<CoachScenario> kCoachScenarios = [
-  CoachScenario('Order at a café', Icons.local_cafe,
+  CoachScenario('Order at a café', Icons.local_cafe, sKey: 'scn_cafe',
       "Let's roleplay! You are a friendly waiter at a café and I am a "
       'customer ordering food. Please start the scene.'),
-  CoachScenario('Job interview', Icons.work,
+  CoachScenario('Job interview', Icons.work, sKey: 'scn_interview',
       "Let's roleplay! You are a kind interviewer and I am applying for a "
       'job. Ask me your first question.'),
-  CoachScenario('Meet a new friend', Icons.emoji_people,
+  CoachScenario('Meet a new friend', Icons.emoji_people, sKey: 'scn_friend',
       "Let's roleplay! We just met at a park. You start a friendly "
       'conversation with me.'),
-  CoachScenario('At the doctor', Icons.medical_services,
+  CoachScenario('At the doctor', Icons.medical_services, sKey: 'scn_doctor',
       "Let's roleplay! You are a caring doctor and I am your patient. "
       'Ask me what is wrong.'),
 ];

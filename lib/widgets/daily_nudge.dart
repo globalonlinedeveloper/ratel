@@ -1,9 +1,9 @@
-import '../flags.dart';
 import 'package:flutter/material.dart';
 import 'ratel_mascot.dart';
 import 'mascot_anim.dart';
 import '../theme.dart';
 import '../app_state.dart';
+import '../strings.dart';
 
 /// A compact, in-app reminder at the top of the Learn screen, driven by the
 /// DB-backed streak + daily-goal data. Shows only when there's something to
@@ -32,15 +32,15 @@ class DailyNudge extends StatelessWidget {
       atRisk = true;
       icon = Icons.local_fire_department;
       color = RatelColors.coral;
-      text = Flags.instance
-          .str('str_nudge_risk',
+      text = S.instance
+          .t('nudge_risk',
               'Keep your {n}-day streak alive — finish a lesson today.')
           .replaceAll('{n}', '$streak');
     } else if (today < goal) {
       icon = Icons.bolt;
       color = RatelColors.honey;
-      text = Flags.instance
-          .str('str_nudge_goal', "{n} XP to reach today's goal.")
+      text = S.instance
+          .t('nudge_goal', "{n} XP to reach today's goal.")
           .replaceAll('{n}', '${goal - today}');
     } else {
       return const SizedBox.shrink(); // goal met — nothing to nudge
