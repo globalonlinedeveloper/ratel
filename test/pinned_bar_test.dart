@@ -24,6 +24,10 @@ void main() {
     await tester.pumpWidget(const MaterialApp(
         home: Padding(padding: EdgeInsets.all(1), child: HomeScreen())));
     await tester.pump(const Duration(milliseconds: 600));
+    // Inc 138: the bar now FOLLOWS the scroll — let the 500ms auto-scroll
+    // to the current node settle before asserting (it transiently names
+    // the units flying past; the end state is the current unit).
+    await tester.pump(const Duration(milliseconds: 700));
     expect(find.textContaining('Unit 2 ·'), findsOneWidget);
     expect(find.textContaining('Unit 1 ·'), findsNothing);
     await tester.pump(const Duration(seconds: 1));
