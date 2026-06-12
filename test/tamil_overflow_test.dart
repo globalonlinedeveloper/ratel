@@ -272,6 +272,9 @@ const Map<String, String> _ta = {
       'காம்போக்கள், தவறில்லாத பாடங்கள், பெட்டிகள் — இவற்றால் ரத்தினங்கள் கிடைக்கும்.',
   'gem_buy_freeze': 'Streak freeze · {n} ரத்தினங்கள்',
   'hearts_pro': 'Ratel Pro-வுடன் வரம்பற்ற இதயங்கள்',
+  // Inc 134 comeback boost
+  'comeback_granted':
+      'மீண்டும் வரவேற்கிறோம்! அடுத்த {n} நிமிடங்களுக்கு {m}x XP!',
   'code_copied': 'குறியீடு நகலெடுக்கப்பட்டது',
 };
 

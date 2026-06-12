@@ -21,6 +21,7 @@ import '../widgets/mascot_anim.dart';
 import '../theme.dart';
 import '../flags.dart';
 import '../strings.dart';
+import '../comeback.dart';
 import '../milestones.dart';
 import '../guidebook.dart';
 import 'section_test_screen.dart';
@@ -90,6 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
           await p.setString('freeze_grant_week', wk);
         }
       }
+      await _comebackCheck(p);
     });
     if (!appState.loaded) {
       appState.sync();
@@ -141,6 +143,37 @@ class _HomeScreenState extends State<HomeScreen> {
         );
       },
     );
+  }
+
+  /// Inc 134: record lapse-risk evenings; grant the comeback boost the
+  /// next morning (multiplier + window from app_flags, once per day).
+  Future<void> _comebackCheck(SharedPreferences p) async {
+    if (!Flags.instance.flag('comeback_on', true)) return;
+    final DateTime now = DateTime.now();
+    if (appState.loaded && isEveningLapseRisk(now, appState.todayXp)) {
+      await p.setString('lapse_risk_day', dayKey(now));
+      return;
+    }
+    if (shouldGrantComeback(
+        now: now,
+        riskDay: p.getString('lapse_risk_day'),
+        lastGrantDay: p.getString('comeback_day'))) {
+      final int mult = Flags.instance.intOf('comeback_multiplier', 3);
+      final int mins = Flags.instance.intOf('comeback_window_min', 30);
+      await p.setString('xp_boost_until',
+          now.add(Duration(minutes: mins)).toIso8601String());
+      await p.setInt('xp_boost_mult', mult);
+      await p.setString('comeback_day', dayKey(now));
+      await p.remove('lapse_risk_day');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(S.instance
+                .t('comeback_granted',
+                    'Welcome back! {m}x XP for the next {n} minutes!')
+                .replaceAll('{m}', '$mult')
+                .replaceAll('{n}', '$mins'))));
+      }
+    }
   }
 
   Widget _placeholder() => Center(

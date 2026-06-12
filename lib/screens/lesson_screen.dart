@@ -84,7 +84,8 @@ class _LessonScreenState extends State<LessonScreen>
   bool _explaining = false;
   int _bonusXp = 0; // occasional surprise bonus on completion
   int _gemsEarned = 0; // combo milestones + flawless bonus
-  bool _boosted = false; // 15-min double-XP window (daily chest)
+  bool _boosted = false; // timed XP-boost window (chest / comeback)
+  int _boostMult = 2; // written by whoever lit the boost (chest 2, comeback 3)
   late final int _scoreBefore; // captured EAGERLY in initState
 
   late final AnimationController _fb; // answer feedback: pop on right, shake on wrong
@@ -99,7 +100,10 @@ class _LessonScreenState extends State<LessonScreen>
       final until =
           DateTime.tryParse(p.getString('xp_boost_until') ?? '');
       if (mounted && boostActive(until, DateTime.now())) {
-        setState(() => _boosted = true);
+        setState(() {
+          _boosted = true;
+          _boostMult = p.getInt('xp_boost_mult') ?? 2;
+        });
       }
     });
     for (int u = 0; u < course.length; u++) {
@@ -245,7 +249,7 @@ class _LessonScreenState extends State<LessonScreen>
         _bonusXp =
             Random().nextInt(oneIn) == 0 ? (5 + Random().nextInt(16)) : 0;
         final total =
-            (_correctCount * 10 + _bonusXp) * (_boosted ? 2 : 1);
+            (_correctCount * 10 + _bonusXp) * (_boosted ? _boostMult : 1);
         final int badgesBefore =
             achievements.where((a) => isEarned(a, appState)).length;
         appState.completeLesson(widget.lesson.id, total);
@@ -1488,7 +1492,7 @@ class _LessonScreenState extends State<LessonScreen>
   // ---- completion ----
   Widget _completion(BuildContext context) {
     final int earned =
-        (_correctCount * 10 + _bonusXp) * (_boosted ? 2 : 1);
+        (_correctCount * 10 + _bonusXp) * (_boosted ? _boostMult : 1);
     final int total = widget.lesson.exercises.length;
     return Scaffold(
       body: SafeArea(
@@ -1626,7 +1630,7 @@ class _LessonScreenState extends State<LessonScreen>
                               _statChip(Icons.diamond, '+$_gemsEarned',
                                   'GEMS', RatelColors.teal),
                             if (_boosted)
-                              _statChip(Icons.flash_on, '2x',
+                              _statChip(Icons.flash_on, '${_boostMult}x',
                                   'BOOST', RatelColors.coral),
                             if (_scoreNow() > _scoreBefore)
                               TweenAnimationBuilder<int>(

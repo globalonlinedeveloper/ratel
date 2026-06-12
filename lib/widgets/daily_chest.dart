@@ -63,6 +63,7 @@ class _DailyChestCardState extends State<DailyChestCard> {
             DateTime.now()
                 .add(const Duration(minutes: 15))
                 .toIso8601String());
+        await p.setInt('xp_boost_mult', 2);
       }
     } catch (_) {}
   }
