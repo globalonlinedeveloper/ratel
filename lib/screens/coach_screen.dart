@@ -327,7 +327,9 @@ class _CoachScreenState extends State<CoachScreen> {
           border: user ? null : Border.all(color: context.borderC),
         ),
         child: Text(
-          m.text,
+          m.text == kCoachGreeting
+              ? S.instance.t('coach_hello', kCoachGreeting)
+              : m.text,
           style: TextStyle(
             color: user ? Colors.white : null,
             fontSize: 15,

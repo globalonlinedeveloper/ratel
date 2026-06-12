@@ -147,7 +147,13 @@ class _HomeScreenState extends State<HomeScreen> {
         if (Config.hasSupabase && appState.loaded && !appState.onboarded) {
           return const OnboardingScreen();
         }
-        return Scaffold(
+        return KeyedSubtree(
+          // Inc 137b: a locale flip must re-inflate EVERYTHING — identical
+          // const child instances are skipped on rebuild (the Inc 135 freeze
+          // class), which left const S()-consumers in the OLD language until
+          // a full reload (live-verified on c6e09dc).
+          key: ValueKey('locale-${S.instance.locale}'),
+          child: Scaffold(
           body: SafeArea(child: _body(context)),
           bottomNavigationBar: NavigationBar(
             selectedIndex: _tab,
@@ -174,6 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: const Icon(Icons.person_outline),
                   label: S.instance.t('nav_profile', 'Profile')),
             ],
+          ),
           ),
         );
       },
