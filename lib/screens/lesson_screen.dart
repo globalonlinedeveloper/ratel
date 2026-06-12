@@ -303,7 +303,7 @@ class _LessonScreenState extends State<LessonScreen>
           ],
         ),
         const SizedBox(height: 16),
-        _typedField('Type your reply'),
+        _typedField(S.instance.t('chat_hint', 'Type your reply')),
       ],
     );
   }
@@ -370,13 +370,13 @@ class _LessonScreenState extends State<LessonScreen>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Quit'),
+            child: Text(S.instance.t('btn_quit', 'Quit')),
           ),
           FilledButton(
             style:
                 FilledButton.styleFrom(backgroundColor: RatelColors.teal),
             onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text('Keep learning'),
+            child: Text(S.instance.t('btn_keep', 'Keep learning')),
           ),
         ],
       ),
@@ -1399,7 +1399,7 @@ class _LessonScreenState extends State<LessonScreen>
               style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16)),
               onPressed: _skip,
-              child: const Text('Skip'),
+              child: Text(S.instance.t('btn_skip', 'Skip')),
             ),
           ),
           const SizedBox(width: 10),
@@ -1411,7 +1411,7 @@ class _LessonScreenState extends State<LessonScreen>
                 padding: const EdgeInsets.symmetric(vertical: 16),
               ),
               onPressed: _canCheck ? _check : null,
-              child: const Text('Check'),
+              child: Text(S.instance.t('btn_check', 'Check')),
             ),
           ),
         ],
@@ -1428,8 +1428,8 @@ class _LessonScreenState extends State<LessonScreen>
             Expanded(
               child: Text(
                 _isCorrect
-                    ? 'Correct!'
-                    : 'Answer: '
+                    ? S.instance.t('correct_banner', 'Correct!')
+                    : '${S.instance.t('answer_prefix', 'Answer:')} '
                         '${_ex.type == ExerciseType.multiBlank
                             ? _correctText()
                             : solutionText(_ex.sentence, _correctText())}',
@@ -1452,8 +1452,8 @@ class _LessonScreenState extends State<LessonScreen>
                     (_fixPhase ||
                         widget.reviewMode ||
                         _missedFirstPass.isEmpty)
-                ? 'Finish'
-                : 'Continue',
+                ? S.instance.t('btn_finish', 'Finish')
+                : S.instance.t('btn_continue', 'Continue'),
             _next),
       ],
     );
@@ -1660,7 +1660,8 @@ class _LessonScreenState extends State<LessonScreen>
                       ],
                       const SizedBox(height: 28),
                       _wideButton(
-                          'Continue', () => Navigator.of(context).maybePop()),
+                          S.instance.t('btn_continue', 'Continue'),
+                          () => Navigator.of(context).maybePop()),
                     ],
                   ),
                 ),

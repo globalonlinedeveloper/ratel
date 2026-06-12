@@ -31,6 +31,26 @@ const Map<String, String> _ta = {
   'guest_cta': 'முதலில் முயற்சித்துப் பார்க்கிறேன்',
   'smart_practice_title': 'ஸ்மார்ட் பயிற்சி',
   'motd_fallback': 'வணக்கம்! இன்று ஒரு பாடம் முடிப்போமா?',
+  'chat_hint': 'உங்கள் பதிலை எழுதுங்கள்',
+  'btn_quit': 'வெளியேறு',
+  'btn_keep': 'தொடர்ந்து கற்கிறேன்',
+  'btn_skip': 'தவிர்',
+  'btn_check': 'சரிபார்',
+  'correct_banner': 'சரிதான்!',
+  'answer_prefix': 'பதில்:',
+  'btn_finish': 'முடி',
+  'btn_continue': 'தொடர்',
+  'nav_learn': 'கற்றல்',
+  'nav_practice': 'பயிற்சி',
+  'nav_coach': 'கோச்',
+  'nav_leagues': 'லீக்',
+  'nav_profile': 'சுயவிவரம்',
+  'start_pill': 'தொடங்கு',
+  'stat_streak': 'தொடர் நாட்கள்',
+  'stat_xp': 'மொத்த XP',
+  'stat_lessons': 'முடித்த பாடங்கள்',
+  'set_language': 'ஆப் மொழி',
+  'set_listening': 'கேட்டல் பயிற்சிகள்',
 };
 
 const Exercise _c = Exercise.choice(
@@ -67,9 +87,9 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     await tester.tap(find.text('Hello'));
     await tester.pump(const Duration(milliseconds: 150));
-    await tester.tap(find.text('Check'));
+    await tester.tap(find.text('சரிபார்')); // Check, in Tamil
     await tester.pump(const Duration(milliseconds: 400));
-    await tester.tap(find.text('Finish'));
+    await tester.tap(find.text('முடி')); // Finish, in Tamil
     await tester.pump(const Duration(milliseconds: 700));
     expect(find.text('பாடம் முடிந்தது!'), findsOneWidget);
   });
@@ -83,7 +103,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     await tester.tap(find.text('Hello'));
     await tester.pump(const Duration(milliseconds: 150));
-    await tester.tap(find.text('Check'));
+    await tester.tap(find.text('சரிபார்')); // Check, in Tamil
     await tester.pump(const Duration(milliseconds: 400));
     await tester.tap(find.byIcon(Icons.close));
     await tester.pump(const Duration(milliseconds: 350));
@@ -136,7 +156,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 250));
     }
     // every bottom tab renders
-    for (final tab in ['Practice', 'Coach', 'Profile']) {
+    for (final tab in ['பயிற்சி', 'கோச்', 'சுயவிவரம்']) {
       step = 'tab \$tab';
       await tester.tap(find.text(tab).last);
       await tester.pump(const Duration(milliseconds: 700));

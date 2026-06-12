@@ -116,21 +116,24 @@ class _HomeScreenState extends State<HomeScreen> {
           bottomNavigationBar: NavigationBar(
             selectedIndex: _tab,
             onDestinationSelected: (i) => setState(() => _tab = i),
-            destinations: const [
+            destinations: [
               NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home),
-                  label: 'Learn'),
+                  icon: const Icon(Icons.home_outlined),
+                  selectedIcon: const Icon(Icons.home),
+                  label: S.instance.t('nav_learn', 'Learn')),
               NavigationDestination(
-                  icon: Icon(Icons.edit_outlined), label: 'Practice'),
+                  icon: const Icon(Icons.edit_outlined),
+                  label: S.instance.t('nav_practice', 'Practice')),
               NavigationDestination(
-                  icon: Icon(Icons.forum_outlined),
-                  selectedIcon: Icon(Icons.forum),
-                  label: 'Coach'),
+                  icon: const Icon(Icons.forum_outlined),
+                  selectedIcon: const Icon(Icons.forum),
+                  label: S.instance.t('nav_coach', 'Coach')),
               NavigationDestination(
-                  icon: Icon(Icons.emoji_events_outlined), label: 'Leagues'),
+                  icon: const Icon(Icons.emoji_events_outlined),
+                  label: S.instance.t('nav_leagues', 'Leagues')),
               NavigationDestination(
-                  icon: Icon(Icons.person_outline), label: 'Profile'),
+                  icon: const Icon(Icons.person_outline),
+                  label: S.instance.t('nav_profile', 'Profile')),
             ],
           ),
         );
@@ -397,13 +400,16 @@ class _HomeScreenState extends State<HomeScreen> {
               childAspectRatio: 2.4,
               children: [
                 _statCardNum(Icons.local_fire_department, appState.streak,
-                    'Day streak', RatelColors.coral, flame: true),
-                _statCardNum(Icons.bolt, appState.xp, 'Total XP',
+                    S.instance.t('stat_streak', 'Day streak'),
+                    RatelColors.coral, flame: true),
+                _statCardNum(Icons.bolt, appState.xp,
+                    S.instance.t('stat_xp', 'Total XP'),
                     RatelColors.honey),
                 _statCardNum(Icons.favorite, appState.hearts, 'Hearts',
                     RatelColors.hearts),
                 _statCardNum(Icons.task_alt, appState.completedCount,
-                    'Lessons done', RatelColors.teal),
+                    S.instance.t('stat_lessons', 'Lessons done'),
+                    RatelColors.teal),
               ],
             ),
           ),
@@ -481,7 +487,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   contentPadding: EdgeInsets.zero,
                   leading: const Icon(Icons.translate,
                       color: RatelColors.teal),
-                  title: const Text('App language'),
+                  title: Text(S.instance.t('set_language', 'App language')),
                   subtitle: const Text('Server copy follows your choice'),
                   trailing: SegmentedButton<String>(
                     showSelectedIcon: false,
@@ -500,7 +506,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Listening exercises'),
+                  title: Text(S.instance.t('set_listening', 'Listening exercises')),
                   subtitle: const Text('Type-what-you-hear questions'),
                   secondary: const Icon(Icons.hearing_outlined),
                   value: _listenOn,
@@ -1587,8 +1593,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 decoration: BoxDecoration(
                     color: RatelColors.charcoal,
                     borderRadius: BorderRadius.circular(20)),
-                child: const Text('Start',
-                    style: TextStyle(
+                child: Text(S.instance.t('start_pill', 'Start'),
+                    style: const TextStyle(
                         color: RatelColors.cream,
                         fontSize: 11,
                         fontWeight: FontWeight.w600)),
