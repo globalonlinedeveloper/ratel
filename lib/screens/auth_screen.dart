@@ -114,7 +114,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     TextField(
                       controller: _name,
                       textCapitalization: TextCapitalization.words,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                           labelText: S.instance.t('fld_name', 'Name'),
                           border: const OutlineInputBorder()),
                     ),
@@ -123,7 +123,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   TextField(
                     controller: _email,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         labelText: S.instance.t('fld_email', 'Email'),
                         border: const OutlineInputBorder()),
                   ),
@@ -131,7 +131,7 @@ class _AuthScreenState extends State<AuthScreen> {
                   TextField(
                     controller: _password,
                     obscureText: true,
-                    decoration: const InputDecoration(
+                    decoration: InputDecoration(
                         labelText: S.instance.t('fld_password', 'Password'),
                         border: const OutlineInputBorder()),
                   ),

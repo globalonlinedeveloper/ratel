@@ -37,9 +37,9 @@ class DailyGoalCard extends StatelessWidget {
                   : const Icon(Icons.flag,
                       color: RatelColors.honey, size: 20),
               const SizedBox(width: 8),
-              const Expanded(
+              Expanded(
                 child: Text(S.instance.t('dg_title', 'Daily goal'),
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontWeight: FontWeight.w700, fontSize: 16)),
               ),
               Text('$today / $goal XP',
