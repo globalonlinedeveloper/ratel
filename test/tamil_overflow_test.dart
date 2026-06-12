@@ -236,6 +236,7 @@ const Map<String, String> _ta = {
   'badge_week_after_week': 'வாரந்தோறும் வெற்றி',
   'badge_quick_thinker': 'விரைவு சிந்தனையாளர்',
   'badge_lightning_badger': 'மின்னல் தேன் கரடி',
+  'gb_open': 'வழிகாட்டியைத் திற',
   'set_remind': 'நினைவூட்டும் நேரம்',
   'set_remind_sub': 'தினசரி streak நினைவூட்டல், உங்கள் உள்ளூர் நேரம்',
   'set_push': 'தினசரி streak நினைவூட்டல்கள்',

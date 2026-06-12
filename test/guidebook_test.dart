@@ -37,4 +37,15 @@ void main() {
     expect(find.text('How are you?'), findsOneWidget);
     await tester.pump(const Duration(seconds: 1));
   });
+
+  testWidgets('unit banner is a labelled semantics button (Inc 138 — the '
+      'browser/a11y route QA could not find)', (tester) async {
+    final handle = tester.ensureSemantics();
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.pump(const Duration(milliseconds: 700));
+    expect(find.bySemanticsLabel(RegExp('Open guidebook')), findsWidgets);
+    handle.dispose();
+    await tester.pump(const Duration(seconds: 1));
+  });
 }

@@ -65,6 +65,38 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int _tab = 0;
 
+  /// Inc 138: the pinned bar follows the unit scrolled into view (QA #2 P4 —
+  /// it used to read "Unit 1" at every scroll depth). Null = current unit.
+  int? _viewedUnit;
+  final Map<int, GlobalKey> _unitBannerKeys = {};
+
+  GlobalKey _unitKeyFor(int u) =>
+      _unitBannerKeys.putIfAbsent(u, GlobalKey.new);
+
+  /// Pick the unit whose banner was last scrolled past the viewport top.
+  bool _onPathScroll(ScrollNotification n) {
+    if (n.metrics.axis != Axis.vertical) return false;
+    final RenderObject? vp = n.context?.findRenderObject();
+    if (vp is! RenderBox || !vp.hasSize) return false;
+    final double top = vp.localToGlobal(Offset.zero).dy + 8;
+    int best = 0;
+    double bestDy = double.negativeInfinity;
+    for (final e in _unitBannerKeys.entries) {
+      final BuildContext? c = e.value.currentContext;
+      if (c == null) continue;
+      final RenderObject? ro = c.findRenderObject();
+      if (ro is! RenderBox || !ro.hasSize || !ro.attached) continue;
+      final double dy = ro.localToGlobal(Offset.zero).dy;
+      if (dy <= top && dy > bestDy) {
+        bestDy = dy;
+        best = e.key;
+      }
+    }
+    if (bestDy == double.negativeInfinity) best = 0;
+    if (_viewedUnit != best) setState(() => _viewedUnit = best);
+    return false;
+  }
+
   bool _listenOn = true;
   Set<String> _chests = {};
 
@@ -119,7 +151,10 @@ class _HomeScreenState extends State<HomeScreen> {
           body: SafeArea(child: _body(context)),
           bottomNavigationBar: NavigationBar(
             selectedIndex: _tab,
-            onDestinationSelected: (i) => setState(() => _tab = i),
+            onDestinationSelected: (i) => setState(() {
+              if (i != 0) _viewedUnit = null;
+              _tab = i;
+            }),
             destinations: [
               NavigationDestination(
                   icon: const Icon(Icons.home_outlined),
@@ -954,11 +989,16 @@ class _HomeScreenState extends State<HomeScreen> {
         const PerfectWeekCard(),
         const MonthlyQuestCard(),
         const AnniversaryCard(),
-        if (currentId != null) _pinnedUnitBar(curUnit),
+        if (currentId != null)
+          _pinnedUnitBar(
+              (_viewedUnit ?? curUnit).clamp(0, course.length - 1)),
         Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 12, bottom: 16),
-            child: Column(children: path),
+          child: NotificationListener<ScrollNotification>(
+            onNotification: _onPathScroll,
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.only(top: 12, bottom: 16),
+              child: Column(children: path),
+            ),
           ),
         ),
       ],
@@ -1706,9 +1746,14 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _unitBanner(int index, Unit unit) {
     final int done =
         unit.lessons.where((l) => appState.isCompleted(l.id)).length;
-    return GestureDetector(
-      onTap: () => _showGuidebook(index, unit),
-      child: Container(
+    return MergeSemantics(
+      child: Semantics(
+        button: true,
+        label: S.instance.t('gb_open', 'Open guidebook'),
+        child: GestureDetector(
+          key: _unitKeyFor(index),
+          onTap: () => _showGuidebook(index, unit),
+          child: Container(
       margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -1746,8 +1791,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     fontSize: 12,
                     fontWeight: FontWeight.w700)),
           ),
+          const SizedBox(width: 8),
+          const Icon(Icons.menu_book, color: Colors.white70, size: 16),
         ],
       ),
+          ),
+        ),
       ),
     );
   }

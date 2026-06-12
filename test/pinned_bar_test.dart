@@ -28,4 +28,20 @@ void main() {
     expect(find.textContaining('Unit 1 ·'), findsNothing);
     await tester.pump(const Duration(seconds: 1));
   });
+
+  testWidgets('the pinned bar follows the unit scrolled into view (Inc 138)',
+      (tester) async {
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await tester.pump(const Duration(milliseconds: 600));
+    await tester.pump(const Duration(milliseconds: 700)); // auto-scroll settles
+    expect(find.textContaining('Unit 1 ·'), findsOneWidget);
+    final scrollable = find.byType(Scrollable).first;
+    for (var i = 0; i < 5; i++) {
+      await tester.drag(scrollable, const Offset(0, -1600));
+      await tester.pump(const Duration(milliseconds: 250));
+    }
+    expect(find.textContaining('Unit 1 ·'), findsNothing,
+        reason: 'pinned bar still says Unit 1 after a deep scroll');
+    await tester.pump(const Duration(seconds: 1));
+  });
 }
