@@ -65,9 +65,10 @@ class _PaywallScreenState extends State<PaywallScreen> {
           const SizedBox(height: 20),
           if (pro) ...[
             _card(
-              child: const Text(
-                  'Your Pro trial is active. Thanks for backing Ratel!',
-                  style: TextStyle(fontWeight: FontWeight.w600)),
+              child: Text(
+                  S.instance.t('pw_trial',
+                      'Your Pro trial is active. Thanks for backing Ratel!'),
+                  style: const TextStyle(fontWeight: FontWeight.w600)),
               tint: RatelColors.teal,
             ),
             const SizedBox(height: 12),
@@ -90,21 +91,25 @@ class _PaywallScreenState extends State<PaywallScreen> {
               width: double.infinity,
               child: FilledButton(
                 onPressed: _busy ? null : _start,
-                child: Text(_busy ? 'Starting…' : 'Start 7-day free trial'),
+                child: Text(_busy
+                    ? S.instance.t('pw_starting', 'Starting…')
+                    : S.instance.t('pw_start', 'Start 7-day free trial')),
               ),
             ),
             const SizedBox(height: 10),
-            const Text(
-                'Test mode — no payment is taken yet. Real billing arrives with the app-store and web checkout.',
+            Text(
+                S.instance.t('pw_test_note',
+                    'Test mode — no payment is taken yet. Real billing arrives with the app-store and web checkout.'),
                 textAlign: TextAlign.center,
-                style: TextStyle(color: RatelColors.textMuted, fontSize: 12)),
+                style: const TextStyle(
+                    color: RatelColors.textMuted, fontSize: 12)),
             TextButton(
               onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                       content: Text(S.instance.t('restore_soon',
                           'Restore arrives with the store build.')))),
-              child: const Text('Restore purchases',
-                  style: TextStyle(
+              child: Text(S.instance.t('pw_restore', 'Restore purchases'),
+                  style: const TextStyle(
                       color: RatelColors.textMuted, fontSize: 12)),
             ),
           ],
@@ -209,8 +214,8 @@ class _PaywallScreenState extends State<PaywallScreen> {
                         decoration: BoxDecoration(
                             color: RatelColors.honey,
                             borderRadius: BorderRadius.circular(8)),
-                        child: const Text('BEST',
-                            style: TextStyle(
+                        child: Text(S.instance.t('pw_best', 'BEST'),
+                            style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700)),

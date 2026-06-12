@@ -501,8 +501,9 @@ class _LessonScreenState extends State<LessonScreen>
                       decoration: BoxDecoration(
                           color: context.tintC(const Color(0xFFE08330)),
                           borderRadius: BorderRadius.circular(12)),
-                      child: const Text('FIXING MISTAKES',
-                          style: TextStyle(
+                      child: Text(
+                          S.instance.t('fix_chip', 'FIXING MISTAKES'),
+                          style: const TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w800,
                               color: Color(0xFFE08330))),
@@ -841,17 +842,17 @@ class _LessonScreenState extends State<LessonScreen>
       );
     }
     if (_explaining) {
-      return const Padding(
-        padding: EdgeInsets.only(bottom: 10),
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10),
         child: Row(
           children: [
-            SizedBox(
+            const SizedBox(
                 width: 16,
                 height: 16,
                 child: CircularProgressIndicator(strokeWidth: 2)),
-            SizedBox(width: 10),
-            Text('Ratel is thinking…',
-                style: TextStyle(color: RatelColors.textMuted)),
+            const SizedBox(width: 10),
+            Text(S.instance.t('explain_wait', 'Ratel is thinking…'),
+                style: const TextStyle(color: RatelColors.textMuted)),
           ],
         ),
       );
@@ -1036,7 +1037,8 @@ class _LessonScreenState extends State<LessonScreen>
                     const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
               ),
               icon: const Icon(Icons.volume_up, size: 26),
-              label: const Text('Play', style: TextStyle(fontSize: 18)),
+              label: Text(S.instance.t('btn_play', 'Play'),
+                  style: const TextStyle(fontSize: 18)),
             ),
           ),
         ),
@@ -1053,7 +1055,7 @@ class _LessonScreenState extends State<LessonScreen>
                 }
               },
               icon: const Text('🐢', style: TextStyle(fontSize: 16)),
-              label: const Text('Slower'),
+              label: Text(S.instance.t('btn_slower', 'Slower')),
             ),
           ),
         ),
@@ -1176,14 +1178,15 @@ class _LessonScreenState extends State<LessonScreen>
                     horizontal: 28, vertical: 16),
               ),
               icon: const Icon(Icons.volume_up, size: 26),
-              label: const Text('Play', style: TextStyle(fontSize: 18)),
+              label: Text(S.instance.t('btn_play', 'Play'),
+                  style: const TextStyle(fontSize: 18)),
             ),
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.only(bottom: 10),
-          child: Text('Pick the best reply',
-              style: TextStyle(color: RatelColors.textMuted)),
+        Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: Text(S.instance.t('pick_reply', 'Pick the best reply'),
+              style: const TextStyle(color: RatelColors.textMuted)),
         ),
         _choiceBody(),
       ],
@@ -1366,8 +1369,8 @@ class _LessonScreenState extends State<LessonScreen>
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Text('Report this exercise',
-                  style: TextStyle(
+              Text(S.instance.t('report_btn', 'Report this exercise'),
+                  style: const TextStyle(
                       fontSize: 17, fontWeight: FontWeight.w800)),
               const SizedBox(height: 12),
               for (final r in reasons)
@@ -1523,8 +1526,8 @@ class _LessonScreenState extends State<LessonScreen>
                             onPressed: () =>
                                 showSaveAccountSheet(context),
                             icon: const Icon(Icons.cloud_done, size: 18),
-                            label: const Text(
-                                'Save your progress — free account'),
+                            label: Text(S.instance.t('save_banner',
+                                'Save your progress — free account')),
                           ),
                         ),
                       if (_unitDone)
@@ -1586,7 +1589,11 @@ class _LessonScreenState extends State<LessonScreen>
                         ),
                       const SizedBox(height: 8),
                       widget.reviewMode
-                          ? Text('$_correctCount / $total correct',
+                          ? Text(
+                              S.instance
+                                  .t('n_correct', '{a} / {b} correct')
+                                  .replaceAll('{a}', '$_correctCount')
+                                  .replaceAll('{b}', '$total'),
                               style: const TextStyle(
                                   color: RatelColors.textMuted, fontSize: 16))
                           : TweenAnimationBuilder<int>(
@@ -1594,7 +1601,12 @@ class _LessonScreenState extends State<LessonScreen>
                               duration: const Duration(milliseconds: 1200),
                               curve: Curves.easeOutCubic,
                               builder: (context, value, _) => Text(
-                                '+$value XP   ·   $_correctCount / $total correct',
+                                S.instance
+                                    .t('xp_and_correct',
+                                        '+{x} XP   ·   {a} / {b} correct')
+                                    .replaceAll('{x}', '$value')
+                                    .replaceAll('{a}', '$_correctCount')
+                                    .replaceAll('{b}', '$total'),
                                 style: const TextStyle(
                                     color: RatelColors.textMuted, fontSize: 16),
                               ),
@@ -1646,7 +1658,10 @@ class _LessonScreenState extends State<LessonScreen>
                       ],
                       if (_bonusXp > 0) ...[
                         const SizedBox(height: 6),
-                        Text('🎁 Surprise bonus +$_bonusXp XP!',
+                        Text(
+                            S.instance
+                                .t('bonus_xp', '🎁 Surprise bonus +{n} XP!')
+                                .replaceAll('{n}', '$_bonusXp'),
                             style: const TextStyle(
                                 color: RatelColors.coral,
                                 fontWeight: FontWeight.w700)),
@@ -1676,7 +1691,10 @@ class _LessonScreenState extends State<LessonScreen>
                           children: [
                             StreakFlame(streak: appState.streak, size: 24),
                             const SizedBox(width: 6),
-                            Text('${appState.streak}-day streak',
+                            Text(
+                                S.instance
+                                    .t('streak_days_title', '{n}-day streak')
+                                    .replaceAll('{n}', '${appState.streak}'),
                                 style: const TextStyle(
                                     color: RatelColors.coral,
                                     fontWeight: FontWeight.w600,

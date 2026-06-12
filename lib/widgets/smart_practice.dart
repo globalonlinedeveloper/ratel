@@ -110,8 +110,11 @@ class SmartPracticeCard extends StatelessWidget {
                         style: const TextStyle(
                             fontWeight: FontWeight.w800)),
                     Text(
-                        '${keys.length} items picked for you — reviews, '
-                        'misses and weak spots',
+                        S.instance
+                            .t('sp_sub',
+                                '{n} items picked for you — reviews, '
+                                'misses and weak spots')
+                            .replaceAll('{n}', '${keys.length}'),
                         style: const TextStyle(
                             color: RatelColors.textMuted,
                             fontSize: 12)),
@@ -123,7 +126,7 @@ class SmartPracticeCard extends StatelessWidget {
                     backgroundColor: RatelColors.teal,
                     visualDensity: VisualDensity.compact),
                 onPressed: () => _start(context, keys),
-                child: const Text('Start'),
+                child: Text(S.instance.t('btn_start', 'Start')),
               ),
             ],
           ),

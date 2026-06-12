@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../milestones.dart';
+import '../strings.dart';
 import '../theme.dart';
 
 /// Earned/locked badge chips from the monthly systems (quests, perfect
@@ -78,8 +79,8 @@ class BadgeGallery extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Monthly badges',
-                  style: TextStyle(
+              Text(S.instance.t('bg_title', 'Monthly badges'),
+                  style: const TextStyle(
                       fontWeight: FontWeight.w800, fontSize: 15)),
               const SizedBox(height: 8),
               Wrap(

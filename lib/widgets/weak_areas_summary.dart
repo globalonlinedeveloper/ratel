@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
 import '../content.dart';
+import '../strings.dart';
 
 /// A no-cost analytics card: overall accuracy + the lessons the signed-in user
 /// struggles with most, from the my_weak_areas() RPC (per-lesson stats over
@@ -68,8 +69,8 @@ class _WeakAreasSummaryState extends State<WeakAreasSummary> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Your accuracy',
-                  style: TextStyle(
+              Text(S.instance.t('wa_title', 'Your accuracy'),
+                  style: const TextStyle(
                       fontWeight: FontWeight.w700, fontSize: 16)),
               const SizedBox(height: 4),
               Row(
@@ -86,14 +87,17 @@ class _WeakAreasSummaryState extends State<WeakAreasSummary> {
                                   ? RatelColors.honey
                                   : RatelColors.coral))),
                   const SizedBox(width: 8),
-                  Text('over $total answers',
+                  Text(
+                      S.instance
+                          .t('wa_over', 'over {n} answers')
+                          .replaceAll('{n}', '$total'),
                       style: const TextStyle(color: RatelColors.textMuted)),
                 ],
               ),
               if (weak.isNotEmpty) ...[
                 const SizedBox(height: 12),
-                const Text('Work on these:',
-                    style: TextStyle(fontWeight: FontWeight.w600)),
+                Text(S.instance.t('wa_work', 'Work on these:'),
+                    style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 6),
                 ...weak.map((r) {
                   final id = (r['lesson_id'] ?? '').toString();
@@ -111,7 +115,11 @@ class _WeakAreasSummaryState extends State<WeakAreasSummary> {
                             child: Text(title,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500))),
-                        Text('$a% · $w missed',
+                        Text(
+                            S.instance
+                                .t('wa_missed', '{a}% · {n} missed')
+                                .replaceAll('{a}', '$a')
+                                .replaceAll('{n}', '$w'),
                             style: const TextStyle(
                                 color: RatelColors.textMuted, fontSize: 13)),
                       ],

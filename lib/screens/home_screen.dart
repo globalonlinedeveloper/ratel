@@ -143,8 +143,9 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _placeholder() => const Center(
-        child: Text('Coming soon', style: TextStyle(color: RatelColors.textMuted)),
+  Widget _placeholder() => Center(
+        child: Text(S.instance.t('coming_soon', 'Coming soon'),
+            style: const TextStyle(color: RatelColors.textMuted)),
       );
 
   Widget _body(BuildContext context) {
@@ -172,8 +173,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        const Text('Practice',
-            style: TextStyle(fontSize: 20, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
+        Text(S.instance.t('nav_practice', 'Practice'),
+            style: const TextStyle(fontSize: 20, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
         const SizedBox(height: 12),
         const SmartPracticeCard(),
         Container(
@@ -190,15 +191,17 @@ class _HomeScreenState extends State<HomeScreen> {
               const Icon(Icons.timer_outlined,
                   color: RatelColors.coral),
               const SizedBox(width: 10),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Timed challenge',
+                    Text(S.instance.t('tc_card_title', 'Timed challenge'),
                         style:
-                            TextStyle(fontWeight: FontWeight.w800)),
-                    Text('Beat the clock — no hearts at risk',
-                        style: TextStyle(
+                            const TextStyle(fontWeight: FontWeight.w800)),
+                    Text(
+                        S.instance.t('tc_card_sub',
+                            'Beat the clock — no hearts at risk'),
+                        style: const TextStyle(
                             color: RatelColors.textMuted,
                             fontSize: 12)),
                   ],
@@ -210,17 +213,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     visualDensity: VisualDensity.compact),
                 onPressed: () => Navigator.of(context).push(
                     ratelRoute(const TimedChallengeScreen())),
-                child: const Text('Go'),
+                child: Text(S.instance.t('btn_go', 'Go')),
               ),
             ],
           ),
         ),
         const MistakesReview(),
-        const Text('Revisit lessons',
-            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+        Text(S.instance.t('rv_title', 'Revisit lessons'),
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
         const SizedBox(height: 4),
-        const Text('Replay any lesson to sharpen up.',
-            style: TextStyle(color: RatelColors.textMuted)),
+        Text(S.instance.t('rv_sub', 'Replay any lesson to sharpen up.'),
+            style: const TextStyle(color: RatelColors.textMuted)),
         const SizedBox(height: 12),
         ...List.generate(course.length, (u) {
           final unit = course[u];
@@ -259,7 +262,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: Text(unit.subtitle,
                     style: const TextStyle(
                         fontWeight: FontWeight.w700, fontSize: 15)),
-                subtitle: Text('$doneCount/${unit.lessons.length} lessons',
+                subtitle: Text(
+                    S.instance
+                        .t('n_lessons', '{a}/{b} lessons')
+                        .replaceAll('{a}', '$doneCount')
+                        .replaceAll('{b}', '${unit.lessons.length}'),
                     style: const TextStyle(
                         color: RatelColors.textMuted, fontSize: 12)),
                 children: [
@@ -310,7 +317,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           Text(l.title,
                               style: const TextStyle(
                                   fontWeight: FontWeight.w600, fontSize: 16)),
-                          Text('${l.exercises.length} exercises',
+                          Text(
+                              S.instance
+                                  .t('n_exercises', '{n} exercises')
+                                  .replaceAll(
+                                      '{n}', '${l.exercises.length}'),
                               style: const TextStyle(
                                   color: RatelColors.textMuted, fontSize: 13)),
                         ],
@@ -352,7 +363,8 @@ class _HomeScreenState extends State<HomeScreen> {
               child: FilledButton.tonalIcon(
                 onPressed: () => showSaveAccountSheet(context),
                 icon: const Icon(Icons.cloud_upload, size: 18),
-                label: const Text('Guest — save your progress'),
+                label: Text(S.instance
+                    .t('guest_banner', 'Guest — save your progress')),
               ),
             )
           else
@@ -425,13 +437,19 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 const Icon(Icons.ac_unit, size: 15, color: RatelColors.teal),
-                Text(' ${appState.streakFreezes} freezes',
+                Text(
+                    S.instance
+                        .t('n_freezes', ' {n} freezes')
+                        .replaceAll('{n}', '${appState.streakFreezes}'),
                     style: const TextStyle(
                         color: RatelColors.textMuted, fontSize: 13)),
                 const SizedBox(width: 14),
                 const Icon(Icons.emoji_events,
                     size: 15, color: RatelColors.honey),
-                Text(' best ${appState.longestStreak}-day streak',
+                Text(
+                    S.instance
+                        .t('best_streak', ' best {n}-day streak')
+                        .replaceAll('{n}', '${appState.longestStreak}'),
                     style: const TextStyle(
                         color: RatelColors.textMuted, fontSize: 13)),
               ],
@@ -491,7 +509,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   leading: const Icon(Icons.translate,
                       color: RatelColors.teal),
                   title: Text(S.instance.t('set_language', 'App language')),
-                  subtitle: const Text('Server copy follows your choice'),
+                  subtitle: Text(S.instance
+                      .t('set_lang_sub', 'Server copy follows your choice')),
                   trailing: SegmentedButton<String>(
                     showSelectedIcon: false,
                     style: const ButtonStyle(
@@ -510,7 +529,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(S.instance.t('set_listening', 'Listening exercises')),
-                  subtitle: const Text('Type-what-you-hear questions'),
+                  subtitle: Text(S.instance
+                      .t('set_listen_sub', 'Type-what-you-hear questions')),
                   secondary: const Icon(Icons.hearing_outlined),
                   value: _listenOn,
                   onChanged: (v) async {
@@ -523,8 +543,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Reduce motion'),
-                  subtitle: const Text('Minimize animations'),
+                  title: Text(S.instance.t('set_motion', 'Reduce motion')),
+                  subtitle: Text(
+                      S.instance.t('set_motion_sub', 'Minimize animations')),
                   secondary:
                       const Icon(Icons.motion_photos_off_outlined),
                   value: reduceMotionNotifier.value,
@@ -535,8 +556,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Battle mode'),
-                  subtitle: const Text('Duel a rival as you answer'),
+                  title: Text(S.instance.t('set_battle', 'Battle mode')),
+                  subtitle: Text(S.instance
+                      .t('set_battle_sub', 'Duel a rival as you answer')),
                   secondary:
                       const Icon(Icons.sports_kabaddi_outlined),
                   value: battleModeNotifier.value,
@@ -549,19 +571,19 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(
                   width: double.infinity,
                   child: SegmentedButton<ThemeMode>(
-                    segments: const [
+                    segments: [
                       ButtonSegment(
                           value: ThemeMode.system,
-                          icon: Icon(Icons.brightness_auto_outlined),
-                          label: Text('Auto')),
+                          icon: const Icon(Icons.brightness_auto_outlined),
+                          label: Text(S.instance.t('set_auto', 'Auto'))),
                       ButtonSegment(
                           value: ThemeMode.light,
-                          icon: Icon(Icons.light_mode_outlined),
-                          label: Text('Light')),
+                          icon: const Icon(Icons.light_mode_outlined),
+                          label: Text(S.instance.t('set_light', 'Light'))),
                       ButtonSegment(
                           value: ThemeMode.dark,
-                          icon: Icon(Icons.dark_mode_outlined),
-                          label: Text('Dark')),
+                          icon: const Icon(Icons.dark_mode_outlined),
+                          label: Text(S.instance.t('set_dark', 'Dark'))),
                     ],
                     selected: {themeModeNotifier.value},
                     onSelectionChanged: (s) {
@@ -578,9 +600,9 @@ class _HomeScreenState extends State<HomeScreen> {
             dense: true,
             leading: const Icon(Icons.schedule,
                 color: RatelColors.teal),
-            title: const Text('Remind me at'),
-            subtitle:
-                const Text('Daily streak reminder, your local time'),
+            title: Text(S.instance.t('set_remind', 'Remind me at')),
+            subtitle: Text(S.instance.t(
+                'set_remind_sub', 'Daily streak reminder, your local time')),
             trailing: DropdownButton<int>(
               value: localHourFromUtc(appState.reminderHourUtc,
                   DateTime.now().timeZoneOffset),
@@ -609,9 +631,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   dense: true,
                   leading: const Icon(Icons.notifications_active_outlined,
                       color: RatelColors.honey),
-                  title: const Text('Daily streak reminders'),
+                  title: Text(
+                      S.instance.t('set_push', 'Daily streak reminders')),
                   subtitle: Text(st == 'Off'
-                      ? 'Off — enable in system settings if asked before'
+                      ? S.instance.t('push_off_hint',
+                          'Off — enable in system settings if asked before')
                       : st),
                   trailing: st == 'On'
                       ? const Icon(Icons.check_circle,
@@ -623,7 +647,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               (context as Element).markNeedsBuild();
                             }
                           },
-                          child: const Text('Enable')),
+                          child: Text(S.instance.t('btn_enable', 'Enable'))),
                 );
               },
             ),
@@ -634,7 +658,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () => Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => const FriendsScreen())),
               icon: const Icon(Icons.group_outlined),
-              label: const Text('Friends'),
+              label: Text(S.instance.t('fr_title', 'Friends')),
             ),
           ],
           if (Config.hasSupabase) ...[
@@ -642,7 +666,8 @@ class _HomeScreenState extends State<HomeScreen> {
             OutlinedButton.icon(
               onPressed: () => showShareCard(context),
               icon: const Icon(Icons.ios_share),
-              label: const Text('Share / invite friends'),
+              label: Text(
+                  S.instance.t('share_invite', 'Share / invite friends')),
             ),
           ],
           if (appState.isAdmin) ...[
@@ -669,15 +694,15 @@ class _HomeScreenState extends State<HomeScreen> {
               TextButton(
                 onPressed: () => launchUrl(Uri.parse(
                     'https://globalonlinedeveloper.github.io/ratel/privacy.html')),
-                child: const Text('Privacy policy',
-                    style: TextStyle(
+                child: Text(S.instance.t('set_privacy', 'Privacy policy'),
+                    style: const TextStyle(
                         color: RatelColors.textMuted, fontSize: 12)),
               ),
               TextButton(
                 onPressed: () => launchUrl(Uri.parse(
                     'https://globalonlinedeveloper.github.io/ratel/terms.html')),
-                child: const Text('Terms',
-                    style: TextStyle(
+                child: Text(S.instance.t('set_terms', 'Terms'),
+                    style: const TextStyle(
                         color: RatelColors.textMuted, fontSize: 12)),
               ),
             ],
@@ -712,19 +737,20 @@ class _HomeScreenState extends State<HomeScreen> {
     final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete your account?'),
-        content: const Text(
+        title: Text(S.instance.t('del_title', 'Delete your account?')),
+        content: Text(S.instance.t(
+            'del_body',
             'This permanently deletes your account and ALL progress '
-            '(XP, streak, friends, history). This cannot be undone.'),
+            '(XP, streak, friends, history). This cannot be undone.')),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(ctx).pop(false),
-              child: const Text('Keep my account')),
+              child: Text(S.instance.t('del_keep', 'Keep my account'))),
           FilledButton(
             style: FilledButton.styleFrom(
                 backgroundColor: RatelColors.coral),
             onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text('Delete forever'),
+            child: Text(S.instance.t('del_confirm', 'Delete forever')),
           ),
         ],
       ),
@@ -1075,7 +1101,7 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Hearts'),
+        title: Text(S.instance.t('hearts_title', 'Hearts')),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1122,9 +1148,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 },
                 icon: const Icon(Icons.diamond,
                     color: RatelColors.teal, size: 18),
-                label: Text('Refill hearts · '
-                    '${Flags.instance.intOf('gem_refill_cost', 350)}'
-                    ' gems'),
+                label: Text(S.instance
+                    .t('refill_label', 'Refill hearts · {n} gems')
+                    .replaceAll(
+                        '{n}',
+                        '${Flags.instance.intOf('gem_refill_cost', 350)}')),
               ),
             ],
           ],
@@ -1138,7 +1166,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.of(ctx).pop();
               setState(() => _tab = 1);
             },
-            child: const Text('Practice — earn a heart'),
+            child: Text(S.instance.t('hp_practice', 'Practice — earn a heart')),
           ),
         ],
       ),
@@ -1171,9 +1199,9 @@ class _HomeScreenState extends State<HomeScreen> {
               const Icon(Icons.school_outlined,
                   size: 18, color: RatelColors.teal),
               const SizedBox(width: 8),
-              const Text('English Score',
-                  style:
-                      TextStyle(fontWeight: FontWeight.w700, fontSize: 14)),
+              Text(S.instance.t('es_title', 'English Score'),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 14)),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(
@@ -1201,7 +1229,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: RatelColors.textMuted, fontSize: 13)),
               const Spacer(),
               if (gap > 0)
-                Text('$gap to ${cefrFor(score + gap)}',
+                Text(
+                    S.instance
+                        .t('es_gap', '{n} to {band}')
+                        .replaceAll('{n}', '$gap')
+                        .replaceAll('{band}', cefrFor(score + gap)),
                     style: const TextStyle(
                         color: RatelColors.textMuted, fontSize: 12)),
             ],
@@ -1221,9 +1253,11 @@ class _HomeScreenState extends State<HomeScreen> {
               style: const TextStyle(
                   fontSize: 12.5, fontWeight: FontWeight.w600)),
           const SizedBox(height: 2),
-          const Text('Grows as you complete lessons and keep your streak.',
-              style:
-                  TextStyle(color: RatelColors.textMuted, fontSize: 11.5)),
+          Text(
+              S.instance.t('es_sub',
+                  'Grows as you complete lessons and keep your streak.'),
+              style: const TextStyle(
+                  color: RatelColors.textMuted, fontSize: 11.5)),
         ],
       ),
     );
@@ -1418,7 +1452,11 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.white, size: 18),
           const SizedBox(width: 8),
           Expanded(
-            child: Text('Unit ${u + 1} · ${unit.subtitle}',
+            child: Text(
+                S.instance
+                    .t('unit_label', 'Unit {n} · {sub}')
+                    .replaceAll('{n}', '${u + 1}')
+                    .replaceAll('{sub}', unit.subtitle),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(
@@ -1474,7 +1512,10 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Section ${kSections.indexOf(s) + 1}',
+                Text(
+                    S.instance
+                        .t('section_label', 'Section {n}')
+                        .replaceAll('{n}', '${kSections.indexOf(s) + 1}'),
                     style: const TextStyle(
                         color: RatelColors.textMuted, fontSize: 11)),
                 Text(s.title,
@@ -1491,7 +1532,11 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Text(S.instance.t('test_out', 'Test out')),
             )
           else
-            Text('$unitsDone/$total units',
+            Text(
+                S.instance
+                    .t('n_units', '{a}/{b} units')
+                    .replaceAll('{a}', '$unitsDone')
+                    .replaceAll('{b}', '$total'),
                 style: const TextStyle(
                     color: RatelColors.textMuted,
                     fontSize: 12,

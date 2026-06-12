@@ -56,7 +56,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Friends')),
+      appBar: AppBar(title: Text(S.instance.t('fr_title', 'Friends'))),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -74,8 +74,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Your friend code',
-                          style: TextStyle(color: RatelColors.textMuted)),
+                      Text(S.instance.t('fr_code', 'Your friend code'),
+                          style: const TextStyle(color: RatelColors.textMuted)),
                       const SizedBox(height: 2),
                       Text(
                           appState.friendCode.isEmpty
@@ -126,8 +126,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          const Text('Your friends',
-              style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
+          Text(S.instance.t('fr_list', 'Your friends'),
+              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
           const SizedBox(height: 8),
           FutureBuilder<List<Map<String, dynamic>>>(
             future: _friends,

@@ -7,6 +7,9 @@ import 'package:ratel/screens/home_screen.dart';
 import 'package:ratel/screens/lesson_screen.dart';
 import 'package:ratel/screens/onboarding_screen.dart';
 import 'package:ratel/screens/section_test_screen.dart';
+import 'package:ratel/screens/friends_screen.dart';
+import 'package:ratel/screens/placement_screen.dart';
+import 'package:ratel/screens/paywall_screen.dart';
 import 'package:ratel/milestones.dart';
 import 'package:ratel/widgets/friends_feed.dart';
 import 'package:ratel/strings.dart';
@@ -179,6 +182,90 @@ const Map<String, String> _ta = {
   'delete_failed': 'இப்போது நீக்க முடியவில்லை — மீண்டும் முயற்சிக்கவும்.',
   'repair_failed': 'இப்போது சரிசெய்ய முடியவில்லை',
   'restore_soon': 'ஸ்டோர் பதிப்புடன் மீட்டமைப்பு வரும்.',
+  // Inc 132 batch-4 drafts (final long tail; owner spot-check, live-editable)
+  'coming_soon': 'விரைவில் வருகிறது',
+  'tc_card_title': 'நேர சவால்',
+  'tc_card_sub': 'நேரத்தை வெல்லுங்கள் — இதயங்கள் பறிபோகாது',
+  'btn_go': 'செல்',
+  'rv_title': 'பாடங்களை மீண்டும் பார்',
+  'rv_sub': 'எந்தப் பாடத்தையும் மீண்டும் பயின்று கூர்மையாகுங்கள்.',
+  'n_lessons': '{a}/{b} பாடங்கள்',
+  'n_exercises': '{n} பயிற்சிகள்',
+  'guest_banner': 'விருந்தினர் — முன்னேற்றத்தைச் சேமியுங்கள்',
+  'n_freezes': ' {n} freezes',
+  'best_streak': ' சிறந்தது {n}-நாள் streak',
+  'set_lang_sub': 'சர்வர் வாசகம் உங்கள் தேர்வைப் பின்பற்றும்',
+  'set_listen_sub': 'கேட்டு எழுதும் கேள்விகள்',
+  'set_motion': 'அசைவுகளைக் குறை',
+  'set_motion_sub': 'அனிமேஷன்களைக் குறைக்கும்',
+  'set_battle': 'சண்டை முறை',
+  'set_battle_sub': 'பதிலளிக்கும்போது எதிரியுடன் மோதுங்கள்',
+  'set_auto': 'ஆட்டோ',
+  'set_light': 'வெளிச்சம்',
+  'set_dark': 'இருட்டு',
+  'set_remind': 'நினைவூட்டும் நேரம்',
+  'set_remind_sub': 'தினசரி streak நினைவூட்டல், உங்கள் உள்ளூர் நேரம்',
+  'set_push': 'தினசரி streak நினைவூட்டல்கள்',
+  'push_off_hint': 'அணைந்துள்ளது — சிஸ்டம் அமைப்புகளில் இயக்கவும்',
+  'btn_enable': 'இயக்கு',
+  'fr_title': 'நண்பர்கள்',
+  'share_invite': 'பகிர் / நண்பர்களை அழை',
+  'set_privacy': 'தனியுரிமைக் கொள்கை',
+  'set_terms': 'விதிமுறைகள்',
+  'del_title': 'கணக்கை நீக்கவா?',
+  'del_body':
+      'இது உங்கள் கணக்கையும் எல்லா முன்னேற்றத்தையும் (XP, streak, நண்பர்கள், வரலாறு) நிரந்தரமாக நீக்கும். இதை மீட்க முடியாது.',
+  'del_keep': 'கணக்கை வைத்திரு',
+  'del_confirm': 'நிரந்தரமாக நீக்கு',
+  'hearts_title': 'இதயங்கள்',
+  'refill_label': 'இதயங்களை நிரப்பு · {n} ரத்தினங்கள்',
+  'hp_practice': 'பயிற்சி செய் — இதயம் பெறு',
+  'es_title': 'ஆங்கில மதிப்பெண்',
+  'es_gap': '{band}-க்கு இன்னும் {n}',
+  'es_sub': 'பாடங்கள் முடித்து streak காத்தால் வளரும்.',
+  'unit_label': 'யூனிட் {n} · {sub}',
+  'section_label': 'பிரிவு {n}',
+  'n_units': '{a}/{b} யூனிட்கள்',
+  'fix_chip': 'தவறுகளைச் சரிசெய்கிறோம்',
+  'explain_wait': 'Ratel யோசிக்கிறது…',
+  'btn_play': 'கேள்',
+  'btn_slower': 'மெதுவாக',
+  'pick_reply': 'சிறந்த பதிலைத் தேர்ந்தெடுங்கள்',
+  'report_btn': 'இந்தப் பயிற்சியைப் புகாரளி',
+  'save_banner': 'முன்னேற்றத்தைச் சேமியுங்கள் — இலவசக் கணக்கு',
+  'n_correct': '{b}-இல் {a} சரி',
+  'xp_and_correct': '+{x} XP   ·   {b}-இல் {a} சரி',
+  'bonus_xp': '🎁 அதிரடி போனஸ் +{n} XP!',
+  'repair_done': 'Streak மீட்கப்பட்டது — பயமில்லை.',
+  'btn_keep_going': 'தொடருங்கள்',
+  'repair_offer': 'மீண்டும் வரவேற்கிறோம்! {n}-நாள் streak-ஐ சரிசெய்யவா?',
+  'repair_uses': 'ஒரு streak freeze செலவாகும்.',
+  'rate_ask': 'Ratel பிடித்திருக்கிறதா?',
+  'rate_no': 'இன்னும் இல்லை',
+  'rate_yes': 'மிகவும் பிடிக்கிறது!',
+  'ms_days': '{n}-நாள் streak!',
+  'ms_body': 'பயமில்லை. தீயைத் தொடர விடுங்கள்.',
+  'wa_title': 'உங்கள் துல்லியம்',
+  'wa_over': '{n} பதில்களில்',
+  'wa_work': 'இவற்றில் கவனம்:',
+  'wa_missed': '{a}% · {n} தவறு',
+  'pl_title': 'நிலை சோதனை',
+  'pl_sub': 'முடிந்ததைச் செய்யுங்கள் — அழுத்தம் இல்லை.',
+  'pw_trial': 'உங்கள் Pro டிரையல் இயங்குகிறது. Ratel-ஐ ஆதரித்ததற்கு நன்றி!',
+  'pw_starting': 'தொடங்குகிறது…',
+  'pw_start': '7-நாள் இலவச டிரையலைத் தொடங்கு',
+  'pw_test_note':
+      'சோதனை முறை — இப்போது பணம் எடுக்கப்படாது. உண்மையான கட்டணம் ஸ்டோர் பதிப்புடன் வரும்.',
+  'pw_restore': 'வாங்கியவற்றை மீட்டெடு',
+  'pw_best': 'சிறந்தது',
+  'fr_code': 'உங்கள் நண்பர் குறியீடு',
+  'fr_list': 'உங்கள் நண்பர்கள்',
+  'sp_sub': 'உங்களுக்காக {n} தேர்வு — மறுபயிற்சி, தவறுகள், பலவீனங்கள்',
+  'btn_start': 'தொடங்கு',
+  'sh_code': 'ratel · நண்பர் குறியீடு {code}',
+  'bg_title': 'மாத பேட்ஜ்கள்',
+  'ach_title': 'சாதனைகள் ({a}/{b})',
+  'ob_speak': 'எனக்கு ஆங்கிலம் பேசத் தெரியும்',
   'code_copied': 'குறியீடு நகலெடுக்கப்பட்டது',
 };
 
@@ -358,5 +445,33 @@ void main() {
     // appbar title renders through st_title (Tamil), progress through
     // st_progress; any overflow at 360px fails the test automatically
     expect(find.textContaining('தேர்வு'), findsWidgets);
+  });
+
+  testWidgets('friends screen reads Tamil at 360px, no overflow',
+      (tester) async {
+    _narrowTamil(tester);
+    await tester.pumpWidget(const MaterialApp(home: FriendsScreen()));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('உங்கள் நண்பர் குறியீடு'), findsOneWidget);
+    expect(find.text('உங்கள் நண்பர்கள்'), findsOneWidget);
+  });
+
+  testWidgets('placement screen reads Tamil at 360px, no overflow',
+      (tester) async {
+    _narrowTamil(tester);
+    await tester.pumpWidget(
+        const MaterialApp(home: PlacementScreen(goal: 20)));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('நிலை சோதனை'), findsOneWidget);
+    expect(find.text('சரிபார்'), findsOneWidget); // btn_check reused here
+  });
+
+  testWidgets('paywall reads Tamil at 360px, no overflow',
+      (tester) async {
+    _narrowTamil(tester);
+    await tester.pumpWidget(const MaterialApp(home: PaywallScreen()));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('7-நாள் இலவச டிரையலைத் தொடங்கு'), findsOneWidget);
+    expect(find.textContaining('சோதனை முறை'), findsOneWidget);
   });
 }

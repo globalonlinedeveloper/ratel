@@ -50,10 +50,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     showSelectedIcon: false,
                     style: const ButtonStyle(
                         visualDensity: VisualDensity.compact),
-                    segments: const [
+                    segments: [
                       ButtonSegment(
-                          value: 'en', label: Text('I speak English')),
-                      ButtonSegment(
+                          value: 'en',
+                          label: Text(
+                              S.instance.t('ob_speak', 'I speak English'))),
+                      const ButtonSegment(
                           value: 'ta', label: Text('நான் தமிழ் பேசுகிறேன்')),
                     ],
                     selected: {S.instance.locale},

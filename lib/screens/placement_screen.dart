@@ -5,6 +5,7 @@ import '../widgets/mascot_anim.dart';
 import '../theme.dart';
 import '../app_state.dart';
 import '../placement.dart';
+import '../strings.dart';
 import '../milestones.dart';
 import '../widgets/ratel_mascot.dart';
 
@@ -95,13 +96,15 @@ class _PlacementScreenState extends State<PlacementScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                const Text('Placement check',
-                    style: TextStyle(
+                Text(S.instance.t('pl_title', 'Placement check'),
+                    style: const TextStyle(
                         fontFamily: kDisplayFont,
                         fontSize: 20,
                         fontWeight: FontWeight.w700)),
                 const SizedBox(height: 4),
-                Text('Answer what you can — no pressure.',
+                Text(
+                    S.instance
+                        .t('pl_sub', 'Answer what you can — no pressure.'),
                     style: TextStyle(color: context.mutedC, fontSize: 13)),
                 const SizedBox(height: 18),
                 Text(ex.prompt,
@@ -119,11 +122,11 @@ class _PlacementScreenState extends State<PlacementScreen> {
                     ? FilledButton(
                         onPressed: _next,
                         child: Text(_i + 1 >= _probes.length
-                            ? 'See result'
-                            : 'Continue'))
+                            ? S.instance.t('st_see_result', 'See result')
+                            : S.instance.t('btn_continue', 'Continue')))
                     : FilledButton(
                         onPressed: _selected == null ? null : _check,
-                        child: const Text('Check')),
+                        child: Text(S.instance.t('btn_check', 'Check'))),
               ],
             ),
           ),
@@ -193,7 +196,11 @@ class _PlacementScreenState extends State<PlacementScreen> {
                       : const RatelMascot(
                           pose: RatelPose.celebrate, size: 120),
                   const SizedBox(height: 16),
-                  Text('$_correct / ${_probes.length} correct',
+                  Text(
+                      S.instance
+                          .t('n_correct', '{a} / {b} correct')
+                          .replaceAll('{a}', '$_correct')
+                          .replaceAll('{b}', '${_probes.length}'),
                       style: TextStyle(color: context.mutedC)),
                   const SizedBox(height: 6),
                   Text(headline,

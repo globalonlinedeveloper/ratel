@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../app_state.dart';
 import '../achievements.dart';
+import '../strings.dart';
 
 /// A grid of milestone badges, earned ones in colour and locked ones greyed.
 /// Computed live from [appState] — zero DB cost.
@@ -22,7 +23,11 @@ class AchievementsView extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Achievements ($earned/${achievements.length})',
+          Text(
+              S.instance
+                  .t('ach_title', 'Achievements ({a}/{b})')
+                  .replaceAll('{a}', '$earned')
+                  .replaceAll('{b}', '${achievements.length}'),
               style:
                   const TextStyle(fontWeight: FontWeight.w700, fontSize: 16)),
           const SizedBox(height: 12),

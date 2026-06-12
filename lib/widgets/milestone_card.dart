@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../app_state.dart';
 import '../milestones.dart';
+import '../strings.dart';
 import '../theme.dart';
 import 'mascot_anim.dart';
 import 'ratel_mascot.dart';
@@ -51,14 +52,14 @@ class _StreakMilestoneCardState extends State<StreakMilestoneCard> {
           final happy = await showDialog<bool>(
             context: context,
             builder: (ctx) => AlertDialog(
-              title: const Text('Enjoying Ratel so far?'),
+              title: Text(S.instance.t('rate_ask', 'Enjoying Ratel so far?')),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.of(ctx).pop(false),
-                    child: const Text('Not yet')),
+                    child: Text(S.instance.t('rate_no', 'Not yet'))),
                 FilledButton(
                     onPressed: () => Navigator.of(ctx).pop(true),
-                    child: const Text('Loving it!')),
+                    child: Text(S.instance.t('rate_yes', 'Loving it!'))),
               ],
             ),
           );
@@ -98,12 +99,15 @@ class _StreakMilestoneCardState extends State<StreakMilestoneCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('$_show-day streak!',
+                Text(
+                    S.instance
+                        .t('ms_days', '{n}-day streak!')
+                        .replaceAll('{n}', '$_show'),
                     style: const TextStyle(
                         fontFamily: kDisplayFont,
                         fontSize: 17,
                         fontWeight: FontWeight.w800)),
-                Text('Fearless. Keep the fire going.',
+                Text(S.instance.t('ms_body', 'Fearless. Keep the fire going.'),
                     style: TextStyle(color: context.mutedC, fontSize: 13)),
               ],
             ),

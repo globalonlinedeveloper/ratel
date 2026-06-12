@@ -65,7 +65,10 @@ Future<void> showShareCard(BuildContext context) {
                         color: RatelColors.cream.withValues(alpha: 0.8),
                         fontSize: 13)),
                 const SizedBox(height: 6),
-                Text('ratel · friend code ${appState.friendCode}',
+                Text(
+                    S.instance
+                        .t('sh_code', 'ratel · friend code {code}')
+                        .replaceAll('{code}', appState.friendCode),
                     style: TextStyle(
                         color: RatelColors.cream.withValues(alpha: 0.6),
                         fontSize: 11,

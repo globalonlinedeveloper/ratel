@@ -50,9 +50,9 @@ class _StreakRepairCardState extends State<StreakRepairCard> {
                   fallbackPose: RatelPose.idle,
                   size: 130),
               const SizedBox(height: 10),
-              const Text('Streak restored — fearless.',
+              Text(S.instance.t('repair_done', 'Streak restored — fearless.'),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                       fontFamily: kDisplayFont,
                       fontSize: 17,
                       fontWeight: FontWeight.w700)),
@@ -61,7 +61,7 @@ class _StreakRepairCardState extends State<StreakRepairCard> {
           actions: [
             TextButton(
                 onPressed: () => Navigator.of(dctx).pop(),
-                child: const Text('Keep going')),
+                child: Text(S.instance.t('btn_keep_going', 'Keep going'))),
           ],
         ),
       );
@@ -99,11 +99,15 @@ class _StreakRepairCardState extends State<StreakRepairCard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Welcome back! Repair your $n-day streak?',
+                  Text(
+                      S.instance
+                          .t('repair_offer',
+                              'Welcome back! Repair your {n}-day streak?')
+                          .replaceAll('{n}', '$n'),
                       style: const TextStyle(
                           fontWeight: FontWeight.w700, fontSize: 13.5)),
-                  const Text('Uses 1 streak freeze.',
-                      style: TextStyle(
+                  Text(S.instance.t('repair_uses', 'Uses 1 streak freeze.'),
+                      style: const TextStyle(
                           color: RatelColors.textMuted, fontSize: 12)),
                 ],
               ),
