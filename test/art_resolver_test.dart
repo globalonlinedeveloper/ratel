@@ -27,7 +27,7 @@ void main() {
   });
 
   tearDown(() {
-    HttpOverrides.global = null;
+    debugNetworkImageHttpClientProvider = null;
     Art.instance.debugSet(paths: {}, publicBase: _base, bundled: {});
   });
 
@@ -79,7 +79,7 @@ void main() {
 
     testWidgets('manifest name loads from the public storage URL',
         (tester) async {
-      HttpOverrides.global = _ArtHttpOverrides(200, _kPng);
+      debugNetworkImageHttpClientProvider = () => _Client(200, _kPng);
       Art.instance.debugSet(paths: {'emo_happy': 'emotions/emo_happy.webp'});
       await tester.pumpWidget(
           MaterialApp(home: const RatelArt('emo_happy')));
@@ -95,7 +95,7 @@ void main() {
 
     testWidgets('remote failure falls back to the bundled static (404)',
         (tester) async {
-      HttpOverrides.global = _ArtHttpOverrides(404, const <int>[]);
+      debugNetworkImageHttpClientProvider = () => _Client(404, const <int>[]);
       Art.instance.debugSet(paths: {'emo_sad': 'emotions/emo_sad.webp'});
       await tester.pumpWidget(MaterialApp(home: const RatelArt('emo_sad')));
       for (var i = 0; i < 6; i++) {
@@ -112,14 +112,9 @@ void main() {
 
 // ---- minimal fake HTTP stack (NetworkImage's dart:io path) ----
 
-class _ArtHttpOverrides extends HttpOverrides {
-  _ArtHttpOverrides(this.status, this.body);
-  final int status;
-  final List<int> body;
-  @override
-  HttpClient createHttpClient(SecurityContext? context) =>
-      _Client(status, body);
-}
+// NOTE: NetworkImage holds a STATIC shared HttpClient, so a per-test
+// HttpOverrides.global is ignored after the first load -- the per-load
+// debugNetworkImageHttpClientProvider hook is the supported seam.
 
 class _Client implements HttpClient {
   _Client(this.status, this.body);
