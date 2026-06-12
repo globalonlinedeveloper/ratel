@@ -1,0 +1,338 @@
+{
+ "id": "u11",
+ "title": "Unit 11",
+ "subtitle": "Weather & seasons",
+ "lessons": [
+  {
+   "id": "u11l1",
+   "title": "Talking about weather",
+   "exercises": [
+    {
+     "type": "choice",
+     "prompt": "Which word is a type of weather?",
+     "options": [
+      "Rainy",
+      "Table",
+      "Pencil",
+      "Shoe"
+     ],
+     "correct_index": 0
+    },
+    {
+     "type": "choice",
+     "prompt": "Complete the sentence",
+     "sentence": "Look at the sun! It is very ___ today.",
+     "options": [
+      "sunny",
+      "wooden",
+      "salty",
+      "square"
+     ],
+     "correct_index": 0
+    },
+    {
+     "type": "wordBank",
+     "prompt": "Build the sentence",
+     "options": [
+      "raining",
+      "It",
+      "outside",
+      "is"
+     ],
+     "correct_order": [
+      "It",
+      "is",
+      "raining",
+      "outside"
+     ]
+    },
+    {
+     "type": "typed",
+     "prompt": "Type the missing word.",
+     "sentence": "I cannot see far — the ___ is very thick.",
+     "correct_order": [
+      "fog"
+     ]
+    },
+    {
+     "type": "listen",
+     "prompt": "Type what you hear",
+     "correct_order": [
+      "It is cold and windy today"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "u11l2",
+   "title": "The four seasons",
+   "exercises": [
+    {
+     "type": "choice",
+     "prompt": "Complete the sentence",
+     "sentence": "The season after winter is ___.",
+     "options": [
+      "spring",
+      "summer",
+      "autumn",
+      "night"
+     ],
+     "correct_index": 0
+    },
+    {
+     "type": "choice",
+     "prompt": "Which season is the hottest?",
+     "options": [
+      "Summer",
+      "Winter",
+      "Autumn",
+      "Spring"
+     ],
+     "correct_index": 0
+    },
+    {
+     "type": "wordBank",
+     "prompt": "Build the sentence",
+     "options": [
+      "bloom",
+      "Flowers",
+      "spring",
+      "in"
+     ],
+     "correct_order": [
+      "Flowers",
+      "bloom",
+      "in",
+      "spring"
+     ]
+    },
+    {
+     "type": "typed",
+     "prompt": "Type the missing word.",
+     "sentence": "Leaves fall from the trees in ___.",
+     "correct_order": [
+      "autumn",
+      "fall"
+     ]
+    },
+    {
+     "type": "match",
+     "prompt": "Match the season to what you see",
+     "options": [
+      "Spring",
+      "Summer",
+      "Autumn",
+      "Winter"
+     ],
+     "correct_order": [
+      "New flowers",
+      "Hot sun",
+      "Falling leaves",
+      "White snow"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "u11l3",
+   "title": "What to wear",
+   "exercises": [
+    {
+     "type": "choice",
+     "prompt": "Complete the sentence",
+     "sentence": "It is snowing — wear your warm ___.",
+     "options": [
+      "coat",
+      "sandals",
+      "swimsuit",
+      "sunglasses"
+     ],
+     "correct_index": 0
+    },
+    {
+     "type": "wordBank",
+     "prompt": "Build the advice",
+     "options": [
+      "an",
+      "Take",
+      "umbrella",
+      "you",
+      "with"
+     ],
+     "correct_order": [
+      "Take",
+      "an",
+      "umbrella",
+      "with",
+      "you"
+     ]
+    },
+    {
+     "type": "typed",
+     "prompt": "Type the missing word.",
+     "sentence": "In winter I wear ___ on my hands.",
+     "correct_order": [
+      "gloves"
+     ]
+    },
+    {
+     "type": "choice",
+     "prompt": "Choose the best reply",
+     "sentence": "A: It is very hot today. B: ___",
+     "options": [
+      "Yes, drink a lot of water!",
+      "Yes, wear your warm coat!",
+      "Yes, take your umbrella!"
+     ],
+     "correct_index": 0
+    },
+    {
+     "type": "listen",
+     "prompt": "Type what you hear",
+     "correct_order": [
+      "Wear a scarf because it is cold"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "u11l4",
+   "title": "The forecast",
+   "exercises": [
+    {
+     "type": "choice",
+     "prompt": "Complete the sentence",
+     "sentence": "The forecast says it ___ rain tomorrow.",
+     "options": [
+      "will",
+      "wills",
+      "did",
+      "done"
+     ],
+     "correct_index": 0
+    },
+    {
+     "type": "wordBank",
+     "prompt": "Build the sentence",
+     "options": [
+      "be",
+      "will",
+      "It",
+      "sunny",
+      "tomorrow"
+     ],
+     "correct_order": [
+      "It",
+      "will",
+      "be",
+      "sunny",
+      "tomorrow"
+     ]
+    },
+    {
+     "type": "typed",
+     "prompt": "Type the missing word.",
+     "sentence": "I check the weather ___ before I go out.",
+     "correct_order": [
+      "forecast",
+      "app"
+     ]
+    },
+    {
+     "type": "match",
+     "prompt": "Match the weather to the plan",
+     "options": [
+      "Rainy",
+      "Sunny",
+      "Snowy"
+     ],
+     "correct_order": [
+      "Stay at home",
+      "Go to the beach",
+      "Build a snowman"
+     ]
+    },
+    {
+     "type": "dialogue",
+     "prompt": "Put the conversation in order",
+     "options": [
+      "What is the forecast for tomorrow?",
+      "It will be sunny and warm.",
+      "Perfect weather for a picnic!",
+      "Good idea!"
+     ],
+     "correct_order": [
+      "What is the forecast for tomorrow?",
+      "It will be sunny and warm.",
+      "Perfect weather for a picnic!",
+      "Good idea!"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "u11l5",
+   "title": "Weather small talk",
+   "exercises": [
+    {
+     "type": "choice",
+     "prompt": "Choose the friendly reply",
+     "sentence": "A: Lovely weather today! B: ___",
+     "options": [
+      "Yes, it is beautiful!",
+      "No, you are tall.",
+      "I am a doctor."
+     ],
+     "correct_index": 0
+    },
+    {
+     "type": "wordBank",
+     "prompt": "Build the expression",
+     "options": [
+      "a",
+      "What",
+      "day",
+      "beautiful"
+     ],
+     "correct_order": [
+      "What",
+      "a",
+      "beautiful",
+      "day"
+     ]
+    },
+    {
+     "type": "typed",
+     "prompt": "Type the missing word.",
+     "sentence": "When you feel a little sick, you can say: I am under the ___.",
+     "correct_order": [
+      "weather"
+     ]
+    },
+    {
+     "type": "listen",
+     "prompt": "Type what you hear",
+     "correct_order": [
+      "It looks like rain"
+     ]
+    },
+    {
+     "type": "dialogue",
+     "prompt": "Put the conversation in order",
+     "options": [
+      "How is the weather there?",
+      "It is windy and cloudy.",
+      "Will you still go out?",
+      "Yes, I have my jacket!"
+     ],
+     "correct_order": [
+      "How is the weather there?",
+      "It is windy and cloudy.",
+      "Will you still go out?",
+      "Yes, I have my jacket!"
+     ]
+    }
+   ]
+  }
+ ]
+}

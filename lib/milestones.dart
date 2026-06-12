@@ -116,7 +116,7 @@ const List<CourseSection> kSections = [
   CourseSection(title: 'First steps', cefr: 'A1', firstUnit: 0, lastUnit: 2),
   CourseSection(title: 'Daily life', cefr: 'A2', firstUnit: 3, lastUnit: 5),
   CourseSection(
-      title: 'Confident talk', cefr: 'B1', firstUnit: 6, lastUnit: 9),
+      title: 'Confident talk', cefr: 'B1', firstUnit: 6, lastUnit: 10),
 ];
 
 /// The section containing unit [u] (the last section absorbs overflow).

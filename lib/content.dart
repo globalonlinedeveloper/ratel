@@ -764,7 +764,49 @@ const Unit unit10 = Unit(
 );
 
 /// Built-in course (offline fallback + test baseline).
-const List<Unit> builtInCourse = [unit1, unit2, unit3, unit4, unit5, unit6, unit7, unit8, unit9, unit10];
+const Unit unit11 = Unit(
+  title: 'Unit 11',
+  subtitle: 'Weather & seasons',
+  lessons: [
+    Lesson(id: 'u11l1', title: 'Talking about weather', exercises: [
+      Exercise.choice(prompt: 'Which word is a type of weather?', options: ['Rainy', 'Table', 'Pencil', 'Shoe'], correctIndex: 0),
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'Look at the sun! It is very ___ today.', options: ['sunny', 'wooden', 'salty', 'square'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['raining', 'It', 'outside', 'is'], correctOrder: ['It', 'is', 'raining', 'outside']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I cannot see far — the ___ is very thick.', accepted: ['fog']),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['It is cold and windy today']),
+    ]),
+    Lesson(id: 'u11l2', title: 'The four seasons', exercises: [
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'The season after winter is ___.', options: ['spring', 'summer', 'autumn', 'night'], correctIndex: 0),
+      Exercise.choice(prompt: 'Which season is the hottest?', options: ['Summer', 'Winter', 'Autumn', 'Spring'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['bloom', 'Flowers', 'spring', 'in'], correctOrder: ['Flowers', 'bloom', 'in', 'spring']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'Leaves fall from the trees in ___.', accepted: ['autumn', 'fall']),
+      Exercise.matchPairs(prompt: 'Match the season to what you see', left: ['Spring', 'Summer', 'Autumn', 'Winter'], right: ['New flowers', 'Hot sun', 'Falling leaves', 'White snow']),
+    ]),
+    Lesson(id: 'u11l3', title: 'What to wear', exercises: [
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'It is snowing — wear your warm ___.', options: ['coat', 'sandals', 'swimsuit', 'sunglasses'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the advice', options: ['an', 'Take', 'umbrella', 'you', 'with'], correctOrder: ['Take', 'an', 'umbrella', 'with', 'you']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'In winter I wear ___ on my hands.', accepted: ['gloves']),
+      Exercise.choice(prompt: 'Choose the best reply', sentence: 'A: It is very hot today. B: ___', options: ['Yes, drink a lot of water!', 'Yes, wear your warm coat!', 'Yes, take your umbrella!'], correctIndex: 0),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['Wear a scarf because it is cold']),
+    ]),
+    Lesson(id: 'u11l4', title: 'The forecast', exercises: [
+      Exercise.choice(prompt: 'Complete the sentence', sentence: 'The forecast says it ___ rain tomorrow.', options: ['will', 'wills', 'did', 'done'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the sentence', options: ['be', 'will', 'It', 'sunny', 'tomorrow'], correctOrder: ['It', 'will', 'be', 'sunny', 'tomorrow']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'I check the weather ___ before I go out.', accepted: ['forecast', 'app']),
+      Exercise.matchPairs(prompt: 'Match the weather to the plan', left: ['Rainy', 'Sunny', 'Snowy'], right: ['Stay at home', 'Go to the beach', 'Build a snowman']),
+      Exercise.dialogueOrder(prompt: 'Put the conversation in order', lines: ['What is the forecast for tomorrow?', 'It will be sunny and warm.', 'Perfect weather for a picnic!', 'Good idea!'], correctOrder: ['What is the forecast for tomorrow?', 'It will be sunny and warm.', 'Perfect weather for a picnic!', 'Good idea!']),
+    ]),
+    Lesson(id: 'u11l5', title: 'Weather small talk', exercises: [
+      Exercise.choice(prompt: 'Choose the friendly reply', sentence: 'A: Lovely weather today! B: ___', options: ['Yes, it is beautiful!', 'No, you are tall.', 'I am a doctor.'], correctIndex: 0),
+      Exercise.wordBank(prompt: 'Build the expression', options: ['a', 'What', 'day', 'beautiful'], correctOrder: ['What', 'a', 'beautiful', 'day']),
+      Exercise.typed(prompt: 'Type the missing word.', sentence: 'When you feel a little sick, you can say: I am under the ___.', accepted: ['weather']),
+      Exercise.listen(prompt: 'Type what you hear', accepted: ['It looks like rain']),
+      Exercise.dialogueOrder(prompt: 'Put the conversation in order', lines: ['How is the weather there?', 'It is windy and cloudy.', 'Will you still go out?', 'Yes, I have my jacket!'], correctOrder: ['How is the weather there?', 'It is windy and cloudy.', 'Will you still go out?', 'Yes, I have my jacket!']),
+    ]),
+  ],
+);
+
+const List<Unit> builtInCourse = [unit1, unit2, unit3, unit4, unit5, unit6, unit7, unit8, unit9, unit10, unit11];
 
 /// The active course: built-in by default, swapped to DB content at startup by
 /// ContentStore. Everything reads it via `course`. Lessons unlock in order.
