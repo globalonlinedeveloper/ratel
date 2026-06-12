@@ -82,7 +82,8 @@ try {
   else if (await guestEn.count()) await guestEn.first().click();
   await ta.waitForTimeout(4000);
   // guest entry lands on onboarding — finish it to reach home
-  const start = ta.getByText('Start learning');
+  let start = ta.getByText('கற்கத் தொடங்கு'); // ob_start went Tamil in Inc 127
+  if (!(await start.count())) start = ta.getByText('Start learning');
   if (await start.count()) {
     await start.first().click();
     await ta.waitForTimeout(5000);
