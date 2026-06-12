@@ -472,6 +472,7 @@ class _LessonScreenState extends State<LessonScreen>
               Row(
                 children: [
                   IconButton(
+                    tooltip: S.instance.t('btn_close', 'Close'),
                     onPressed: () => Navigator.of(context).maybePop(),
                     icon: const Icon(Icons.close, color: RatelColors.textMuted),
                   ),

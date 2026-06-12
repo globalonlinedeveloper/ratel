@@ -1401,26 +1401,43 @@ class _HomeScreenState extends State<HomeScreen> {
           const Text('English',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
           const Spacer(),
-          InkWell(
-            key: const Key('streak_stat'),
-            borderRadius: BorderRadius.circular(8),
-            onTap: _streakPopover,
-            child: _streakStat(appState.streak),
+          MergeSemantics(
+            child: Semantics(
+              button: true,
+              label: S.instance.t('streak_title', 'Streak'),
+              child: InkWell(
+                key: const Key('streak_stat'),
+                borderRadius: BorderRadius.circular(8),
+                onTap: _streakPopover,
+                child: _streakStat(appState.streak),
+              ),
+            ),
           ),
           const SizedBox(width: 12),
-          InkWell(
-            key: const Key('gems_stat'),
-            borderRadius: BorderRadius.circular(8),
-            onTap: _gemsPopover,
-            child: _numStat(Icons.diamond, appState.gems, RatelColors.teal),
+          MergeSemantics(
+            child: Semantics(
+              button: true,
+              label: S.instance.t('gems_title', 'Gems'),
+              child: InkWell(
+                key: const Key('gems_stat'),
+                borderRadius: BorderRadius.circular(8),
+                onTap: _gemsPopover,
+                child:
+                    _numStat(Icons.diamond, appState.gems, RatelColors.teal),
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           _numStat(Icons.bolt, appState.xp, RatelColors.honey),
           const SizedBox(width: 12),
-          InkWell(
-            key: const Key('hearts_stat'),
-            borderRadius: BorderRadius.circular(8),
-            onTap: _heartsPopover,
+          MergeSemantics(
+            child: Semantics(
+              button: true,
+              label: S.instance.t('hearts_title', 'Hearts'),
+              child: InkWell(
+                key: const Key('hearts_stat'),
+                borderRadius: BorderRadius.circular(8),
+                onTap: _heartsPopover,
             child: appState.isPro
                 ? Row(mainAxisSize: MainAxisSize.min, children: const [
                     Icon(Icons.favorite,
@@ -1432,8 +1449,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             fontWeight: FontWeight.w700,
                             fontSize: 16)),
                   ])
-                : _numStat(
-                    Icons.favorite, appState.hearts, RatelColors.hearts),
+                    : _numStat(Icons.favorite, appState.hearts,
+                        RatelColors.hearts),
+              ),
+            ),
           ),
         ],
       ),
