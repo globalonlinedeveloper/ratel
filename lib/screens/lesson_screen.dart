@@ -859,7 +859,7 @@ class _LessonScreenState extends State<LessonScreen>
       child: OutlinedButton.icon(
         onPressed: _explain,
         icon: const Icon(Icons.auto_awesome, size: 18),
-        label: const Text('Explain this'),
+        label: Text(S.instance.t('explain_btn', 'Explain this')),
       ),
     );
   }

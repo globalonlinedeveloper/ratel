@@ -132,6 +132,7 @@ const Map<String, String> _ta = {
   'explain_fallback': 'சரியான பதில் "{answer}".',
   'new_achievement': 'புதிய சாதனை!',
   'mistakes_cleared': 'தவறுகள் சரியாகிவிட்டன!',
+  'explain_btn': 'விளக்கு',
 };
 
 const Exercise _c = Exercise.choice(

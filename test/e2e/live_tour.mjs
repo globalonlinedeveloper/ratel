@@ -93,9 +93,58 @@ try {
     await ta.waitForTimeout(800);
     await ta.screenshot({ path: `ta-home-${i + 2}.png` });
   }
-  const prof = ta.getByText('Profile');
-  if (await prof.count()) {
-    await prof.first().click();
+  // FULL-FLOW (Inc 129d): start a lesson by the Tamil pill, skip once to
+  // surface the wrong-answer banner, tap Explain (server ta path), then
+  // tour Practice/Coach/Leagues tabs. Tamil label first, EN fallback.
+  const byTa = async (taTxt, enTxt) => {
+    const t = ta.getByText(taTxt);
+    if (await t.count()) return t.first();
+    const e = ta.getByText(enTxt);
+    return (await e.count()) ? e.first() : null;
+  };
+  const startPill = await byTa('தொடங்கு', 'Start');
+  if (startPill) {
+    await startPill.click();
+    await ta.waitForTimeout(4500);
+    await ta.screenshot({ path: 'ta-lesson-1.png' });
+    const skip = await byTa('தவிர்', 'Skip');
+    if (skip) {
+      await skip.click();
+      await ta.waitForTimeout(2500);
+      await ta.screenshot({ path: 'ta-lesson-2-banner.png' });
+      const expl = await byTa('விளக்கு', 'Explain this');
+      if (expl) {
+        await expl.click();
+        await ta.waitForTimeout(8000); // server generate can take a beat
+        await ta.screenshot({ path: 'ta-lesson-3-explain.png' });
+      }
+      // leave the lesson via the quit dialog (X then confirm) — best-effort
+      const x = ta.locator('flt-semantics-host [aria-label="Close"]');
+      if (await x.count()) {
+        await x.first().click();
+        await ta.waitForTimeout(1500);
+        const leave = await byTa('வெளியேறு', 'Leave');
+        if (leave) await leave.click();
+        await ta.waitForTimeout(3000);
+      }
+    }
+  }
+  for (const [taL, enL, shot] of [
+    ['பயிற்சி', 'Practice', 'ta-practice.png'],
+    ['கோச்', 'Coach', 'ta-coach.png'],
+    ['லீக்', 'Leagues', 'ta-leagues.png'],
+  ]) {
+    const tab = await byTa(taL, enL);
+    if (tab) {
+      await tab.click();
+      await ta.waitForTimeout(3000);
+      await ta.screenshot({ path: shot });
+    }
+  }
+  const prof = await byTa('சுயவிவரம்', 'Profile') ??
+      ta.getByText('Profile');
+  if (prof && await prof.count()) {
+    await prof.click();
     await ta.waitForTimeout(2500);
     await ta.screenshot({ path: 'ta-profile-1.png' });
     for (let i = 0; i < 2; i++) {
@@ -104,6 +153,7 @@ try {
       await ta.screenshot({ path: `ta-profile-${i + 2}.png` });
     }
   }
+
   ok('tamil leg: no page errors', taErrors.length === 0,
      taErrors.join(' | '));
   await ctx.close();
