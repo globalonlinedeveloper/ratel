@@ -14,4 +14,19 @@ void main() {
     expect(ExplainStore.instance.lookup('nope'), isNull);
     S.instance.locale = 'en';
   });
+
+  test('explain_fallback template renders byte-identical EN + Tamil draft', () {
+    S.instance.debugClear();
+    S.instance.locale = 'en';
+    String render(String answer) => S.instance
+        .t('explain_fallback', 'The correct answer is "{answer}".')
+        .replaceAll('{answer}', answer);
+    // The historical literal, byte for byte.
+    expect(render('have'), 'The correct answer is "have".');
+    S.instance.debugSet('explain_fallback', ta: 'சரியான பதில் "{answer}".');
+    S.instance.locale = 'ta';
+    expect(render('have'), 'சரியான பதில் "have".');
+    S.instance.locale = 'en';
+    S.instance.debugClear();
+  });
 }

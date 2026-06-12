@@ -756,6 +756,12 @@ class _LessonScreenState extends State<LessonScreen>
 
   String _correctText() => correctTextFor(_ex);
 
+  /// Offline/empty-response fallback line, localized (EN render byte-identical
+  /// to the historical literal).
+  String _fallbackExplain() => S.instance
+      .t('explain_fallback', 'The correct answer is "{answer}".')
+      .replaceAll('{answer}', _correctText());
+
   String _userText() => userTextFor(_ex,
       selected: _selected,
       pickedWords: [for (final i in _picked) _ex.options[i]],
@@ -775,7 +781,7 @@ class _LessonScreenState extends State<LessonScreen>
     // New content such as a DB-added lesson: generate-on-demand, cached
     //    server-side so it costs at most one LLM call ever for that exercise.
     if (!Config.hasSupabase) {
-      setState(() => _explanation = 'The correct answer is "${_correctText()}".');
+      setState(() => _explanation = _fallbackExplain());
       return;
     }
     setState(() => _explaining = true);
@@ -784,6 +790,7 @@ class _LessonScreenState extends State<LessonScreen>
         'explain-answer',
         body: {
           'key': key,
+          'locale': S.instance.locale,
           'prompt': _ex.prompt,
           'userAnswer': _userText(),
           'correctAnswer': _correctText(),
@@ -797,13 +804,13 @@ class _LessonScreenState extends State<LessonScreen>
       setState(() {
         _explanation = text.isNotEmpty
             ? text
-            : 'The correct answer is "${_correctText()}".';
+            : _fallbackExplain();
         _explaining = false;
       });
     } catch (_) {
       if (!mounted) return;
       setState(() {
-        _explanation = 'The correct answer is "${_correctText()}".';
+        _explanation = _fallbackExplain();
         _explaining = false;
       });
     }
@@ -1524,10 +1531,8 @@ class _LessonScreenState extends State<LessonScreen>
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const RatelActionAnim(
-                                  action: 'gradcap',
-                                  fallbackPose: RatelPose.celebrate,
-                                  size: 54),
+                              const Icon(Icons.school,
+                                  size: 30, color: RatelColors.honey),
                               const SizedBox(width: 8),
                               Flexible(
                                   child: Text(
@@ -1545,13 +1550,32 @@ class _LessonScreenState extends State<LessonScreen>
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const RatelActionAnim(
-                                  action: 'medalbite',
-                                  fallbackPose: RatelPose.celebrate,
-                                  size: 54),
+                              const Icon(Icons.military_tech,
+                                  size: 30, color: RatelColors.honey),
                               const SizedBox(width: 8),
                               Flexible(
-                                  child: Text('New achievement earned!',
+                                  child: Text(
+                                      S.instance.t('new_achievement',
+                                          'New achievement earned!'),
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w700,
+                                          color: context.textC))),
+                            ],
+                          ),
+                        ),
+                      if (_fixPhase && !widget.reviewMode)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(Icons.task_alt,
+                                  size: 30, color: RatelColors.teal),
+                              const SizedBox(width: 8),
+                              Flexible(
+                                  child: Text(
+                                      S.instance.t('mistakes_cleared',
+                                          'Mistakes cleared!'),
                                       style: TextStyle(
                                           fontWeight: FontWeight.w700,
                                           color: context.textC))),
