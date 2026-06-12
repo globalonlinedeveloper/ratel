@@ -42,7 +42,7 @@ class AchievementsView extends StatelessWidget {
         ? RatelColors.honey
         : (context.isDark ? const Color(0xFF6E6A63) : const Color(0xFFBFBFBF));
     return Tooltip(
-      message: '${a.title} — ${a.description}',
+      message: '${achTitle(a)} — ${achDesc(a)}',
       child: SizedBox(
         width: 64,
         child: Column(
@@ -83,7 +83,7 @@ class AchievementsView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 4),
-            Text(a.title,
+            Text(achTitle(a),
                 textAlign: TextAlign.center,
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,

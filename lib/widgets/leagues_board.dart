@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../strings.dart';
 import 'ratel_mascot.dart';
 import 'mascot_anim.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -45,7 +46,9 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
   Widget build(BuildContext context) {
     if (_client == null) {
       return _scaffold('Leagues',
-          const Center(child: Text('Sign in to join a league.')));
+          Center(
+          child: Text(S.instance
+              .t('lg_signin', 'Sign in to join a league.'))));
     }
     final myId = _client?.auth.currentUser?.id;
     return FutureBuilder<List<Map<String, dynamic>>>(
@@ -63,7 +66,7 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
           children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 16, 2),
-              child: Text('$tier League',
+              child: Text('$tier ${S.instance.t('lg_league', 'League')}',
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.w700)),
             ),
@@ -71,7 +74,7 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
               child: Row(
                 children: [
-                  const Text('This week · top 5 advance',
+                  Text(S.instance.t('lg_week', 'This week · top 5 advance'),
                       style: TextStyle(color: RatelColors.textMuted)),
                   const Spacer(),
                   Container(
@@ -121,7 +124,8 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
                         size: 52),
                     const SizedBox(width: 8),
                     const Expanded(
-                      child: Text('Promotion zone — hold your spot!',
+                      child: Text(
+              S.instance.t('lg_promo', 'Promotion zone — hold your spot!'),
                           style: TextStyle(
                               fontWeight: FontWeight.w700,
                               color: RatelColors.honey)),

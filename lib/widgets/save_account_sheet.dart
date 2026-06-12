@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../strings.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../app_state.dart';
@@ -65,7 +66,8 @@ class _SaveAccountSheetState extends State<SaveAccountSheetBody> {
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text('Progress saved — welcome to the sett!')));
+            content: Text(S.instance
+            .t('sv_done', 'Progress saved — welcome to the sett!'))));
       }
     } on AuthException catch (e) {
       if (mounted) setState(() => _message = e.message);
@@ -87,7 +89,7 @@ class _SaveAccountSheetState extends State<SaveAccountSheetBody> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Save your progress',
+          Text(S.instance.t('sv_title', 'Save your progress'),
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
           const SizedBox(height: 6),
@@ -131,7 +133,7 @@ class _SaveAccountSheetState extends State<SaveAccountSheetBody> {
                     width: 20,
                     child: CircularProgressIndicator(
                         strokeWidth: 2, color: Colors.white))
-                : const Text('Save my progress'),
+                : Text(S.instance.t('sv_cta', 'Save my progress')),
           ),
         ],
       ),

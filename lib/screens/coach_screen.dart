@@ -151,7 +151,7 @@ class _CoachScreenState extends State<CoachScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Coach',
+                    Text(S.instance.t('coach_title', 'Coach'),
                         style: TextStyle(
                             fontSize: 18, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
                     Text(
@@ -186,7 +186,7 @@ class _CoachScreenState extends State<CoachScreen> {
                     height: 14,
                     child: CircularProgressIndicator(strokeWidth: 2)),
                 SizedBox(width: 8),
-                Text('Ratel is typing...',
+                Text(S.instance.t('coach_typing', 'Ratel is typing...'),
                     style: TextStyle(
                         color: RatelColors.textMuted, fontSize: 13)),
               ],
@@ -224,7 +224,7 @@ class _CoachScreenState extends State<CoachScreen> {
                                 Icon(sc.icon,
                                     size: 20, color: RatelColors.teal),
                                 const SizedBox(height: 8),
-                                Text('Roleplay',
+                                Text(S.instance.t('coach_roleplay', 'Roleplay'),
                                     style: TextStyle(
                                         fontSize: 10,
                                         fontWeight: FontWeight.w700,

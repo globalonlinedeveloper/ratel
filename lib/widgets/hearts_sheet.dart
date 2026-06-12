@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import '../strings.dart';
 
 import '../app_state.dart';
 import '../flags.dart';
@@ -92,7 +93,8 @@ class _HeartsSheetState extends State<_HeartsSheet> {
               widget.onPractice?.call();
             },
             icon: const Icon(Icons.fitness_center),
-            label: const Text('Practice mistakes — earn a heart'),
+            label: Text(
+              S.instance.t('hs_practice', 'Practice mistakes — earn a heart')),
           ),
           if (appState.gems >=
               Flags.instance.intOf('gem_refill_cost', 350)) ...[
@@ -108,7 +110,7 @@ class _HeartsSheetState extends State<_HeartsSheet> {
                     Flags.instance.intOf('gem_refill_cost', 350));
               },
               icon: const Icon(Icons.diamond, color: RatelColors.teal),
-              label: Text('Refill now · '
+              label: Text('${S.instance.t('hs_refill', 'Refill now')} · '
                   '${Flags.instance.intOf('gem_refill_cost', 350)}'
                   ' gems'),
             ),
@@ -123,7 +125,8 @@ class _HeartsSheetState extends State<_HeartsSheet> {
                   .push(ratelRoute(const PaywallScreen()));
             },
             icon: const Icon(Icons.favorite, color: RatelColors.hearts),
-            label: const Text('Ratel Pro — unlimited hearts'),
+            label: Text(
+              S.instance.t('hs_pro', 'Ratel Pro — unlimited hearts')),
           ),
         ],
       ),

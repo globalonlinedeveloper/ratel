@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../strings.dart';
 import 'package:flutter/services.dart';
 
 import '../app_state.dart';
@@ -49,7 +50,7 @@ Future<void> showShareCard(BuildContext context) {
                   children: [
                     StreakFlame(streak: appState.streak, size: 30),
                     const SizedBox(width: 8),
-                    Text('${appState.streak}-day streak',
+                    Text('${appState.streak}${S.instance.t('sh_days', '-day streak')}',
                         style: const TextStyle(
                             color: RatelColors.cream,
                             fontSize: 22,
@@ -57,7 +58,9 @@ Future<void> showShareCard(BuildContext context) {
                   ],
                 ),
                 const SizedBox(height: 4),
-                Text('${appState.xp} XP · learning English fearlessly',
+                Text(
+              '${appState.xp} '
+              '${S.instance.t('sh_line', 'XP · learning English fearlessly')}',
                     style: TextStyle(
                         color: RatelColors.cream.withValues(alpha: 0.8),
                         fontSize: 13)),
@@ -85,10 +88,11 @@ Future<void> showShareCard(BuildContext context) {
                       'https://globalonlinedeveloper.github.io/ratel/'));
               Navigator.of(ctx).pop();
               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text('Invite copied — paste it anywhere!')));
+                  content: Text(S.instance
+            .t('sh_copied', 'Invite copied — paste it anywhere!'))));
             },
             icon: const Icon(Icons.copy, size: 18),
-            label: const Text('Copy invite text'),
+            label: Text(S.instance.t('sh_copy', 'Copy invite text')),
           ),
         ],
       ),

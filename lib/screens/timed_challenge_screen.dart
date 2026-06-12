@@ -116,7 +116,8 @@ class _TimedChallengeScreenState extends State<TimedChallengeScreen> {
 
   Widget _gate(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Timed challenge')),
+      appBar:
+          AppBar(title: Text(S.instance.t('tc_title', 'Timed challenge'))),
       body: SafeArea(
         child: Center(
           child: Padding(
@@ -143,7 +144,7 @@ class _TimedChallengeScreenState extends State<TimedChallengeScreen> {
                     style:
                         const TextStyle(color: RatelColors.textMuted)),
                 const SizedBox(height: 6),
-                Text('Best: $_best',
+                Text('${S.instance.t('tc_best', 'Best:')} $_best',
                     style: const TextStyle(
                         color: RatelColors.textMuted,
                         fontWeight: FontWeight.w700)),
@@ -165,12 +166,14 @@ class _TimedChallengeScreenState extends State<TimedChallengeScreen> {
                     },
                     icon: const Icon(Icons.flash_on,
                         color: RatelColors.coral, size: 18),
-                    label: Text('Start with +15s · $_boostCost gems'),
+                    label: Text(
+              '${S.instance.t('tc_boost', 'Start with +15s ·')} '
+              '$_boostCost ${S.instance.t('tc_gems', 'gems')}'),
                   )
                 else
                   const Padding(
                     padding: EdgeInsets.only(bottom: 4),
-                    child: Text('+15s boost armed!',
+                    child: Text(S.instance.t('tc_armed', '+15s boost armed!'),
                         style: TextStyle(
                             color: RatelColors.coral,
                             fontWeight: FontWeight.w800)),
@@ -213,7 +216,7 @@ class _TimedChallengeScreenState extends State<TimedChallengeScreen> {
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.w800)),
                   const Spacer(),
-                  Text('Score ${_correct * 10}',
+                  Text('${S.instance.t('tc_score', 'Score')} ${_correct * 10}',
                       style: const TextStyle(
                           fontWeight: FontWeight.w800, fontSize: 16)),
                 ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'strings.dart';
 import 'app_state.dart';
 
 /// Which running stat an achievement is measured against.
@@ -48,3 +49,12 @@ int valueFor(AchMetric m, AppState s) {
 }
 
 bool isEarned(Achievement a, AppState s) => valueFor(a.metric, s) >= a.threshold;
+
+String _achSlug(String t) =>
+    t.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '_');
+
+/// Locale-aware display name/description (data stays const English).
+String achTitle(Achievement a) =>
+    S.instance.t('ach_${_achSlug(a.title)}', a.title);
+String achDesc(Achievement a) =>
+    S.instance.t('achd_${_achSlug(a.title)}', a.description);
