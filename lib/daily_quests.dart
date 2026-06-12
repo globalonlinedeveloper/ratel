@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'app_state.dart';
+import 'strings.dart';
 
 enum QuestMetric { xp, lessons }
 
@@ -20,9 +21,16 @@ List<Quest> questsForToday() {
   final xp = const [20, 30, 40, 50][r.nextInt(4)];
   final lessons = const [1, 2, 3][r.nextInt(3)];
   return [
-    Quest(QuestMetric.xp, xp, 'Earn $xp XP', Icons.bolt),
-    Quest(QuestMetric.lessons, lessons,
-        'Finish $lessons ${lessons == 1 ? 'lesson' : 'lessons'}',
+    Quest(QuestMetric.xp, xp,
+        S.instance.t('q_earn', 'Earn {n} XP').replaceAll('{n}', '$xp'),
+        Icons.bolt),
+    Quest(
+        QuestMetric.lessons,
+        lessons,
+        (lessons == 1
+                ? S.instance.t('q_finish_one', 'Finish {n} lesson')
+                : S.instance.t('q_finish_many', 'Finish {n} lessons'))
+            .replaceAll('{n}', '$lessons'),
         Icons.menu_book),
   ];
 }

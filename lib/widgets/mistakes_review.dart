@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../strings.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
 import 'skeleton.dart';
@@ -101,7 +102,8 @@ class _MistakesReviewState extends State<MistakesReview> {
                 const Icon(Icons.auto_stories,
                     color: RatelColors.coral, size: 18),
                 const SizedBox(width: 6),
-                Text('Review your mistakes (${items.length})',
+                Text('${S.instance.t('mr_title', 'Review your mistakes')} '
+                    '(${items.length})',
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w700)),
               ],
@@ -114,7 +116,9 @@ class _MistakesReviewState extends State<MistakesReview> {
               child: FilledButton.icon(
                 onPressed: () => _practice(items),
                 icon: const Icon(Icons.fitness_center, size: 18),
-                label: Text('Practice these ${items.length}'),
+                label: Text(
+                    '${S.instance.t('mr_cta', 'Practice these')} '
+                    '${items.length}'),
               ),
             ),
             const SizedBox(height: 16),
@@ -145,7 +149,9 @@ class _MistakesReviewState extends State<MistakesReview> {
             const Icon(Icons.close, color: RatelColors.coral, size: 16),
             const SizedBox(width: 4),
             Expanded(
-              child: Text('You said: ${m['chosen'] ?? ''}',
+              child: Text(
+                  '${S.instance.t('you_said', 'You said:')} '
+                  '${m['chosen'] ?? ''}',
                   style: const TextStyle(color: RatelColors.textMuted)),
             ),
           ]),
@@ -154,7 +160,9 @@ class _MistakesReviewState extends State<MistakesReview> {
             const Icon(Icons.check, color: RatelColors.teal, size: 16),
             const SizedBox(width: 4),
             Expanded(
-              child: Text('Correct: ${m['correct_answer'] ?? ''}',
+              child: Text(
+                  '${S.instance.t('correct_lbl', 'Correct:')} '
+                  '${m['correct_answer'] ?? ''}',
                   style: const TextStyle(
                       color: RatelColors.teal, fontWeight: FontWeight.w600)),
             ),

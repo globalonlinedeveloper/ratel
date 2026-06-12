@@ -64,15 +64,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text('Welcome to Ratel!',
+                Text(S.instance.t('ob_title', 'Welcome to Ratel!'),
                     textAlign: TextAlign.center,
                     style:
                         TextStyle(fontSize: 24, fontFamily: kDisplayFont, fontWeight: FontWeight.w800)),
-                const Text('Be fearless about English. Two quick questions.',
+                Text(S.instance.t('ob_sub',
+                        'Be fearless about English. Two quick questions.'),
                     textAlign: TextAlign.center,
                     style: TextStyle(color: RatelColors.textMuted)),
                 const SizedBox(height: 24),
-                const Text('Why are you learning?',
+                Text(S.instance.t('ob_why', 'Why are you learning?'),
                     style: TextStyle(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
                 Wrap(
@@ -81,14 +82,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   children: [
                     for (final m in _motivations)
                       ChoiceChip(
-                        label: Text(m),
+                        label: Text(S.instance.t(
+                            'ob_m_${m.toLowerCase().replaceAll(' ', '_')}',
+                            m)),
                         selected: _motivation == m,
                         onSelected: (_) => setState(() => _motivation = m),
                       ),
                   ],
                 ),
                 const SizedBox(height: 24),
-                const Text('Set your daily goal',
+                Text(S.instance.t('ob_goal', 'Set your daily goal'),
                     style: TextStyle(fontWeight: FontWeight.w700)),
                 const SizedBox(height: 8),
                 Column(
@@ -100,7 +103,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 const SizedBox(height: 24),
                 FilledButton(
                   onPressed: _busy ? null : _start,
-                  child: Text(_busy ? 'Setting up…' : 'Start learning'),
+                  child: Text(_busy
+                      ? S.instance.t('ob_setting_up', 'Setting up…')
+                      : S.instance.t('ob_start', 'Start learning')),
                 ),
                 const SizedBox(height: 10),
                 OutlinedButton(
@@ -108,7 +113,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ? null
                       : () => Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => PlacementScreen(goal: _goal))),
-                  child: const Text('I already know some English'),
+                  child: Text(S.instance
+                      .t('ob_know', 'I already know some English')),
                 ),
               ],
             ),
@@ -138,9 +144,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 color: sel ? RatelColors.honey : RatelColors.textMuted, size: 20),
             const SizedBox(width: 12),
             Expanded(
-                child: Text(label,
+                child: Text(
+                    S.instance.t('ob_g_${label.toLowerCase()}', label),
                     style: const TextStyle(fontWeight: FontWeight.w600))),
-            Text('$xp XP / day',
+            Text('$xp ${S.instance.t('xp_day', 'XP / day')}',
                 style: const TextStyle(color: RatelColors.textMuted)),
           ],
         ),

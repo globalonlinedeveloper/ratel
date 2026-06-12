@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../strings.dart';
 import '../theme.dart';
 import '../app_state.dart';
 import '../content.dart';
@@ -75,16 +76,22 @@ class _ReviewCardState extends State<ReviewCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('$n ${n == 1 ? 'exercise' : 'exercises'} due for review',
+                      Text(
+                          (n == 1
+                                  ? S.instance.t('review_due_one',
+                                      '{n} exercise due for review')
+                                  : S.instance.t('review_due_many',
+                                      '{n} exercises due for review'))
+                              .replaceAll('{n}', '$n'),
                           style: const TextStyle(
                               fontWeight: FontWeight.w700, fontSize: 14)),
-                      const Text('Lock in what you have learned.',
+                      Text(S.instance.t('review_lockin', 'Lock in what you have learned.'),
                           style: TextStyle(
                               color: RatelColors.textMuted, fontSize: 12.5)),
                     ],
                   ),
                 ),
-                const Text('Review',
+                Text(S.instance.t('review_cta', 'Review'),
                     style: TextStyle(
                         color: RatelColors.teal, fontWeight: FontWeight.w700)),
                 const Icon(Icons.chevron_right, color: RatelColors.teal),

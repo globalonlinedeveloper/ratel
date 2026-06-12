@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
 import 'package:ratel/models.dart';
+import 'package:ratel/screens/auth_screen.dart';
 import 'package:ratel/screens/home_screen.dart';
 import 'package:ratel/screens/lesson_screen.dart';
+import 'package:ratel/screens/onboarding_screen.dart';
 import 'package:ratel/strings.dart';
 import 'package:ratel/widgets/daily_chest.dart';
 import 'package:ratel/widgets/monthly_quest.dart';
@@ -51,6 +53,51 @@ const Map<String, String> _ta = {
   'stat_lessons': 'முடித்த பாடங்கள்',
   'set_language': 'ஆப் மொழி',
   'set_listening': 'கேட்டல் பயிற்சிகள்',
+  'ob_title': 'Ratel-க்கு வரவேற்கிறோம்!',
+  'ob_sub': 'ஆங்கிலத்தில் பயம் வேண்டாம். இரண்டே கேள்விகள்.',
+  'ob_why': 'எதற்காகக் கற்கிறீர்கள்?',
+  'ob_goal': 'தினசரி இலக்கை அமைக்கவும்',
+  'ob_setting_up': 'தயாராகிறது…',
+  'ob_start': 'கற்கத் தொடங்கு',
+  'ob_know': 'எனக்கு கொஞ்சம் ஆங்கிலம் தெரியும்',
+  'ob_m_career': 'வேலை',
+  'ob_m_travel': 'பயணம்',
+  'ob_m_school': 'பள்ளி',
+  'ob_m_family': 'குடும்பம்',
+  'ob_m_brain_training': 'மூளைப் பயிற்சி',
+  'ob_m_just_for_fun': 'பொழுதுபோக்கு',
+  'ob_g_casual': 'இலகு',
+  'ob_g_regular': 'வழக்கம்',
+  'ob_g_serious': 'தீவிரம்',
+  'ob_g_intense': 'அதிதீவிரம்',
+  'xp_day': 'XP / நாள்',
+  'auth_tagline': 'பயமின்றி ஆங்கிலம் கற்போம்.',
+  'fld_name': 'பெயர்',
+  'fld_email': 'மின்னஞ்சல்',
+  'fld_password': 'கடவுச்சொல்',
+  'btn_create': 'கணக்கு உருவாக்கு',
+  'btn_login': 'உள்நுழை',
+  'auth_have': 'கணக்கு உள்ளதா? உள்நுழையுங்கள்',
+  'auth_new': 'புதியவரா? கணக்கு உருவாக்குங்கள்',
+  'set_sound': 'ஒலி விளைவுகள்',
+  'set_haptics': 'அதிர்வுகள்',
+  'set_music': 'பின்னணி இசை',
+  'set_music_sub': 'கற்கும்போது அமைதியான இசை',
+  'btn_logout': 'வெளியேறு',
+  'btn_delete': 'கணக்கை நீக்கு',
+  'q_earn': '{n} XP சம்பாதி',
+  'q_finish_one': '{n} பாடம் முடி',
+  'q_finish_many': '{n} பாடங்கள் முடி',
+  'dq_title': 'தினசரி பணிகள்',
+  'dg_title': 'தினசரி இலக்கு',
+  'review_due_one': '{n} பயிற்சி மறுபயிற்சிக்கு உள்ளது',
+  'review_due_many': '{n} பயிற்சிகள் மறுபயிற்சிக்கு உள்ளன',
+  'review_lockin': 'கற்றதை உறுதி செய்யுங்கள்.',
+  'review_cta': 'மறுபயிற்சி',
+  'mr_title': 'தவறுகளின் மறுபயிற்சி',
+  'mr_cta': 'இவற்றைப் பயிற்சி செய்',
+  'you_said': 'நீங்கள் சொன்னது:',
+  'correct_lbl': 'சரியானது:',
 };
 
 const Exercise _c = Exercise.choice(
@@ -126,6 +173,19 @@ void main() {
     // motd needs an admin flag; the chest CTA is the live ta probe
     expect(find.text('தினசரி பெட்டி — திறக்க தட்டவும்!'),
         findsOneWidget);
+  });
+
+  testWidgets('auth and onboarding read Tamil at 360px, no overflow',
+      (tester) async {
+    _narrowTamil(tester);
+    await tester.pumpWidget(const MaterialApp(home: AuthScreen()));
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.text('பயமின்றி ஆங்கிலம் கற்போம்.'), findsOneWidget);
+    await tester.pumpWidget(
+        const MaterialApp(home: OnboardingScreen()));
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.text('எதற்காகக் கற்கிறீர்கள்?'), findsOneWidget);
+    expect(find.text('மூளைப் பயிற்சி'), findsOneWidget);
   });
 
   testWidgets('full home tour in Tamil at 360px: scroll + every tab',

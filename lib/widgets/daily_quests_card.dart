@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../strings.dart';
 import 'ratel_mascot.dart';
 import 'mascot_anim.dart';
 import '../theme.dart';
@@ -36,7 +37,8 @@ class DailyQuestsCard extends StatelessWidget {
                       color: RatelColors.honey, size: 18),
               const SizedBox(width: 6),
               Expanded(
-                child: Text('Daily quests ($done/${quests.length})',
+                child: Text('${S.instance.t('dq_title', 'Daily quests')} '
+                      '($done/${quests.length})',
                     style: const TextStyle(
                         fontWeight: FontWeight.w700, fontSize: 15)),
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../strings.dart';
 import 'ratel_mascot.dart';
 import 'mascot_anim.dart';
 import '../theme.dart';
@@ -37,7 +38,7 @@ class DailyGoalCard extends StatelessWidget {
                       color: RatelColors.honey, size: 20),
               const SizedBox(width: 8),
               const Expanded(
-                child: Text('Daily goal',
+                child: Text(S.instance.t('dg_title', 'Daily goal'),
                     style: TextStyle(
                         fontWeight: FontWeight.w700, fontSize: 16)),
               ),

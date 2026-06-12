@@ -107,7 +107,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           fontSize: 30, fontFamily: kDisplayFont,
                           fontWeight: FontWeight.w800,
                           color: RatelColors.honey)),
-                  const Text('Learn English, fearlessly.',
+                  Text(S.instance.t('auth_tagline', 'Learn English, fearlessly.'),
                       style: TextStyle(color: RatelColors.textMuted)),
                   const SizedBox(height: 24),
                   if (_isSignUp) ...[
@@ -115,7 +115,8 @@ class _AuthScreenState extends State<AuthScreen> {
                       controller: _name,
                       textCapitalization: TextCapitalization.words,
                       decoration: const InputDecoration(
-                          labelText: 'Name', border: OutlineInputBorder()),
+                          labelText: S.instance.t('fld_name', 'Name'),
+                          border: const OutlineInputBorder()),
                     ),
                     const SizedBox(height: 12),
                   ],
@@ -123,14 +124,16 @@ class _AuthScreenState extends State<AuthScreen> {
                     controller: _email,
                     keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
-                        labelText: 'Email', border: OutlineInputBorder()),
+                        labelText: S.instance.t('fld_email', 'Email'),
+                        border: const OutlineInputBorder()),
                   ),
                   const SizedBox(height: 12),
                   TextField(
                     controller: _password,
                     obscureText: true,
                     decoration: const InputDecoration(
-                        labelText: 'Password', border: OutlineInputBorder()),
+                        labelText: S.instance.t('fld_password', 'Password'),
+                        border: const OutlineInputBorder()),
                   ),
                   if (_message != null) ...[
                     const SizedBox(height: 12),
@@ -151,7 +154,9 @@ class _AuthScreenState extends State<AuthScreen> {
                               width: 20,
                               child: CircularProgressIndicator(
                                   strokeWidth: 2, color: Colors.white))
-                          : Text(_isSignUp ? 'Create account' : 'Log in'),
+                          : Text(_isSignUp
+                              ? S.instance.t('btn_create', 'Create account')
+                              : S.instance.t('btn_login', 'Log in')),
                     ),
                   ),
                   const SizedBox(height: 8),
@@ -163,8 +168,10 @@ class _AuthScreenState extends State<AuthScreen> {
                               _message = null;
                             }),
                     child: Text(_isSignUp
-                        ? 'Have an account? Log in'
-                        : 'New here? Create an account'),
+                        ? S.instance
+                            .t('auth_have', 'Have an account? Log in')
+                        : S.instance.t(
+                            'auth_new', 'New here? Create an account')),
                   ),
                   if (Flags.instance.flag('guest_mode', false)) ...[
                     const SizedBox(height: 2),

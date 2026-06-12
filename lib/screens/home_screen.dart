@@ -446,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Sound effects'),
+                  title: Text(S.instance.t('set_sound', 'Sound effects')),
                   secondary:
                       const Icon(Icons.volume_up, color: RatelColors.honey),
                   value: Sfx.instance.soundOn,
@@ -457,7 +457,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Haptics'),
+                  title: Text(S.instance.t('set_haptics', 'Haptics')),
                   secondary:
                       const Icon(Icons.vibration, color: RatelColors.teal),
                   value: Sfx.instance.hapticsOn,
@@ -468,8 +468,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Background music'),
-                  subtitle: const Text('Calm ambient loop while you learn'),
+                  title: Text(S.instance.t('set_music', 'Background music')),
+                  subtitle: Text(S.instance
+                      .t('set_music_sub', 'Calm ambient loop while you learn')),
                   secondary: Sfx.instance.musicOn
                       ? const RatelActionAnim(
                           action: 'headphones',
@@ -686,14 +687,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 appState.reset();
               },
               icon: const Icon(Icons.logout, color: RatelColors.textMuted),
-              label: const Text('Log out',
+              label: Text(S.instance.t('btn_logout', 'Log out'),
                   style: TextStyle(color: RatelColors.textMuted)),
             ),
             TextButton.icon(
               onPressed: () => _confirmDeleteAccount(context, appState),
               icon: const Icon(Icons.delete_forever,
                   color: RatelColors.coral, size: 18),
-              label: const Text('Delete account',
+              label: Text(S.instance.t('btn_delete', 'Delete account'),
                   style:
                       TextStyle(color: RatelColors.coral, fontSize: 12)),
             ),
