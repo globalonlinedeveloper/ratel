@@ -101,10 +101,14 @@ void main() {
       for (var i = 0; i < 6; i++) {
         await tester.pump(const Duration(milliseconds: 20));
       }
-      final img = tester.widget<Image>(find.byType(Image));
-      expect(img.image, isA<AssetImage>(),
+      // errorBuilder keeps the outer Image.network widget and nests the
+      // fallback inside it -> assert the AssetImage twin appeared.
+      final images = tester.widgetList<Image>(find.byType(Image)).toList();
+      final fallbacks =
+          images.where((i) => i.image is AssetImage).toList();
+      expect(fallbacks, hasLength(1),
           reason: 'errorBuilder must swap in the bundled fallback');
-      expect((img.image as AssetImage).assetName,
+      expect((fallbacks.single.image as AssetImage).assetName,
           'assets/images/ratel-idle.webp');
     });
   });
