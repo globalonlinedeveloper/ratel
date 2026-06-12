@@ -24,7 +24,7 @@ void main() {
       home: Scaffold(
           body: ListenableBuilder(
               listenable: appState,
-              builder: (_, __) => Column(children: const [
+              builder: (_, _) => Column(children: const [
                     DailyNudge(),
                     DailyQuestsCard(),
                   ]))));
