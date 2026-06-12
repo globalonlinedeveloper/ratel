@@ -78,14 +78,14 @@ try {
   // guest entry — Tamil label first, English fallback
   const guestTa = ta.getByText('முதலில் முயற்சித்துப் பார்க்கிறேன்');
   const guestEn = ta.getByText('Just let me try it');
-  if (await guestTa.count()) await guestTa.first().click();
-  else if (await guestEn.count()) await guestEn.first().click();
+  if (await guestTa.count()) await guestTa.first().click({ force: true });
+  else if (await guestEn.count()) await guestEn.first().click({ force: true });
   await ta.waitForTimeout(4000);
   // guest entry lands on onboarding — finish it to reach home
   let start = ta.getByText('கற்கத் தொடங்கு'); // ob_start went Tamil in Inc 127
   if (!(await start.count())) start = ta.getByText('Start learning');
   if (await start.count()) {
-    await start.first().click();
+    await start.first().click({ force: true });
     await ta.waitForTimeout(5000);
   }
   await ta.screenshot({ path: 'ta-home-1.png' });
@@ -98,34 +98,38 @@ try {
   // surface the wrong-answer banner, tap Explain (server ta path), then
   // tour Practice/Coach/Leagues tabs. Tamil label first, EN fallback.
   const byTa = async (taTxt, enTxt) => {
-    const t = ta.getByText(taTxt);
-    if (await t.count()) return t.first();
-    const e = ta.getByText(enTxt);
-    return (await e.count()) ? e.first() : null;
+    for (const txt of [taTxt, enTxt]) {
+      const t = ta.getByText(txt);
+      if (await t.count()) return t.first();
+      const a = ta.locator(`flt-semantics-host [aria-label*="${txt}"]`);
+      if (await a.count()) return a.first();
+    }
+    return null;
   };
   const startPill = await byTa('தொடங்கு', 'Start');
   if (startPill) {
-    await startPill.click();
+    const box = await startPill.boundingBox();
+    await ta.mouse.click(box.x + box.width / 2, box.y + box.height / 2 + 52);
     await ta.waitForTimeout(4500);
     await ta.screenshot({ path: 'ta-lesson-1.png' });
     const skip = await byTa('தவிர்', 'Skip');
     if (skip) {
-      await skip.click();
+      await skip.click({ force: true });
       await ta.waitForTimeout(2500);
       await ta.screenshot({ path: 'ta-lesson-2-banner.png' });
       const expl = await byTa('விளக்கு', 'Explain this');
       if (expl) {
-        await expl.click();
+        await expl.click({ force: true });
         await ta.waitForTimeout(8000); // server generate can take a beat
         await ta.screenshot({ path: 'ta-lesson-3-explain.png' });
       }
       // leave the lesson via the quit dialog (X then confirm) — best-effort
       const x = ta.locator('flt-semantics-host [aria-label="Close"]');
       if (await x.count()) {
-        await x.first().click();
+        await x.first().click({ force: true });
         await ta.waitForTimeout(1500);
         const leave = await byTa('வெளியேறு', 'Leave');
-        if (leave) await leave.click();
+        if (leave) await leave.click({ force: true });
         await ta.waitForTimeout(3000);
       }
     }
@@ -137,7 +141,7 @@ try {
   ]) {
     const tab = await byTa(taL, enL);
     if (tab) {
-      await tab.click();
+      await tab.click({ force: true });
       await ta.waitForTimeout(3000);
       await ta.screenshot({ path: shot });
     }
@@ -145,7 +149,7 @@ try {
   const prof = await byTa('சுயவிவரம்', 'Profile') ??
       ta.getByText('Profile');
   if (prof && await prof.count()) {
-    await prof.click();
+    await prof.click({ force: true });
     await ta.waitForTimeout(2500);
     await ta.screenshot({ path: 'ta-profile-1.png' });
     for (let i = 0; i < 2; i++) {
