@@ -565,7 +565,15 @@ void main() {
     expect(find.text('Ratel Pro-வுடன் பயமின்றி முன்னேறுங்கள்'),
         findsOneWidget);
     expect(find.text('வரம்பற்ற இதயங்கள்'), findsOneWidget); // pw_b1_t
-    // the body is a lazy ListView — build the lower items before asserting
+    // the body is a lazy ListView — items must be IN the viewport when
+    // asserted: unbuilt below AND disposed above both find nothing, so
+    // walk the list top-to-bottom asserting at each stop (Inc 139).
+    await tester.scrollUntilVisible(find.text('கோச் செய்திகள்'), 220,
+        scrollable: find.byType(Scrollable).first);
+    expect(find.text('கோச் செய்திகள்'), findsOneWidget); // pw_c_coach
+    await tester.scrollUntilVisible(find.text('ஆண்டுத் திட்டம்'), 220,
+        scrollable: find.byType(Scrollable).first);
+    expect(find.text('ஆண்டுத் திட்டம்'), findsOneWidget); // pw_yearly
     for (var i = 0; i < 3; i++) {
       await tester.drag(find.byType(Scrollable).first, const Offset(0, -900));
       await tester.pump(const Duration(milliseconds: 200));
@@ -573,9 +581,6 @@ void main() {
     expect(
         find.text('7-நாள் இலவச டிரையலைத் தொடங்கு'), findsOneWidget);
     expect(find.textContaining('சோதனை முறை'), findsOneWidget);
-    // Inc 139: compare table + plan cards in ta (built once scrolled)
-    expect(find.text('கோச் செய்திகள்'), findsOneWidget); // pw_c_coach
-    expect(find.text('ஆண்டுத் திட்டம்'), findsOneWidget); // pw_yearly
   });
 
   testWidgets('hearts popover upsell reads Tamil at 360px, BELOW practice',
