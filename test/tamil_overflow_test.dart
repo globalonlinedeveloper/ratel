@@ -266,6 +266,12 @@ const Map<String, String> _ta = {
   'bg_title': 'மாத பேட்ஜ்கள்',
   'ach_title': 'சாதனைகள் ({a}/{b})',
   'ob_speak': 'எனக்கு ஆங்கிலம் பேசத் தெரியும்',
+  // Inc 133 gems popover drafts
+  'gems_title': 'ரத்தினங்கள்',
+  'gems_earn_hint':
+      'காம்போக்கள், தவறில்லாத பாடங்கள், பெட்டிகள் — இவற்றால் ரத்தினங்கள் கிடைக்கும்.',
+  'gem_buy_freeze': 'Streak freeze · {n} ரத்தினங்கள்',
+  'hearts_pro': 'Ratel Pro-வுடன் வரம்பற்ற இதயங்கள்',
   'code_copied': 'குறியீடு நகலெடுக்கப்பட்டது',
 };
 
@@ -471,7 +477,26 @@ void main() {
     _narrowTamil(tester);
     await tester.pumpWidget(const MaterialApp(home: PaywallScreen()));
     await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text('7-நாள் இலவச டிரையலைத் தொடங்கு'), findsOneWidget);
+    // the body is a lazy ListView — build the lower items before asserting
+    for (var i = 0; i < 3; i++) {
+      await tester.drag(find.byType(Scrollable).first, const Offset(0, -900));
+      await tester.pump(const Duration(milliseconds: 200));
+    }
+    expect(
+        find.text('7-நாள் இலவச டிரையலைத் தொடங்கு'), findsOneWidget);
     expect(find.textContaining('சோதனை முறை'), findsOneWidget);
+  });
+
+  testWidgets('gems popover opens from the header and reads Tamil at 360px',
+      (tester) async {
+    _narrowTamil(tester);
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await tester.pump(const Duration(milliseconds: 800));
+    await tester.tap(find.byKey(const Key('gems_stat')));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('ரத்தினங்கள்'), findsOneWidget); // gems_title
+    // spend shortcut present (freezes start at 0 < 2)
+    expect(find.textContaining('Streak freeze ·'), findsOneWidget);
+    expect(find.textContaining('கிடைக்கும்'), findsOneWidget); // earn hint
   });
 }

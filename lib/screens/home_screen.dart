@@ -688,8 +688,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ],
           const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+          Wrap(
+            alignment: WrapAlignment.center,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               TextButton(
                 onPressed: () => launchUrl(Uri.parse(
@@ -1096,6 +1097,88 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _gemsPopover() {
+    final int freezeCost = Flags.instance.intOf('gem_freeze_cost', 200);
+    final int refillCost = Flags.instance.intOf('gem_refill_cost', 350);
+    showDialog<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(S.instance.t('gems_title', 'Gems')),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.diamond,
+                    color: RatelColors.teal, size: 26),
+                const SizedBox(width: 8),
+                Text('${appState.gems}',
+                    style: const TextStyle(
+                        fontSize: 26, fontWeight: FontWeight.w800)),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Text(
+                S.instance.t('gems_earn_hint',
+                    'Earn gems from combos, flawless lessons and chests.'),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    color: RatelColors.textMuted, fontSize: 13)),
+            const SizedBox(height: 14),
+            if (appState.streakFreezes < 2)
+              FilledButton.tonalIcon(
+                onPressed: () async {
+                  final bool ok =
+                      await appState.buyStreakFreeze(cost: freezeCost);
+                  if (ctx.mounted) Navigator.of(ctx).pop();
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(ok
+                          ? S.instance
+                              .t('freeze_added', 'Streak freeze added!')
+                          : S.instance.t('gems_short',
+                              'Not enough gems yet — keep learning!'))));
+                },
+                icon: const Icon(Icons.ac_unit,
+                    color: RatelColors.teal, size: 18),
+                label: Text(S.instance
+                    .t('gem_buy_freeze', 'Streak freeze · {n} gems')
+                    .replaceAll('{n}', '$freezeCost')),
+              ),
+            if (!appState.isPro && appState.hearts < 5) ...[
+              const SizedBox(height: 8),
+              FilledButton.tonalIcon(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  if (appState.gems >= refillCost) {
+                    appState.refillHearts();
+                    appState.spendGems(refillCost);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(S.instance.t('gems_short',
+                            'Not enough gems yet — keep learning!'))));
+                  }
+                },
+                icon: const Icon(Icons.favorite,
+                    color: RatelColors.hearts, size: 18),
+                label: Text(S.instance
+                    .t('refill_label', 'Refill hearts · {n} gems')
+                    .replaceAll('{n}', '$refillCost')),
+              ),
+            ],
+          ],
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(S.instance.t('btn_close', 'Close'))),
+        ],
+      ),
+    );
+  }
+
   void _heartsPopover() {
     final Duration? next = appState.nextHeartIn;
     showDialog<void>(
@@ -1120,7 +1203,8 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 10),
             Text(
                 appState.isPro
-                    ? 'Unlimited hearts with Ratel Pro'
+                    ? S.instance
+                        .t('hearts_pro', 'Unlimited hearts with Ratel Pro')
                     : (appState.hearts >= 5 || next == null)
                         ? S.instance.t('hearts_full',
                             'Hearts full — go get them!')
@@ -1199,10 +1283,11 @@ class _HomeScreenState extends State<HomeScreen> {
               const Icon(Icons.school_outlined,
                   size: 18, color: RatelColors.teal),
               const SizedBox(width: 8),
-              Text(S.instance.t('es_title', 'English Score'),
-                  style: const TextStyle(
-                      fontWeight: FontWeight.w700, fontSize: 14)),
-              const Spacer(),
+              Expanded(
+                child: Text(S.instance.t('es_title', 'English Score'),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700, fontSize: 14)),
+              ),
               Container(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 10, vertical: 3),
@@ -1227,15 +1312,18 @@ class _HomeScreenState extends State<HomeScreen> {
               const Text(' / 100',
                   style: TextStyle(
                       color: RatelColors.textMuted, fontSize: 13)),
-              const Spacer(),
+              const SizedBox(width: 8),
               if (gap > 0)
-                Text(
+                Expanded(
+                  child: Text(
                     S.instance
                         .t('es_gap', '{n} to {band}')
                         .replaceAll('{n}', '$gap')
                         .replaceAll('{band}', cefrFor(score + gap)),
+                    textAlign: TextAlign.right,
                     style: const TextStyle(
                         color: RatelColors.textMuted, fontSize: 12)),
+                ),
             ],
           ),
           const SizedBox(height: 8),
@@ -1287,7 +1375,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: _streakStat(appState.streak),
           ),
           const SizedBox(width: 12),
-          _numStat(Icons.diamond, appState.gems, RatelColors.teal),
+          InkWell(
+            key: const Key('gems_stat'),
+            borderRadius: BorderRadius.circular(8),
+            onTap: _gemsPopover,
+            child: _numStat(Icons.diamond, appState.gems, RatelColors.teal),
+          ),
           const SizedBox(width: 12),
           _numStat(Icons.bolt, appState.xp, RatelColors.honey),
           const SizedBox(width: 12),
