@@ -1455,7 +1455,7 @@ class _LessonScreenState extends State<LessonScreen>
             ),
             IconButton(
               visualDensity: VisualDensity.compact,
-              tooltip: 'Report this exercise',
+              tooltip: S.instance.t('report_btn', 'Report this exercise'),
               onPressed: _reportSheet,
               icon: const Icon(Icons.flag_outlined,
                   size: 18, color: RatelColors.textMuted),

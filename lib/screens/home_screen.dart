@@ -449,31 +449,44 @@ class _HomeScreenState extends State<HomeScreen> {
           const DailyGoalCard(),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-            child: GestureDetector(
-              onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => const PaywallScreen())),
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                      colors: [RatelColors.honey, RatelColors.coral]),
-                  borderRadius: BorderRadius.circular(14),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.workspace_premium, color: Colors.white),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                          appState.isPro
-                              ? 'Ratel Pro is active ✨'
-                              : 'Ratel Pro — unlimited hearts & more',
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w700)),
+            child: MergeSemantics(
+              child: Semantics(
+                button: true,
+                label: appState.isPro
+                    ? S.instance.t('pro_row_active', 'Ratel Pro is active ✨')
+                    : S.instance.t(
+                        'pro_row_title', 'Ratel Pro — unlimited hearts & more'),
+                child: GestureDetector(
+                  key: const Key('pro_row'),
+                  onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                      builder: (_) => const PaywallScreen())),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                          colors: [RatelColors.honey, RatelColors.coral]),
+                      borderRadius: BorderRadius.circular(14),
                     ),
-                    const Icon(Icons.chevron_right, color: Colors.white),
-                  ],
+                    child: Row(
+                      children: [
+                        const Icon(Icons.workspace_premium,
+                            color: Colors.white),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                              appState.isPro
+                                  ? S.instance.t(
+                                      'pro_row_active', 'Ratel Pro is active ✨')
+                                  : S.instance.t('pro_row_title',
+                                      'Ratel Pro — unlimited hearts & more'),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w700)),
+                        ),
+                        const Icon(Icons.chevron_right, color: Colors.white),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -1329,19 +1342,44 @@ class _HomeScreenState extends State<HomeScreen> {
                         '${Flags.instance.intOf('gem_refill_cost', 350)}')),
               ),
             ],
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                  setState(() => _tab = 1);
+                },
+                child: Text(
+                    S.instance.t('hp_practice', 'Practice — earn a heart')),
+              ),
+            ),
+            // KIND upsell — always BELOW the practice-earns-heart option
+            // (anti-goals: no guilt loops, no dark patterns).
+            if (!appState.isPro) ...[
+              const SizedBox(height: 8),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  key: const Key('hearts_pro_upsell'),
+                  onPressed: () {
+                    Navigator.of(ctx).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => const PaywallScreen()));
+                  },
+                  icon: const Icon(Icons.workspace_premium,
+                      color: RatelColors.honey, size: 18),
+                  label: Text(S.instance
+                      .t('pw_upsell', 'Ratel Pro — unlimited hearts')),
+                ),
+              ),
+            ],
           ],
         ),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
               child: Text(S.instance.t('btn_close', 'Close'))),
-          FilledButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              setState(() => _tab = 1);
-            },
-            child: Text(S.instance.t('hp_practice', 'Practice — earn a heart')),
-          ),
         ],
       ),
     );

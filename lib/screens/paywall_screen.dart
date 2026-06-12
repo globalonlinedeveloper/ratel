@@ -34,7 +34,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
   Widget build(BuildContext context) {
     final pro = appState.isPro;
     return Scaffold(
-      appBar: AppBar(title: const Text('Ratel Pro')),
+      appBar: AppBar(title: Text(S.instance.t('pw_title', 'Ratel Pro'))),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
@@ -47,7 +47,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
                     errorBuilder: (_, _, _) => const RatelMascot(
                         pose: RatelPose.celebrate, size: 120)),
                 const SizedBox(height: 8),
-                Text(pro ? "You're Ratel Pro ✨" : 'Go fearless with Ratel Pro',
+                Text(
+                    pro
+                        ? S.instance.t('pw_head_pro', "You're Ratel Pro ✨")
+                        : S.instance
+                            .t('pw_head', 'Go fearless with Ratel Pro'),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         fontSize: 22, fontWeight: FontWeight.w800)),
@@ -55,12 +59,21 @@ class _PaywallScreenState extends State<PaywallScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          _benefit(Icons.favorite, 'Unlimited hearts',
-              'Never get blocked by mistakes — learn at your pace.'),
-          _benefit(Icons.auto_awesome, 'Support development',
-              'Help build the fearless honey badger you love.'),
-          _benefit(Icons.rocket_launch, 'Early access',
-              'New features and content land for Pro first.'),
+          _benefit(
+              Icons.favorite,
+              S.instance.t('pw_b1_t', 'Unlimited hearts'),
+              S.instance.t('pw_b1_s',
+                  'Never get blocked by mistakes — learn at your pace.')),
+          _benefit(
+              Icons.auto_awesome,
+              S.instance.t('pw_b2_t', 'Support development'),
+              S.instance.t('pw_b2_s',
+                  'Help build the fearless honey badger you love.')),
+          _benefit(
+              Icons.rocket_launch,
+              S.instance.t('pw_b3_t', 'Early access'),
+              S.instance.t('pw_b3_s',
+                  'New features and content land for Pro first.')),
           _compareTable(context),
           const SizedBox(height: 20),
           if (pro) ...[
@@ -74,18 +87,20 @@ class _PaywallScreenState extends State<PaywallScreen> {
             const SizedBox(height: 12),
             OutlinedButton(
               onPressed: _busy ? null : _cancel,
-              child: Text(_busy ? 'Working…' : 'Cancel Pro'),
+              child: Text(_busy
+                  ? S.instance.t('pw_working', 'Working…')
+                  : S.instance.t('pw_cancel', 'Cancel Pro')),
             ),
           ] else ...[
             _plan(
-                'Yearly',
+                S.instance.t('pw_yearly', 'Yearly'),
                 Flags.instance.str('price_year', '\$59.99/yr'),
-                'Best value', true),
+                S.instance.t('pw_best_value', 'Best value'), true),
             const SizedBox(height: 10),
             _plan(
-                'Monthly',
+                S.instance.t('pw_monthly', 'Monthly'),
                 Flags.instance.str('price_month', '\$9.99/mo'),
-                'Cancel anytime', false),
+                S.instance.t('pw_cancel_any', 'Cancel anytime'), false),
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,
@@ -177,11 +192,19 @@ class _PaywallScreenState extends State<PaywallScreen> {
           2: FlexColumnWidth(1),
         },
         children: [
-          row('', 'Free', 'Pro', head: true),
-          row('Hearts', '5 + regen', 'Unlimited'),
-          row('Coach messages', '20/day', '200/day'),
-          row('Every lesson & villain', '✓', '✓'),
-          row('Early features', '—', '✓'),
+          row('', S.instance.t('pw_c_free', 'Free'),
+              S.instance.t('pw_c_pro', 'Pro'),
+              head: true),
+          row(
+              S.instance.t('hearts_title', 'Hearts'),
+              S.instance.t('pw_c_regen', '5 + regen'),
+              S.instance.t('pw_c_unlim', 'Unlimited')),
+          row(
+              S.instance.t('pw_c_coach', 'Coach messages'),
+              S.instance.t('pw_c_perday', '{n}/day').replaceAll('{n}', '20'),
+              S.instance.t('pw_c_perday', '{n}/day').replaceAll('{n}', '200')),
+          row(S.instance.t('pw_c_all', 'Every lesson & villain'), '✓', '✓'),
+          row(S.instance.t('pw_c_early', 'Early features'), '—', '✓'),
         ],
       ),
     );
@@ -203,9 +226,11 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(children: [
-                    Text(name,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w700, fontSize: 16)),
+                    Flexible(
+                      child: Text(name,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w700, fontSize: 16)),
+                    ),
                     if (best) ...[
                       const SizedBox(width: 8),
                       Container(

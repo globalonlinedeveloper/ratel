@@ -312,6 +312,33 @@ const Map<String, String> _ta = {
   'comeback_granted':
       'மீண்டும் வரவேற்கிறோம்! அடுத்த {n} நிமிடங்களுக்கு {m}x XP!',
   'code_copied': 'குறியீடு நகலெடுக்கப்பட்டது',
+  // Inc 139 Pro family
+  'pw_upsell': 'Ratel Pro — வரம்பற்ற இதயங்கள்',
+  'pro_row_title': 'Ratel Pro — வரம்பற்ற இதயங்கள், இன்னும் பல',
+  'pro_row_active': 'Ratel Pro செயலில் உள்ளது ✨',
+  'pw_title': 'Ratel Pro',
+  'pw_head': 'Ratel Pro-வுடன் பயமின்றி முன்னேறுங்கள்',
+  'pw_head_pro': 'நீங்கள் Ratel Pro ✨',
+  'pw_b1_t': 'வரம்பற்ற இதயங்கள்',
+  'pw_b1_s': 'தவறுகள் உங்களைத் தடுக்காது — உங்கள் வேகத்தில் கற்றுக்கொள்ளுங்கள்.',
+  'pw_b2_t': 'வளர்ச்சிக்கு ஆதரவு',
+  'pw_b2_s': 'உங்களுக்குப் பிடித்த தேன் கரடியை வளர்க்க உதவுங்கள்.',
+  'pw_b3_t': 'முன்கூட்டிய அணுகல்',
+  'pw_b3_s': 'புதிய அம்சங்கள் Pro-வுக்கு முதலில் வரும்.',
+  'pw_c_free': 'இலவசம்',
+  'pw_c_pro': 'Pro',
+  'pw_c_regen': '5 + மீளும்',
+  'pw_c_unlim': 'வரம்பின்றி',
+  'pw_c_coach': 'கோச் செய்திகள்',
+  'pw_c_perday': '{n}/நாள்',
+  'pw_c_all': 'எல்லா பாடமும் வில்லனும்',
+  'pw_c_early': 'புதிய அம்சங்கள் முதலில்',
+  'pw_yearly': 'ஆண்டுத் திட்டம்',
+  'pw_monthly': 'மாதத் திட்டம்',
+  'pw_best_value': 'சிறந்த மதிப்பு',
+  'pw_cancel_any': 'எப்போதும் ரத்து செய்யலாம்',
+  'pw_working': 'செயல்படுகிறது…',
+  'pw_cancel': 'Pro-வை ரத்து செய்',
 };
 
 const Exercise _c = Exercise.choice(
@@ -534,6 +561,10 @@ void main() {
     _narrowTamil(tester);
     await tester.pumpWidget(const MaterialApp(home: PaywallScreen()));
     await tester.pump(const Duration(milliseconds: 500));
+    // Inc 139: headline + benefit rows render ta at the top of the list
+    expect(find.text('Ratel Pro-வுடன் பயமின்றி முன்னேறுங்கள்'),
+        findsOneWidget);
+    expect(find.text('வரம்பற்ற இதயங்கள்'), findsOneWidget); // pw_b1_t
     // the body is a lazy ListView — build the lower items before asserting
     for (var i = 0; i < 3; i++) {
       await tester.drag(find.byType(Scrollable).first, const Offset(0, -900));
@@ -542,6 +573,25 @@ void main() {
     expect(
         find.text('7-நாள் இலவச டிரையலைத் தொடங்கு'), findsOneWidget);
     expect(find.textContaining('சோதனை முறை'), findsOneWidget);
+    // Inc 139: compare table + plan cards in ta (built once scrolled)
+    expect(find.text('கோச் செய்திகள்'), findsOneWidget); // pw_c_coach
+    expect(find.text('ஆண்டுத் திட்டம்'), findsOneWidget); // pw_yearly
+  });
+
+  testWidgets('hearts popover upsell reads Tamil at 360px, BELOW practice',
+      (tester) async {
+    _narrowTamil(tester);
+    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
+    await tester.pump(const Duration(milliseconds: 800));
+    await tester.tap(find.byKey(const Key('hearts_stat')));
+    await tester.pump(const Duration(milliseconds: 400));
+    final practice = find.text('பயிற்சி செய் — இதயம் பெறு'); // hp_practice
+    final upsell = find.text('Ratel Pro — வரம்பற்ற இதயங்கள்'); // pw_upsell
+    expect(practice, findsOneWidget);
+    expect(upsell, findsOneWidget);
+    // anti-goal guard: the upsell sits BELOW the practice-earns-heart option
+    expect(tester.getTopLeft(upsell).dy > tester.getBottomLeft(practice).dy,
+        isTrue);
   });
 
   testWidgets('gems popover opens from the header and reads Tamil at 360px',
