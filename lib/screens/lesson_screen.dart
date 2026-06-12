@@ -751,7 +751,9 @@ class _LessonScreenState extends State<LessonScreen>
 
   String _bubble() {
     if (!_answered) return _ex.prompt;
-    return _isCorrect ? 'Nice — fearless!' : 'No fear — that is how we learn.';
+    return _isCorrect
+        ? S.instance.t('bub_correct', 'Nice — fearless!')
+        : S.instance.t('bub_wrong', 'No fear — that is how we learn.');
   }
 
   String _correctText() => correctTextFor(_ex);

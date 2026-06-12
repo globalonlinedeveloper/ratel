@@ -3,6 +3,7 @@ import 'ratel_mascot.dart';
 import 'mascot_anim.dart';
 import '../theme.dart';
 import '../app_state.dart';
+import '../strings.dart';
 import 'streak_flame.dart';
 
 /// A welcome-back prompt to restore a recently-broken streak (costs a freeze).
@@ -65,8 +66,9 @@ class _StreakRepairCardState extends State<StreakRepairCard> {
         ),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text('Could not repair right now')));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              S.instance.t('repair_failed', 'Could not repair right now'))));
     }
     setState(() => _busy = false);
   }

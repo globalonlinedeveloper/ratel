@@ -2,6 +2,7 @@ import '../flags.dart';
 import 'package:flutter/material.dart';
 import '../theme.dart';
 import '../app_state.dart';
+import '../strings.dart';
 import '../widgets/ratel_mascot.dart';
 
 /// Ratel Pro paywall. Lists the plan + benefits and starts the 7-day trial.
@@ -99,9 +100,9 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 style: TextStyle(color: RatelColors.textMuted, fontSize: 12)),
             TextButton(
               onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                      content: Text(
-                          'Restore arrives with the store build.'))),
+                  SnackBar(
+                      content: Text(S.instance.t('restore_soon',
+                          'Restore arrives with the store build.')))),
               child: const Text('Restore purchases',
                   style: TextStyle(
                       color: RatelColors.textMuted, fontSize: 12)),

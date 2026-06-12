@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config.dart';
 import '../milestones.dart';
+import '../strings.dart';
 import '../theme.dart';
 
 /// One row of friend activity (from the friends_feed RPC).
@@ -16,7 +17,9 @@ class FeedItem {
 
   factory FeedItem.fromRow(Map<String, dynamic> r) => FeedItem(
         friendId: (r['friend_id'] ?? '').toString(),
-        name: (r['display_name'] ?? 'Badger').toString(),
+        name: (r['display_name'] ??
+                S.instance.t('feed_badger', 'Badger'))
+            .toString(),
         amount: (r['amount'] as num?)?.toInt() ?? 0,
         reason: (r['reason'] ?? '').toString(),
         at: DateTime.tryParse((r['created_at'] ?? '').toString()) ??
@@ -74,7 +77,8 @@ class _FriendsFeedState extends State<FriendsFeed> {
           FeedItem.fromRow(r as Map<String, dynamic>),
         for (final r in cheers)
           FeedItem(
-              name: ((r as Map)['display_name'] ?? 'A friend')
+              name: ((r as Map)['display_name'] ??
+                      S.instance.t('feed_friend', 'A friend'))
                   .toString(),
               amount: 0,
               reason: 'cheer',
@@ -95,11 +99,11 @@ class _FriendsFeedState extends State<FriendsFeed> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.only(top: 18, bottom: 8),
-          child: Text('Friend activity',
-              style:
-                  TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
+        Padding(
+          padding: const EdgeInsets.only(top: 18, bottom: 8),
+          child: Text(S.instance.t('feed_title', 'Friend activity'),
+              style: const TextStyle(
+                  fontWeight: FontWeight.w800, fontSize: 16)),
         ),
         for (final it in items.take(20)) _row(context, it),
       ],
@@ -119,10 +123,14 @@ class _FriendsFeedState extends State<FriendsFeed> {
 
   Widget _row(BuildContext context, FeedItem it) {
     final String what = it.reason == 'cheer'
-        ? 'cheered you on!'
+        ? S.instance.t('feed_cheer', 'cheered you on!')
         : it.reason == 'chest'
-            ? 'opened a chest (+${it.amount} XP)'
-            : 'earned ${it.amount} XP';
+            ? S.instance
+                .t('feed_chest', 'opened a chest (+{n} XP)')
+                .replaceAll('{n}', '${it.amount}')
+            : S.instance
+                .t('feed_xp', 'earned {n} XP')
+                .replaceAll('{n}', '${it.amount}');
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
@@ -145,7 +153,7 @@ class _FriendsFeedState extends State<FriendsFeed> {
           if (it.reason != 'cheer' && it.friendId.isNotEmpty)
             IconButton(
               visualDensity: VisualDensity.compact,
-              tooltip: 'Cheer',
+              tooltip: S.instance.t('cheer_tip', 'Cheer'),
               onPressed: _cheered.contains(it.friendId)
                   ? null
                   : () => _cheer(it),

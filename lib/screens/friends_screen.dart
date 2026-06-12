@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/friends_feed.dart';
+import '../strings.dart';
 import '../theme.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/ratel_mascot.dart';
@@ -95,8 +96,9 @@ class _FriendsScreenState extends State<FriendsScreen> {
                       : () {
                           Clipboard.setData(
                               ClipboardData(text: appState.friendCode));
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Code copied')));
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                              content: Text(S.instance
+                                  .t('code_copied', 'Code copied'))));
                         },
                 ),
               ],

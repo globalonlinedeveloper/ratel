@@ -6,6 +6,9 @@ import 'package:ratel/screens/auth_screen.dart';
 import 'package:ratel/screens/home_screen.dart';
 import 'package:ratel/screens/lesson_screen.dart';
 import 'package:ratel/screens/onboarding_screen.dart';
+import 'package:ratel/screens/section_test_screen.dart';
+import 'package:ratel/milestones.dart';
+import 'package:ratel/widgets/friends_feed.dart';
 import 'package:ratel/strings.dart';
 import 'package:ratel/widgets/daily_chest.dart';
 import 'package:ratel/widgets/monthly_quest.dart';
@@ -133,6 +136,50 @@ const Map<String, String> _ta = {
   'new_achievement': 'புதிய சாதனை!',
   'mistakes_cleared': 'தவறுகள் சரியாகிவிட்டன!',
   'explain_btn': 'விளக்கு',
+  // Inc 130 mop-up batch drafts (owner spot-check pending, live-editable)
+  'bub_correct': 'அருமை — பயமில்லை!',
+  'bub_wrong': 'பயம் வேண்டாம் — இப்படித்தான் கற்கிறோம்.',
+  'gb_title': 'வழிகாட்டி · {sub}',
+  'gb_sub': 'இந்த யூனிட்டின் முக்கியச் சொற்றொடர்கள்',
+  'node_done_body':
+      'இதை அருமையாக முடித்தீர்கள். ஒரு சிறு பயிற்சி நினைவில் வைத்திருக்க உதவும்!',
+  'node_locked_body': 'திறக்க, மேலே உள்ள பாதையை முடியுங்கள்!',
+  'btn_close': 'மூடு',
+  'node_practice': 'மீண்டும் பயிற்சி',
+  'chest_title': 'ஒரு பரிசுப் பெட்டி!',
+  'chest_locked': 'திறக்க, மேலே உள்ள மூன்று பாடங்களை முடியுங்கள்.',
+  'btn_ok': 'சரி',
+  'chest_found_title': '20 XP மற்றும் 5 ரத்தினங்கள் கிடைத்தன!',
+  'chest_found_body': 'தேன் கரடி பாராட்டுகிறது. தொடருங்கள்!',
+  'btn_claim': 'பெற்றுக்கொள்',
+  'streak_days_title': '{n} நாள் தொடர்',
+  'freezes_count': 'Freezes: {n}/2',
+  'freeze_get': 'ஒன்று வாங்க · {n} ரத்தினங்கள்',
+  'freeze_added': 'Streak freeze சேர்க்கப்பட்டது!',
+  'streak_tip': 'தொடர் முறியாமல் இருக்க, தினமும் பயிற்சி செய்யுங்கள்!',
+  'feed_title': 'நண்பர்களின் செயல்பாடு',
+  'feed_cheer': 'உங்களை உற்சாகப்படுத்தினார்!',
+  'feed_chest': 'ஒரு பெட்டியைத் திறந்தார் (+{n} XP)',
+  'feed_xp': '{n} XP சம்பாதித்தார்',
+  'cheer_tip': 'உற்சாகப்படுத்து',
+  'feed_badger': 'தேன் கரடி',
+  'feed_friend': 'ஒரு நண்பர்',
+  'st_title': 'தேர்வு · {t}',
+  'st_progress': '{b}-இல் {a}',
+  'btn_next': 'அடுத்து',
+  'st_see_result': 'முடிவைப் பார்',
+  'st_pass': 'முன்னே தாவிவிட்டீர்கள்!',
+  'st_fail': 'இன்னும் இல்லை — தொடருங்கள்!',
+  'st_pass_body':
+      '{t} திறக்கப்பட்டது. முந்தைய பாடங்கள் பயிற்சிக்காகத் திறந்தே இருக்கும்.',
+  'st_fail_body':
+      '{b}-இல் {a} சரி. இன்னும் கொஞ்சம் பயிற்சியில் இந்தப் பகுதி உங்களுடையதே.',
+  'test_out': 'தேர்வு எழுது',
+  'friend_added': 'உங்கள் அழைப்பு இணைப்பால் நண்பர் சேர்க்கப்பட்டார் ({code})!',
+  'delete_failed': 'இப்போது நீக்க முடியவில்லை — மீண்டும் முயற்சிக்கவும்.',
+  'repair_failed': 'இப்போது சரிசெய்ய முடியவில்லை',
+  'restore_soon': 'ஸ்டோர் பதிப்புடன் மீட்டமைப்பு வரும்.',
+  'code_copied': 'குறியீடு நகலெடுக்கப்பட்டது',
 };
 
 const Exercise _c = Exercise.choice(
@@ -268,5 +315,48 @@ void main() {
     FlutterError.onError = old; // restore BEFORE expect (binding rule)
     expect(overflows, isEmpty,
         reason: overflows.join('\n────────\n'));
+  });
+
+  testWidgets('friends feed rows read Tamil at 360px, no overflow',
+      (tester) async {
+    _narrowTamil(tester);
+    final now = DateTime.now();
+    final items = [
+      FeedItem(
+          name: 'வெற்றிவேல்',
+          amount: 120,
+          reason: 'xp',
+          at: now,
+          friendId: 'f1'),
+      FeedItem(
+          name: 'அன்புச்செல்வி',
+          amount: 20,
+          reason: 'chest',
+          at: now.subtract(const Duration(hours: 3)),
+          friendId: 'f2'),
+      FeedItem(
+          name: 'தோழி',
+          amount: 0,
+          reason: 'cheer',
+          at: now.subtract(const Duration(hours: 5))),
+    ];
+    await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+            body: ListView(children: [FriendsFeed(items: items)]))));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('நண்பர்களின் செயல்பாடு'), findsOneWidget);
+    expect(find.textContaining('சம்பாதித்தார்'), findsOneWidget);
+    expect(find.textContaining('உற்சாகப்படுத்தினார்'), findsOneWidget);
+  });
+
+  testWidgets('section test reads Tamil at 360px, no overflow',
+      (tester) async {
+    _narrowTamil(tester);
+    await tester.pumpWidget(
+        MaterialApp(home: SectionTestScreen(section: kSections[1])));
+    await tester.pump(const Duration(milliseconds: 400));
+    // appbar title renders through st_title (Tamil), progress through
+    // st_progress; any overflow at 360px fails the test automatically
+    expect(find.textContaining('தேர்வு'), findsWidgets);
   });
 }

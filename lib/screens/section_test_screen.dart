@@ -4,6 +4,7 @@ import '../app_state.dart';
 import '../milestones.dart';
 import '../placement.dart';
 import '../sfx.dart';
+import '../strings.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
 
@@ -65,14 +66,16 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
         body: Center(
           child: TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Close')),
+              child: Text(S.instance.t('btn_close', 'Close'))),
         ),
       );
     }
     final ex = _probes[_i].exercise;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Test out · ${widget.section.title}'),
+        title: Text(S.instance
+            .t('st_title', 'Test out · {t}')
+            .replaceAll('{t}', widget.section.title)),
       ),
       body: SafeArea(
         child: Padding(
@@ -80,7 +83,11 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('${_i + 1} of ${_probes.length}',
+              Text(
+                  S.instance
+                      .t('st_progress', '{a} of {b}')
+                      .replaceAll('{a}', '${_i + 1}')
+                      .replaceAll('{b}', '${_probes.length}'),
                   style: const TextStyle(
                       color: RatelColors.textMuted,
                       fontWeight: FontWeight.w700)),
@@ -132,8 +139,9 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
                       backgroundColor: RatelColors.teal,
                       padding: const EdgeInsets.symmetric(vertical: 16)),
                   onPressed: _sel == null ? null : _answer,
-                  child: Text(
-                      _i + 1 < _probes.length ? 'Next' : 'See result'),
+                  child: Text(_i + 1 < _probes.length
+                      ? S.instance.t('btn_next', 'Next')
+                      : S.instance.t('st_see_result', 'See result')),
                 ),
               ),
             ],
@@ -158,17 +166,29 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
                         : RatelPose.encourage,
                     size: 120),
                 const SizedBox(height: 14),
-                Text(_passed ? 'You jumped ahead!' : 'Not yet — keep going!',
+                Text(
+                    _passed
+                        ? S.instance.t('st_pass', 'You jumped ahead!')
+                        : S.instance.t('st_fail', 'Not yet — keep going!'),
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w800)),
                 const SizedBox(height: 8),
                 Text(
                     _passed
-                        ? '${widget.section.title} is unlocked. '
-                            'Earlier lessons stay open for practice.'
-                        : 'You got $_correct of ${_probes.length}. '
-                            'A little more practice and this section '
-                            'is yours.',
+                        ? S.instance
+                            .t(
+                                'st_pass_body',
+                                '{t} is unlocked. '
+                                'Earlier lessons stay open for practice.')
+                            .replaceAll('{t}', widget.section.title)
+                        : S.instance
+                            .t(
+                                'st_fail_body',
+                                'You got {a} of {b}. '
+                                'A little more practice and this section '
+                                'is yours.')
+                            .replaceAll('{a}', '$_correct')
+                            .replaceAll('{b}', '${_probes.length}'),
                     textAlign: TextAlign.center,
                     style:
                         const TextStyle(color: RatelColors.textMuted)),
@@ -181,7 +201,7 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
                         padding:
                             const EdgeInsets.symmetric(vertical: 16)),
                     onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Continue'),
+                    child: Text(S.instance.t('btn_continue', 'Continue')),
                   ),
                 ),
               ],

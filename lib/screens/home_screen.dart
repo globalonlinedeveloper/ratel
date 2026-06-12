@@ -97,8 +97,10 @@ class _HomeScreenState extends State<HomeScreen> {
     appState.redeemPendingFriendCode().then((code) {
       if (code != null && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Friend added from your invite link '
-                '($code)!')));
+            content: Text(S.instance
+                .t('friend_added',
+                    'Friend added from your invite link ({code})!')
+                .replaceAll('{code}', code))));
       }
     });
   }
@@ -734,9 +736,9 @@ class _HomeScreenState extends State<HomeScreen> {
       appState.reset();
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content:
-                Text("Couldn't delete right now — please try again.")));
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(S.instance.t('delete_failed',
+                "Couldn't delete right now — please try again."))));
       }
     }
   }
@@ -901,12 +903,14 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (ctx) => AlertDialog(
         title: Text(lesson.title),
         content: Text(done
-            ? 'You aced this one. A quick practice keeps it fresh!'
-            : 'Complete the path above to unlock!'),
+            ? S.instance.t('node_done_body',
+                'You aced this one. A quick practice keeps it fresh!')
+            : S.instance
+                .t('node_locked_body', 'Complete the path above to unlock!')),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Close')),
+              child: Text(S.instance.t('btn_close', 'Close'))),
           if (done)
             FilledButton(
               style: FilledButton.styleFrom(backgroundColor: unitAccent(u)),
@@ -920,7 +924,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.of(context).push(ratelRoute(
                     LessonScreen(lesson: lesson, reviewMode: true)));
               },
-              child: const Text('Practice again'),
+              child: Text(S.instance.t('node_practice', 'Practice again')),
             ),
         ],
       ),
@@ -956,12 +960,13 @@ class _HomeScreenState extends State<HomeScreen> {
       showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('A reward chest!'),
-          content: const Text('Finish the three lessons above to open it.'),
+          title: Text(S.instance.t('chest_title', 'A reward chest!')),
+          content: Text(S.instance.t('chest_locked',
+              'Finish the three lessons above to open it.')),
           actions: [
             TextButton(
                 onPressed: () => Navigator.of(ctx).pop(),
-                child: const Text('OK')),
+                child: Text(S.instance.t('btn_ok', 'OK'))),
           ],
         ),
       );
@@ -978,12 +983,14 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('You found 20 XP and 5 gems!'),
-        content: const Text('The honey badger approves. Keep going!'),
+        title: Text(S.instance.t('chest_found_title',
+            'You found 20 XP and 5 gems!')),
+        content: Text(S.instance.t('chest_found_body',
+            'The honey badger approves. Keep going!')),
         actions: [
           FilledButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Claim')),
+              child: Text(S.instance.t('btn_claim', 'Claim'))),
         ],
       ),
     );
@@ -998,7 +1005,10 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('${appState.streak}-day streak',
+            Text(
+                S.instance
+                    .t('streak_days_title', '{n}-day streak')
+                    .replaceAll('{n}', '${appState.streak}'),
                 style: const TextStyle(
                     fontSize: 18, fontWeight: FontWeight.w800)),
             Padding(
@@ -1009,7 +1019,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   const Icon(Icons.ac_unit,
                       color: RatelColors.teal, size: 18),
                   const SizedBox(width: 6),
-                  Text('Freezes: ${appState.streakFreezes}/2',
+                  Text(
+                      S.instance
+                          .t('freezes_count', 'Freezes: {n}/2')
+                          .replaceAll(
+                              '{n}', '${appState.streakFreezes}'),
                       style: const TextStyle(
                           fontSize: 13, fontWeight: FontWeight.w600)),
                   const SizedBox(width: 10),
@@ -1024,22 +1038,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                                 content: Text(ok
-                                    ? 'Streak freeze added!'
-                                    : 'Not enough gems yet — '
-                                        'keep learning!')));
+                                    ? S.instance.t('freeze_added',
+                                        'Streak freeze added!')
+                                    : S.instance.t(
+                                        'gems_short',
+                                        'Not enough gems yet — '
+                                        'keep learning!'))));
                       },
-                      child: Text('Get one · '
-                          '${Flags.instance.intOf('gem_freeze_cost', 200)}'
-                          ' gems'),
+                      child: Text(S.instance
+                          .t('freeze_get', 'Get one · {n} gems')
+                          .replaceAll(
+                              '{n}',
+                              '${Flags.instance.intOf('gem_freeze_cost', 200)}')),
                     ),
                 ],
               ),
             ),
             const StreakCalendar(),
-            const Padding(
-              padding: EdgeInsets.fromLTRB(24, 2, 24, 8),
-              child: Text("Practice every day so your streak won't break!",
-                  style: TextStyle(
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 2, 24, 8),
+              child: Text(
+                  S.instance.t('streak_tip',
+                      "Practice every day so your streak won't break!"),
+                  style: const TextStyle(
                       color: RatelColors.textMuted, fontSize: 13)),
             ),
           ],
@@ -1111,7 +1132,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('Close')),
+              child: Text(S.instance.t('btn_close', 'Close'))),
           FilledButton(
             onPressed: () {
               Navigator.of(ctx).pop();
@@ -1315,15 +1336,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   Icon(Icons.menu_book, color: unitAccent(index)),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: Text('Guidebook · ${unit.subtitle}',
+                    child: Text(
+                        S.instance
+                            .t('gb_title', 'Guidebook · {sub}')
+                            .replaceAll('{sub}', unit.subtitle),
                         style: const TextStyle(
                             fontSize: 17, fontWeight: FontWeight.w800)),
                   ),
                 ],
               ),
               const SizedBox(height: 4),
-              const Text('Key phrases from this unit',
-                  style: TextStyle(
+              Text(S.instance.t('gb_sub', 'Key phrases from this unit'),
+                  style: const TextStyle(
                       color: RatelColors.textMuted, fontSize: 12.5)),
               const SizedBox(height: 12),
               for (final (i, entry)
@@ -1464,7 +1488,7 @@ class _HomeScreenState extends State<HomeScreen> {
               onPressed: () => Navigator.of(context)
                   .push(ratelRoute(SectionTestScreen(section: s)))
                   .then((_) => setState(() {})),
-              child: const Text('Test out'),
+              child: Text(S.instance.t('test_out', 'Test out')),
             )
           else
             Text('$unitsDone/$total units',
