@@ -27,7 +27,12 @@ class AnniversaryCard extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      ListenableBuilder(listenable: appState, builder: (c, _) => _live(c));
+
+  // Self-listening: const on Home + reads appState.todayXp (same freeze
+  // class as DailyNudge — see QA #2 P2 / Inc 135).
+  Widget _live(BuildContext context) {
     final int years = _years();
     if (years < 1 || appState.todayXp <= 0) {
       return const SizedBox.shrink();

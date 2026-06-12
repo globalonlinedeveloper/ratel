@@ -13,7 +13,13 @@ class DailyNudge extends StatelessWidget {
   const DailyNudge({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      ListenableBuilder(listenable: appState, builder: (c, _) => _live(c));
+
+  // Const-instantiated in the always-mounted Home column: parent rebuilds
+  // SKIP identical const children, so an appState reader must listen itself
+  // or it freezes at first-build values (QA #2 P2 — guest goal banner).
+  Widget _live(BuildContext context) {
     final goal = appState.dailyGoalXp <= 0 ? 50 : appState.dailyGoalXp;
     final today = appState.todayXp;
     final streak = appState.streak;

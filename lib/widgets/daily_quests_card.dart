@@ -12,7 +12,12 @@ class DailyQuestsCard extends StatelessWidget {
   const DailyQuestsCard({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      ListenableBuilder(listenable: appState, builder: (c, _) => _live(c));
+
+  // Self-listening for the same reason as DailyNudge: const on Home means
+  // parent rebuilds never reach build() — progress froze at 0 (QA #2 P2).
+  Widget _live(BuildContext context) {
     final quests = questsForToday();
     final done = quests.where((q) => questDone(q, appState)).length;
     return Container(
