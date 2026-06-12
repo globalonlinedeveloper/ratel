@@ -123,10 +123,10 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
                         fallbackPose: RatelPose.celebrate,
                         size: 52),
                     const SizedBox(width: 8),
-                    const Expanded(
+                    Expanded(
                       child: Text(
               S.instance.t('lg_promo', 'Promotion zone — hold your spot!'),
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontWeight: FontWeight.w700,
                               color: RatelColors.honey)),
                     ),

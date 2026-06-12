@@ -171,10 +171,10 @@ class _TimedChallengeScreenState extends State<TimedChallengeScreen> {
               '$_boostCost ${S.instance.t('tc_gems', 'gems')}'),
                   )
                 else
-                  const Padding(
-                    padding: EdgeInsets.only(bottom: 4),
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
                     child: Text(S.instance.t('tc_armed', '+15s boost armed!'),
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: RatelColors.coral,
                             fontWeight: FontWeight.w800)),
                   ),

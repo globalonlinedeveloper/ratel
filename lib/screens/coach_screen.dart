@@ -177,17 +177,17 @@ class _CoachScreenState extends State<CoachScreen> {
           ),
         ),
         if (_waiting)
-          const Padding(
-            padding: EdgeInsets.only(left: 20, bottom: 6),
+          Padding(
+            padding: const EdgeInsets.only(left: 20, bottom: 6),
             child: Row(
               children: [
-                SizedBox(
+                const SizedBox(
                     width: 14,
                     height: 14,
                     child: CircularProgressIndicator(strokeWidth: 2)),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Text(S.instance.t('coach_typing', 'Ratel is typing...'),
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: RatelColors.textMuted, fontSize: 13)),
               ],
             ),

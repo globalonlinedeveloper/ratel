@@ -87,7 +87,7 @@ Future<void> showShareCard(BuildContext context) {
                       '${appState.friendCode} at '
                       'https://globalonlinedeveloper.github.io/ratel/'));
               Navigator.of(ctx).pop();
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(S.instance
             .t('sh_copied', 'Invite copied — paste it anywhere!'))));
             },

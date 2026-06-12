@@ -65,7 +65,7 @@ class _SaveAccountSheetState extends State<SaveAccountSheetBody> {
       appState.notify();
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(S.instance
             .t('sv_done', 'Progress saved — welcome to the sett!'))));
       }
