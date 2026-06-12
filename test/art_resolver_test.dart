@@ -27,7 +27,6 @@ void main() {
   });
 
   tearDown(() {
-    debugNetworkImageHttpClientProvider = null;
     Art.instance.debugSet(paths: {}, publicBase: _base, bundled: {});
   });
 
@@ -91,6 +90,7 @@ void main() {
       for (var i = 0; i < 6; i++) {
         await tester.pump(const Duration(milliseconds: 20));
       }
+      debugNetworkImageHttpClientProvider = null; // invariant check pre-tearDown
     });
 
     testWidgets('remote failure falls back to the bundled static (404)',
@@ -110,6 +110,7 @@ void main() {
           reason: 'errorBuilder must swap in the bundled fallback');
       expect((fallbacks.single.image as AssetImage).assetName,
           'assets/images/ratel-idle.webp');
+      debugNetworkImageHttpClientProvider = null; // invariant check pre-tearDown
     });
   });
 }
