@@ -1,3 +1,5 @@
+# DEPRECATED (Inc 122): per-frame normalization caused size-pumping,
+# clipping and dropped satellites in EVERY loop. Use assemble_v2.py.
 import os
 
 import numpy as np
