@@ -5,6 +5,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'art.dart';
 import 'flags.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'strings.dart';
@@ -48,6 +49,7 @@ Future<void> main() async {
   await Flags.instance.load(); // remote config before dependent loads
   await S.instance.load(); // server copy (in-code defaults if offline)
   await S.instance.restoreLocale();
+  await Art.instance.load(); // remote art index (bundled-first, Inc 140)
   // share-link friend code (web): stow now, redeem after sign-in
   try {
     final code = friendCodeFromUri(Uri.base);
