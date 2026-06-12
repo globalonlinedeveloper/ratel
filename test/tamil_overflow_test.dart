@@ -490,13 +490,16 @@ void main() {
   testWidgets('gems popover opens from the header and reads Tamil at 360px',
       (tester) async {
     _narrowTamil(tester);
+    appState.streakFreezes = 0; // reset() leaves 2 -> shortcut hidden
+    appState.hearts = 2; // < 5 -> refill shortcut shows too
     await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
     await tester.pump(const Duration(milliseconds: 800));
     await tester.tap(find.byKey(const Key('gems_stat')));
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('ரத்தினங்கள்'), findsOneWidget); // gems_title
-    // spend shortcut present (freezes start at 0 < 2)
+    // both spend shortcuts present in the spendable state
     expect(find.textContaining('Streak freeze ·'), findsOneWidget);
+    expect(find.textContaining('நிரப்பு'), findsOneWidget); // refill_label
     expect(find.textContaining('கிடைக்கும்'), findsOneWidget); // earn hint
   });
 }
