@@ -61,6 +61,12 @@ class S {
     return pseudo ? _pseudoize(base) : base;
   }
 
+  /// Locale pick for DB-localized CONTENT (unit/lesson titles): the Tamil
+  /// value when the app is in Tamil and a non-empty [ta] exists, else the
+  /// English source. Mirrors the i18n default-fallback so EN stays byte-identical.
+  String tr(String en, String ta) =>
+      (locale == 'ta' && ta.trim().isNotEmpty) ? ta : en;
+
   String _resolve(String key, String def) {
     final row = _rows[key];
     if (row == null) return def;

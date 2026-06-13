@@ -21,8 +21,8 @@ class ContentStore {
     try {
       final c = Supabase.instance.client;
       final res = await Future.wait([
-        c.from('content_units').select('id,title,subtitle,sort_order'),
-        c.from('content_lessons').select('id,unit_id,title,sort_order,node_id'),
+        c.from('content_units').select('id,title,subtitle,title_ta,subtitle_ta,sort_order'),
+        c.from('content_lessons').select('id,unit_id,title,title_ta,sort_order,node_id'),
         c.from('content_exercises').select(
             'lesson_id,sort_order,type,prompt,sentence,options,correct_index,correct_order'),
       ]).timeout(const Duration(seconds: 5));
@@ -133,6 +133,7 @@ class ContentStore {
         builtLessons.add(Lesson(
           id: lid,
           title: (l['title'] ?? '').toString(),
+          titleTa: (l['title_ta'] ?? '').toString(),
           exercises: exs.map(toExercise).toList(),
         ));
       }
@@ -140,6 +141,8 @@ class ContentStore {
       out.add(Unit(
         title: (u['title'] ?? '').toString(),
         subtitle: (u['subtitle'] ?? '').toString(),
+        titleTa: (u['title_ta'] ?? '').toString(),
+        subtitleTa: (u['subtitle_ta'] ?? '').toString(),
         lessons: builtLessons,
       ));
     }

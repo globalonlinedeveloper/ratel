@@ -1,3 +1,4 @@
+import 'strings.dart';
 /// Exercise types supported by the lesson player.
 enum ExerciseType {
   choice,
@@ -121,15 +122,37 @@ class Exercise {
 /// A lesson is an ordered list of exercises.
 class Lesson {
   final String id;
-  final String title;
+  final String titleEn;
+  final String titleTa; // Tamil draft (Inc 158); '' -> EN fallback
   final List<Exercise> exercises;
-  const Lesson({required this.id, required this.title, required this.exercises});
+  const Lesson({
+    required this.id,
+    required String title,
+    this.titleTa = '',
+    required this.exercises,
+  }) : titleEn = title;
+
+  /// Locale-aware display title (Inc 158).
+  String get title => S.instance.tr(titleEn, titleTa);
 }
 
 /// A unit groups lessons under a theme.
 class Unit {
-  final String title;
-  final String subtitle;
+  final String titleEn;
+  final String subtitleEn;
+  final String titleTa; // Tamil drafts (Inc 158); '' -> EN fallback
+  final String subtitleTa;
   final List<Lesson> lessons;
-  const Unit({required this.title, required this.subtitle, required this.lessons});
+  const Unit({
+    required String title,
+    required String subtitle,
+    this.titleTa = '',
+    this.subtitleTa = '',
+    required this.lessons,
+  })  : titleEn = title,
+        subtitleEn = subtitle;
+
+  /// Locale-aware display strings (Inc 158).
+  String get title => S.instance.tr(titleEn, titleTa);
+  String get subtitle => S.instance.tr(subtitleEn, subtitleTa);
 }
