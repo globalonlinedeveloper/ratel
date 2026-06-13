@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'models.dart';
 import 'content.dart';
@@ -11,12 +12,17 @@ class ContentStore {
   ContentStore._();
   static final ContentStore instance = ContentStore._();
 
+  /// lesson id -> curriculum node id (Inc 151), filled from the DB on
+  /// load. Empty for the built-in offline course, which the node score
+  /// tolerates by falling back to the legacy formula.
+  final Map<String, String> lessonNode = {};
+
   Future<void> load() async {
     try {
       final c = Supabase.instance.client;
       final res = await Future.wait([
         c.from('content_units').select('id,title,subtitle,sort_order'),
-        c.from('content_lessons').select('id,unit_id,title,sort_order'),
+        c.from('content_lessons').select('id,unit_id,title,sort_order,node_id'),
         c.from('content_exercises').select(
             'lesson_id,sort_order,type,prompt,sentence,options,correct_index,correct_order'),
       ]).timeout(const Duration(seconds: 5));
@@ -39,6 +45,7 @@ class ContentStore {
     List<Map<String, dynamic>> lessons,
     List<Map<String, dynamic>> exercises,
   ) {
+    lessonNode.clear();
     int ord(Map<String, dynamic> m) => (m['sort_order'] as num?)?.toInt() ?? 0;
 
     // exercises grouped by lesson, sorted by sort_order
@@ -119,6 +126,8 @@ class ContentStore {
       final builtLessons = <Lesson>[];
       for (final l in uLessons) {
         final lid = (l['id'] ?? '').toString();
+        final nid = (l['node_id'] ?? '').toString();
+        if (nid.isNotEmpty) lessonNode[lid] = nid;
         final exs = [...(exByLesson[lid] ?? <Map<String, dynamic>>[])]
           ..sort((a, b) => ord(a).compareTo(ord(b)));
         builtLessons.add(Lesson(
@@ -135,5 +144,12 @@ class ContentStore {
       ));
     }
     return out;
+  }
+
+  @visibleForTesting
+  void debugSetLessonNode(Map<String, String> m) {
+    lessonNode
+      ..clear()
+      ..addAll(m);
   }
 }

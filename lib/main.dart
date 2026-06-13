@@ -17,6 +17,7 @@ import 'config.dart';
 import 'sfx.dart';
 import 'explain_store.dart';
 import 'content_store.dart';
+import 'nodes.dart';
 import 'screens/auth_gate.dart';
 import 'screens/home_screen.dart';
 import 'widgets/aurora_background.dart';
@@ -63,6 +64,7 @@ Future<void> main() async {
   await loadBattleMode();
   await ExplainStore.instance.load();
   await ContentStore.instance.load();
+  await Nodes.instance.load(); // curriculum spine for the node English Score
   Push.instance.refreshIfGranted(); // fire-and-forget token upkeep
   runApp(const RatelApp());
 }

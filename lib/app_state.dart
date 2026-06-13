@@ -1,4 +1,7 @@
 import 'milestones.dart';
+import 'content_store.dart';
+import 'nodes.dart';
+import 'score.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -32,6 +35,11 @@ class AppState extends ChangeNotifier {
   bool isPro = false;
   List<String> dueKeys = [];
   final Set<String> _completed = <String>{};
+
+  /// The signed-in user's attempt history (exercise_key + correctness),
+  /// loaded on [sync] and appended on [logAttempt]. Powers the node
+  /// English Score and node-scoped weak areas (Inc 151). Bounded.
+  final List<({String key, bool correct})> _attempts = [];
 
   bool isCompleted(String lessonId) => _completed.contains(lessonId);
   int get completedCount => _completed.length;
@@ -102,6 +110,7 @@ class AppState extends ChangeNotifier {
     await _loadTodayXp(client);
     await _loadPro(client);
     await _loadDueReviews(client);
+    await _loadAttempts(client);
     loaded = true;
     notifyListeners();
   }
@@ -189,6 +198,51 @@ class AppState extends ChangeNotifier {
     } catch (_) {
       dueKeys = [];
     }
+  }
+
+  /// Load the signed-in user's attempts (own rows via RLS) for the node
+  /// score and weak-area mastery (Inc 151).
+  Future<void> _loadAttempts(SupabaseClient client) async {
+    try {
+      final uid = client.auth.currentUser?.id;
+      if (uid == null) return;
+      final rows = await client
+          .from('attempts')
+          .select('exercise_key, is_correct')
+          .eq('user_id', uid)
+          .limit(5000);
+      _attempts.clear();
+      for (final r in List<Map<String, dynamic>>.from(rows)) {
+        final k = (r['exercise_key'] ?? '').toString();
+        if (k.isEmpty) continue;
+        _attempts.add((key: k, correct: (r['is_correct'] as bool?) ?? true));
+      }
+    } catch (_) {
+      // Leave whatever we have; the score falls back if empty.
+    }
+  }
+
+  /// CEFR-band-weighted node-mastery English Score (Inc 151). Falls back to
+  /// the legacy completion+streak score when curriculum/attempt data isn't
+  /// loaded yet (guest, offline, pre-content) so it is never wrongly zero.
+  int englishScoreNode(int totalLessons) {
+    final bands = Nodes.instance.bands;
+    final lessonNode = ContentStore.instance.lessonNode;
+    if (bands.isEmpty || lessonNode.isEmpty || _attempts.isEmpty) {
+      return currentEnglishScore(completedCount, totalLessons, streak);
+    }
+    return nodeEnglishScore(nodeMastery(_attempts, lessonNode), bands);
+  }
+
+  /// Correct/total per skill node, for node-scoped weak areas (Inc 151).
+  Map<String, ({int correct, int total})> get nodeTally =>
+      nodeTallies(_attempts, ContentStore.instance.lessonNode);
+
+  @visibleForTesting
+  void debugSetAttempts(List<({String key, bool correct})> a) {
+    _attempts
+      ..clear()
+      ..addAll(a);
   }
 
   /// Record an answer into the spaced-repetition schedule (fire-and-forget).
@@ -398,6 +452,7 @@ class AppState extends ChangeNotifier {
     onboarded = true;
     isPro = false;
     _completed.clear();
+    _attempts.clear();
     notifyListeners();
   }
 
@@ -545,6 +600,7 @@ class AppState extends ChangeNotifier {
   }) async {
     final client = _client;
     if (client == null) return;
+    _attempts.add((key: '$lessonId:$exerciseIndex', correct: isCorrect));
     try {
       await client.from('attempts').insert({
         'lesson_id': lessonId,

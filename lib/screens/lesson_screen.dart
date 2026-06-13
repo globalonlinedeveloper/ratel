@@ -1351,8 +1351,7 @@ class _LessonScreenState extends State<LessonScreen>
     final int totalLessons = [
       for (final u in course) u.lessons.length
     ].fold(0, (a, b) => a + b);
-    return currentEnglishScore(
-        appState.completedCount, totalLessons, appState.streak);
+    return appState.englishScoreNode(totalLessons);
   }
 
   // ---- report this exercise ----

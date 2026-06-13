@@ -1,63 +1,31 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import '../theme.dart';
-import '../content.dart';
+import '../app_state.dart';
+import '../score.dart';
 import '../strings.dart';
+import '../theme.dart';
 
-/// A no-cost analytics card: overall accuracy + the lessons the signed-in user
-/// struggles with most, from the my_weak_areas() RPC (per-lesson stats over
-/// public.attempts, own rows only). Renders nothing when signed out / no data.
-class WeakAreasSummary extends StatefulWidget {
+/// A no-cost analytics card: overall accuracy + the SKILLS (curriculum nodes)
+/// the signed-in learner is weakest at, computed from their own attempts
+/// (Inc 151 — node-scoped, replacing the per-lesson `my_weak_areas` RPC so it
+/// stays consistent with the node-based English Score). Renders nothing when
+/// signed out or with no graded attempts yet.
+class WeakAreasSummary extends StatelessWidget {
   const WeakAreasSummary({super.key});
 
   @override
-  State<WeakAreasSummary> createState() => _WeakAreasSummaryState();
-}
-
-class _WeakAreasSummaryState extends State<WeakAreasSummary> {
-  late final Future<List<Map<String, dynamic>>> _future = _load();
-
-  SupabaseClient? get _client {
-    try {
-      final c = Supabase.instance.client;
-      return c.auth.currentSession != null ? c : null;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  Future<List<Map<String, dynamic>>> _load() async {
-    final c = _client;
-    if (c == null) return [];
-    try {
-      final res = await c.rpc('my_weak_areas');
-      return List<Map<String, dynamic>>.from(res as List);
-    } catch (_) {
-      return [];
-    }
-  }
-
-  int _i(dynamic v) => (v as num?)?.toInt() ?? 0;
-
-  @override
   Widget build(BuildContext context) {
-    if (_client == null) return const SizedBox.shrink();
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _future,
-      builder: (context, snap) {
-        if (snap.connectionState != ConnectionState.done) {
-          return const SizedBox.shrink();
-        }
-        final rows = snap.data ?? const [];
-        var total = 0, wrong = 0;
-        for (final r in rows) {
-          total += _i(r['total']);
-          wrong += _i(r['wrong']);
+    return ListenableBuilder(
+      listenable: appState,
+      builder: (context, _) {
+        final tally = appState.nodeTally;
+        var total = 0, correct = 0;
+        for (final t in tally.values) {
+          total += t.total;
+          correct += t.correct;
         }
         if (total == 0) return const SizedBox.shrink();
-        final acc = ((total - wrong) * 100 / total).round();
-        final weak =
-            rows.where((r) => _i(r['wrong']) > 0).take(3).toList();
+        final acc = (correct * 100 / total).round();
+        final weak = weakNodes(tally).take(3).toList();
         return Container(
           margin: const EdgeInsets.fromLTRB(16, 4, 16, 8),
           padding: const EdgeInsets.all(16),
@@ -99,11 +67,10 @@ class _WeakAreasSummaryState extends State<WeakAreasSummary> {
                 Text(S.instance.t('wa_work', 'Work on these:'),
                     style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 6),
-                ...weak.map((r) {
-                  final id = (r['lesson_id'] ?? '').toString();
-                  final title = lessonTitleForId(id) ?? id;
-                  final a = _i(r['accuracy']);
-                  final w = _i(r['wrong']);
+                ...weak.map((node) {
+                  final t = tally[node]!;
+                  final a = (t.correct * 100 / t.total).round();
+                  final w = t.total - t.correct;
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 6),
                     child: Row(
@@ -112,7 +79,7 @@ class _WeakAreasSummaryState extends State<WeakAreasSummary> {
                             color: RatelColors.coral, size: 16),
                         const SizedBox(width: 6),
                         Expanded(
-                            child: Text(title,
+                            child: Text(nodeLabel(node),
                                 style: const TextStyle(
                                     fontWeight: FontWeight.w500))),
                         Text(

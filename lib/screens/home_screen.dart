@@ -1390,10 +1390,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final int totalLessons = [
       for (final u in course) u.lessons.length
     ].fold(0, (a, b) => a + b);
-    final int score = englishScore(
-        lessonsDone: appState.completedCount,
-        lessonsTotal: totalLessons,
-        streak: appState.streak);
+    final int score = appState.englishScoreNode(totalLessons);
     final String band = cefrFor(score);
     final int gap = toNextBand(score);
     return Container(
@@ -1474,7 +1471,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 2),
           Text(
               S.instance.t('es_sub',
-                  'Grows as you complete lessons and keep your streak.'),
+                  'Grows as you master skills, not just finish lessons.'),
               style: const TextStyle(
                   color: RatelColors.textMuted, fontSize: 11.5)),
         ],
