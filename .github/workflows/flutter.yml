@@ -86,6 +86,12 @@ jobs:
           SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
         run: node test/e2e/dataset_p2_lockstep.mjs
 
+      - name: Dataset P3 lockstep (Inc 146 -- reuse layer schema)
+        env:
+          SUPABASE_URL: https://fkbmodjtxatrqcghhfba.supabase.co
+          SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
+        run: node test/e2e/dataset_p3_lockstep.mjs
+
       - name: Upload e2e screenshot
         if: always()
         uses: actions/upload-artifact@v4
