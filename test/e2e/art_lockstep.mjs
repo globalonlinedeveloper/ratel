@@ -7,7 +7,7 @@ const KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_RINvN2-MTrfUgOIZ_ox
 const FLOOR = 204;
 
 const problems = [];
-const res = await fetch(`${URL_}/rest/v1/art_manifest?select=name,set,path,bytes&limit=2000`, {
+const res = await fetch(`${URL_}/rest/v1/art_manifest?select=name,set,path,bytes,state,provenance&limit=2000`, {
   headers: { apikey: KEY, Authorization: `Bearer ${KEY}` },
 });
 if (!res.ok) { console.error(`manifest read failed: ${res.status}`); process.exit(1); }
@@ -21,10 +21,12 @@ for (const r of rows) {
   names.add(r.name); paths.add(r.path);
   if (!/^[a-z0-9-]+\/[A-Za-z0-9._-]+\.webp$/.test(r.path)) problems.push(`odd path: ${r.path}`);
   if (!(r.bytes > 0)) problems.push(`zero-byte row: ${r.name}`);
+  if (!['draft', 'live', 'deprecated'].includes(r.state)) problems.push(`bad state ${JSON.stringify(r.state)}: ${r.name}`);
+  if (r.provenance == null) problems.push(`no provenance: ${r.name}`);
 }
 
 let probed = 0;
-const queue = [...rows];
+const queue = [...rows.filter((r) => r.state === 'live')];
 async function worker() {
   for (;;) {
     const r = queue.shift();
@@ -45,4 +47,4 @@ if (problems.length) {
   for (const p of problems.slice(0, 10)) console.error('  ' + p);
   process.exit(1);
 }
-console.log(`ART LOCKSTEP OK — ${rows.length} manifest rows, ${probed} storage objects probed 200, sets: ${new Set(rows.map(r => r.set)).size}`);
+console.log(`ART LOCKSTEP OK — ${rows.length} manifest rows (all state+provenance valid), ${probed} live storage objects probed 200, sets: ${new Set(rows.map(r => r.set)).size}`);

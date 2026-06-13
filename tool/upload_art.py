@@ -123,7 +123,11 @@ def main():
             if st != 200:
                 raise RuntimeError(f"upload {path}: {st}")
             return {"name": name, "set": s, "path": path, "bytes": len(data),
-                    "updated_at": datetime.now(timezone.utc).isoformat()}
+                    "updated_at": datetime.now(timezone.utc).isoformat(),
+                    "state": "live",
+                    "provenance": {"source": "openai-chatgpt-ui",
+                                   "ai_generated": True,
+                                   "pipeline": "split+chromakey+webp"}}
 
         rows, errs = [], []
         with ThreadPoolExecutor(max_workers=6) as ex:

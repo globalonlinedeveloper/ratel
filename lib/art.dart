@@ -32,6 +32,7 @@ class Art {
       final rows = await Supabase.instance.client
           .from('art_manifest')
           .select('name, path')
+          .eq('state', 'live')
           .timeout(const Duration(seconds: 4));
       for (final r in rows) {
         final name = (r['name'] ?? '').toString();
