@@ -9,6 +9,7 @@ import 'art.dart';
 import 'flags.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'strings.dart';
+import 'locales.dart';
 import 'milestones.dart';
 import 'push.dart';
 import 'theme.dart';
@@ -49,6 +50,7 @@ Future<void> main() async {
   await Flags.instance.load(); // remote config before dependent loads
   await S.instance.load(); // server copy (in-code defaults if offline)
   await S.instance.restoreLocale();
+  await Locales.instance.load(); // enabled UI-locale registry (data-driven picker)
   await Art.instance.load(); // remote art index (bundled-first, Inc 140)
   // share-link friend code (web): stow now, redeem after sign-in
   try {

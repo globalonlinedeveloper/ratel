@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import '../push.dart';
+import '../locales.dart';
 import '../guest.dart';
 import '../widgets/save_account_sheet.dart';
 import '../widgets/streak_calendar.dart';
@@ -604,9 +605,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     showSelectedIcon: false,
                     style: const ButtonStyle(
                         visualDensity: VisualDensity.compact),
-                    segments: const [
-                      ButtonSegment(value: 'en', label: Text('EN')),
-                      ButtonSegment(value: 'ta', label: Text('தமிழ்')),
+                    segments: [
+                      for (final e in Locales.instance.enabled)
+                        ButtonSegment(value: e.code, label: Text(e.nativeName)),
                     ],
                     selected: {S.instance.locale},
                     onSelectionChanged: (sel) async {
