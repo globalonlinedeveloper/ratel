@@ -44,6 +44,10 @@ class Art {
     }
   }
 
+  /// Live manifest as name -> storage path (read-only); feeds the Inc 157
+  /// exercise-art vocab index. Empty offline.
+  Map<String, String> get manifestPaths => Map.unmodifiable(_paths);
+
   /// Bundled asset path for [name], when the name ships in the bundle.
   String? bundledFor(String name) =>
       _bundledOverride[name] ?? kBundledArt[name];

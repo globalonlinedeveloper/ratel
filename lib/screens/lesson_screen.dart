@@ -5,6 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../content.dart';
 import '../exercise_kit.dart';
+import '../art.dart';
+import '../exercise_art.dart';
+import '../widgets/ratel_art.dart';
 import '../flags.dart';
 import '../strings.dart';
 import '../push.dart';
@@ -71,6 +74,8 @@ class _LessonScreenState extends State<LessonScreen>
   bool _isBoss = false;
   String _villain = 'cobra';
   bool _finished = false;
+  // Inc 157: object-art vocab index (built once; empty offline).
+  final Map<String, String> _vocab = buildVocab(Art.instance.manifestPaths);
 
   int? _selected; // choice
   List<int> _order = const []; // shuffled display order (choice)
@@ -447,6 +452,20 @@ class _LessonScreenState extends State<LessonScreen>
     } catch (_) {}
   }
 
+  /// Inc 157: a small topic illustration above the prompt for SAFE exercise
+  /// types when a content word maps to a promoted art cell. Flag-gated
+  /// (`exercise_art`) + graceful: no match => nothing, so grammar items and
+  /// answer-revealing types are never illustrated.
+  List<Widget> _exerciseArtHeader() {
+    if (!Flags.instance.flag('exercise_art', true)) return const [];
+    final name = exerciseArt(_ex, _vocab);
+    if (name == null) return const [];
+    return [
+      Center(child: RatelArt(name, height: 92)),
+      const SizedBox(height: 12),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_finished) return _completion(context);
@@ -609,6 +628,7 @@ class _LessonScreenState extends State<LessonScreen>
                 ],
               ),
               const SizedBox(height: 20),
+              ..._exerciseArtHeader(),
               if (_ex.sentence != null &&
                   _ex.type != ExerciseType.listenRespond &&
                   _ex.type != ExerciseType.multiBlank &&
