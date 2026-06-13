@@ -1,12 +1,12 @@
-// Inc 144 -- DATASET P1 lockstep gate (anon view, zero spend).
-// Guards the long-format UI-string layer, the locales registry, and the R6
-// stable-key + legacy-position freeze. R1 (course_id on attempts/review_state/
-// xp_events + user_course_progress) is user-scoped (RLS) and is verified at
-// migration time, not from anon REST.
+// Inc 144/147 -- DATASET P1 lockstep gate (anon view, zero spend).
+// app_strings is the long (key,locale,val) table -- Inc 147 contracted away the
+// transitional app_strings_tr name + the P1 back-compat wide view (pre-release).
+// Guards:
 //   * locales en+ta enabled with CLDR plural categories
-//   * app_strings_tr ta coverage >= FLOOR; valid state; non-empty val
-//   * back-compat wide view returns the same key set, no all-empty key
+//   * app_strings ta coverage >= FLOOR; valid state; non-empty val
 //   * every LIVE exercise has a unique ex: stable key + frozen legacy_key
+// R1 (course_id + user_course_progress) is user-scoped (RLS) and is verified at
+// migration time, not from anon REST.
 const URL_ = (process.env.SUPABASE_URL || 'https://fkbmodjtxatrqcghhfba.supabase.co').replace(/\/+$/, '');
 const KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2';
 const FLOOR_TA = 310; // ta UI-string coverage; raise consciously as keys grow
@@ -33,23 +33,16 @@ for (const code of ['en', 'ta']) {
     problems.push(`locales: '${code}' plural_categories missing one/other (${JSON.stringify(pc)})`);
 }
 
-const tr = await getAll('app_strings_tr?select=key,locale,val,state&limit=20000');
-const trKeys = new Set();
+const rows = await getAll('app_strings?select=key,locale,val,state&limit=20000');
+const keys = new Set();
 let taRows = 0;
-for (const r of tr) {
-  trKeys.add(r.key);
-  if (!STATES.has(r.state)) problems.push(`app_strings_tr ${r.key}/${r.locale}: bad state ${JSON.stringify(r.state)}`);
-  if (r.val == null || r.val === '') problems.push(`app_strings_tr ${r.key}/${r.locale}: empty val`);
+for (const r of rows) {
+  keys.add(r.key);
+  if (!STATES.has(r.state)) problems.push(`app_strings ${r.key}/${r.locale}: bad state ${JSON.stringify(r.state)}`);
+  if (r.val == null || r.val === '') problems.push(`app_strings ${r.key}/${r.locale}: empty val`);
   if (r.locale === 'ta') taRows++;
 }
 if (taRows < FLOOR_TA) problems.push(`ta string rows ${taRows} < floor ${FLOOR_TA}`);
-
-const view = await getAll('app_strings?select=key,en,ta&limit=20000');
-if (view.length !== trKeys.size)
-  problems.push(`back-compat view keys ${view.length} != long distinct keys ${trKeys.size}`);
-for (const r of view) {
-  if ((r.en || '') === '' && (r.ta || '') === '') problems.push(`view ${r.key}: both en and ta empty`);
-}
 
 const ex = await getAll('content_exercises?select=id,lesson_id,sort_order,key,legacy_key,state&limit=5000');
 const live = ex.filter((e) => e.state === 'live');
@@ -70,4 +63,4 @@ if (problems.length) {
   for (const p of problems.slice(0, 15)) console.error('  ' + p);
   process.exit(1);
 }
-console.log(`APP_STRINGS/P1 LOCKSTEP OK -- ${trKeys.size} keys / ${taRows} ta rows (floor ${FLOOR_TA}); back-compat view ${view.length} rows; ${live.length} live exercises stable-keyed + legacy-frozen (floor ${FLOOR_EX}); locales en+ta enabled w/ CLDR plural categories.`);
+console.log(`APP_STRINGS/P1 LOCKSTEP OK -- app_strings ${keys.size} keys / ${taRows} ta rows (floor ${FLOOR_TA}); ${live.length} live exercises stable-keyed + legacy-frozen (floor ${FLOOR_EX}); locales en+ta enabled w/ CLDR plural categories.`);

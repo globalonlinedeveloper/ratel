@@ -5,12 +5,13 @@ import 'config.dart';
 
 /// Server-driven copy + the i18n seam.
 ///
-/// P1 (Inc 144): UI strings live long-format in `app_strings_tr`
+/// P1 (Inc 144): UI strings live long-format in `app_strings`
 /// (key, locale, val) — adding a UI language is now INSERT-only, with no schema
 /// or loader change. In-code defaults (the `def` arg of [t]) remain the English
 /// PIVOT and ALWAYS apply when a row/locale is empty, so the app never shows a
-/// blank string and existing EN tests stay byte-identical. A back-compat wide
-/// view keeps already-deployed clients working; new clients read the long table.
+/// blank string and existing EN tests stay byte-identical. (Inc 147 contracted
+/// the transitional name + back-compat view away pre-release: app_strings IS
+/// the long table now.)
 class S {
   S._();
   static final S instance = S._();
@@ -29,7 +30,7 @@ class S {
     if (!Config.hasSupabase) return;
     try {
       final rows = await Supabase.instance.client
-          .from('app_strings_tr')
+          .from('app_strings')
           .select('key, locale, val')
           // All enabled-locale rows (tiny today: en+ta). FUTURE: when many
           // locales enable, filter by the enabled set or paginate.

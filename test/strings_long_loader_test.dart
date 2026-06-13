@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/strings.dart';
 
 // Inc 144 (Dataset P1) -- the S() loader now ingests long-format
-// (key, locale, val) rows from app_strings_tr. ingestRows is the pure,
+// (key, locale, val) rows from app_strings. ingestRows is the pure,
 // network-free core so the mapping is unit-tested directly.
 void main() {
   setUp(() {
