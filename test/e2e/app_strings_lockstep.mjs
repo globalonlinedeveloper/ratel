@@ -9,7 +9,7 @@
 // migration time, not from anon REST.
 const URL_ = (process.env.SUPABASE_URL || 'https://fkbmodjtxatrqcghhfba.supabase.co').replace(/\/+$/, '');
 const KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2';
-const FLOOR_TA = 310; // ta UI-string coverage; raise consciously as keys grow
+const FLOOR_TA = 311; // ta UI-string coverage; raise consciously as keys grow
 const FLOOR_EX = 272; // live legacy exercises carrying stable keys
 const STATES = new Set(['draft', 'live', 'deprecated']);
 const H = { apikey: KEY, Authorization: `Bearer ${KEY}` };

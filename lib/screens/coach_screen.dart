@@ -167,6 +167,14 @@ class _CoachScreenState extends State<CoachScreen> {
                       style: const TextStyle(
                           color: RatelColors.textMuted, fontSize: 12),
                     ),
+                    Text(
+                      S.instance.t('coach_ai_notice',
+                          'AI tutor — replies are AI-generated.'),
+                      style: const TextStyle(
+                          color: RatelColors.textMuted,
+                          fontSize: 11,
+                          fontStyle: FontStyle.italic),
+                    ),
                   ],
                 ),
               ),
