@@ -12,6 +12,8 @@ import { readFileSync } from 'node:fs';
 const URL_ = (process.env.SUPABASE_URL || 'https://fkbmodjtxatrqcghhfba.supabase.co').replace(/\/+$/, '');
 const KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2';
 const STATES = new Set(['draft', 'live', 'deprecated']);
+const FLOOR_NODES = 29; // Skill-tier curriculum nodes (Inc 148); raise as curriculum grows
+const FLOOR_MAPPED = 54; // every live lesson maps to a node
 const taxo = JSON.parse(readFileSync(new URL('../../tool/tag_taxonomy.json', import.meta.url)));
 const GV = new Set(taxo.grammar.map((x) => x.key));
 const CV = new Set(taxo.concept.map((x) => x.key));
@@ -66,6 +68,9 @@ for (const id of nodeIds) { if (color.get(id) === 0 && dfs(id)) break; }
 if (cycle) problems.push(`curriculum_nodes prereq cycle at ${cycle}`);
 
 for (const l of lessons) if (l.node_id && !nodeIds.has(l.node_id)) problems.push(`lesson ${l.id}: node_id '${l.node_id}' missing`);
+if (nodes.length < FLOOR_NODES) problems.push(`curriculum_nodes ${nodes.length} < floor ${FLOOR_NODES}`);
+const mappedCount = lessons.filter((l) => l.node_id).length;
+if (mappedCount < FLOOR_MAPPED) problems.push(`live lessons node-mapped ${mappedCount} < ${FLOOR_MAPPED}`);
 
 if (problems.length) {
   console.error(`DATASET P2 LOCKSTEP FAIL (${problems.length} problems):`);
