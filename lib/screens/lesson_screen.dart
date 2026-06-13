@@ -15,6 +15,7 @@ import '../achievements.dart';
 import 'dart:math' as math;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../widgets/mascot_anim.dart';
+import '../widgets/completion_mascot.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/confetti.dart';
@@ -698,10 +699,7 @@ class _LessonScreenState extends State<LessonScreen>
     }
     final bool perfect = !widget.reviewMode &&
         _correctCount >= widget.lesson.exercises.length;
-    return RatelActionAnim(
-        action: perfect ? 'perfect' : 'jump',
-        fallbackPose: RatelPose.celebrate,
-        size: 132);
+    return CompletionMascot(perfect: perfect, size: 132);
   }
 
   Widget _mascotSlot() {
