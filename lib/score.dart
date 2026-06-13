@@ -101,10 +101,8 @@ List<String> weakNodes(
 /// Human-readable label for a node id ("node:gen.a1.past-simple" ->
 /// "Past simple") — pure display helper for weak-area rows.
 String nodeLabel(String nodeId) {
-  final seg = nodeId.split('.').last;
+  final seg = nodeId.split('.').last.replaceAll('-', ' ');
   if (seg.isEmpty) return nodeId;
-  return seg
-      .split('-')
-      .map((w) => w.isEmpty ? w : '${w[0].toUpperCase()}${w.substring(1)}')
-      .join(' ');
+  // Sentence case (ELT convention: 'Past simple', 'Present continuous').
+  return '${seg[0].toUpperCase()}${seg.substring(1)}';
 }
