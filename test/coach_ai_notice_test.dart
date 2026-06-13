@@ -19,7 +19,9 @@ void main() {
 
   testWidgets('Coach shows the AI disclosure at entry (EN default)',
       (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: CoachScreen()));
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(body: CoachScreen(sender: (h) async => 'ok')),
+    ));
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.textContaining('AI-generated'), findsOneWidget);
   });
@@ -28,7 +30,9 @@ void main() {
     S.instance.debugSet('coach_ai_notice',
         ta: 'AI பயிற்சியாளர் — பதில்களை AI உருவாக்குகிறது.');
     S.instance.locale = 'ta';
-    await tester.pumpWidget(const MaterialApp(home: CoachScreen()));
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(body: CoachScreen(sender: (h) async => 'ok')),
+    ));
     await tester.pump(const Duration(milliseconds: 200));
     expect(find.textContaining('உருவாக்குகிறது'), findsOneWidget);
   });
