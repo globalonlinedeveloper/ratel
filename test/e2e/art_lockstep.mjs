@@ -4,7 +4,7 @@
 // baseline (raise FLOOR consciously when new sets ship).
 const URL_ = (process.env.SUPABASE_URL || 'https://fkbmodjtxatrqcghhfba.supabase.co').replace(/\/+$/, '');
 const KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2';
-const FLOOR = 204;
+const FLOOR = 362;  // Inc 155: +158 PROMOTE-NOW theme cells (kt/ho/tr/mk/jb/md), deduped
 
 const problems = [];
 const res = await fetch(`${URL_}/rest/v1/art_manifest?select=name,set,path,bytes,state,provenance&limit=2000`, {
