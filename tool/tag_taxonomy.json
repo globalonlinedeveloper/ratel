@@ -1,0 +1,249 @@
+{
+  "version": 1,
+  "increment": 141,
+  "note": "Inc 141 DATASET P0 controlled vocabulary. Source of truth for the dataset_lockstep CI gate: any live grammar_tag/concept_tag NOT in these lists fails the build. Tags stay DB-editable (owner review at-leisure, not gating). Add keys here in a follow-up increment when the taxonomy needs to grow; never silently widen.",
+  "grammar": [
+    {
+      "key": "vocabulary",
+      "desc": "single-word or lexical recognition with no specific grammatical structure"
+    },
+    {
+      "key": "nouns",
+      "desc": "naming words: people, places, things"
+    },
+    {
+      "key": "verbs",
+      "desc": "action or state words"
+    },
+    {
+      "key": "adjectives",
+      "desc": "describing words (big, happy, blue)"
+    },
+    {
+      "key": "adverbs",
+      "desc": "words modifying verbs/adjectives (quickly, very, well)"
+    },
+    {
+      "key": "pronouns",
+      "desc": "I, you, he, she, it, we, they, etc."
+    },
+    {
+      "key": "spelling",
+      "desc": "correct spelling / type-the-word"
+    },
+    {
+      "key": "sentence-building",
+      "desc": "word order / assembling a correct sentence"
+    },
+    {
+      "key": "present-simple",
+      "desc": "habitual or general present (I work, she likes)"
+    },
+    {
+      "key": "present-continuous",
+      "desc": "am/is/are + -ing (I am eating)"
+    },
+    {
+      "key": "past-simple",
+      "desc": "completed past actions (I went, she worked)"
+    },
+    {
+      "key": "past-continuous",
+      "desc": "was/were + -ing (I was reading)"
+    },
+    {
+      "key": "present-perfect",
+      "desc": "have/has + past participle (I have seen)"
+    },
+    {
+      "key": "will-future",
+      "desc": "will + verb for the future"
+    },
+    {
+      "key": "going-to-future",
+      "desc": "be going to + verb for plans/predictions"
+    },
+    {
+      "key": "articles",
+      "desc": "a / an / the"
+    },
+    {
+      "key": "plurals",
+      "desc": "singular vs plural noun forms"
+    },
+    {
+      "key": "countable-uncountable",
+      "desc": "count vs mass nouns (much/many, some/any)"
+    },
+    {
+      "key": "question-forms",
+      "desc": "forming wh- and yes/no questions"
+    },
+    {
+      "key": "negation",
+      "desc": "making negatives (not, don't, isn't)"
+    },
+    {
+      "key": "prepositions-place",
+      "desc": "location: in, on, under, next to"
+    },
+    {
+      "key": "prepositions-time",
+      "desc": "time: at, on, in, before, after"
+    },
+    {
+      "key": "prepositions-movement",
+      "desc": "direction: to, into, across, towards"
+    },
+    {
+      "key": "modals-can",
+      "desc": "can / could for ability or permission"
+    },
+    {
+      "key": "modals-obligation",
+      "desc": "should, must, have to (advice/obligation)"
+    },
+    {
+      "key": "comparatives",
+      "desc": "-er / more (bigger, more useful)"
+    },
+    {
+      "key": "superlatives",
+      "desc": "-est / most (the biggest)"
+    },
+    {
+      "key": "possessives",
+      "desc": "my, your, 's and possessive forms"
+    },
+    {
+      "key": "demonstratives",
+      "desc": "this, that, these, those"
+    },
+    {
+      "key": "quantifiers",
+      "desc": "some, any, much, many, a few, a lot of"
+    },
+    {
+      "key": "imperatives",
+      "desc": "commands and instructions (Turn left, Open it)"
+    },
+    {
+      "key": "conjunctions",
+      "desc": "and, but, because, so, or"
+    },
+    {
+      "key": "there-is-are",
+      "desc": "there is / there are"
+    },
+    {
+      "key": "subject-verb-agreement",
+      "desc": "matching subject and verb form (is/are, do/does)"
+    }
+  ],
+  "concept": [
+    {
+      "key": "greetings",
+      "desc": "hellos, introductions, how-are-you"
+    },
+    {
+      "key": "people-describing",
+      "desc": "people; describing appearance and character"
+    },
+    {
+      "key": "family",
+      "desc": "family members and relationships"
+    },
+    {
+      "key": "food-drink",
+      "desc": "meals, food, drinks, ordering"
+    },
+    {
+      "key": "daily-routine",
+      "desc": "everyday activities and routines"
+    },
+    {
+      "key": "numbers",
+      "desc": "numbers and counting"
+    },
+    {
+      "key": "time-days",
+      "desc": "telling time, days, dates"
+    },
+    {
+      "key": "places-town",
+      "desc": "shops, buildings, places in a town"
+    },
+    {
+      "key": "shopping",
+      "desc": "buying, prices, stores"
+    },
+    {
+      "key": "weather-seasons",
+      "desc": "weather, seasons, forecast"
+    },
+    {
+      "key": "directions",
+      "desc": "asking/giving directions, left/right"
+    },
+    {
+      "key": "health-body",
+      "desc": "body parts, health, the doctor"
+    },
+    {
+      "key": "jobs-work",
+      "desc": "jobs, workplace, professions"
+    },
+    {
+      "key": "free-time",
+      "desc": "hobbies, leisure, free-time activities"
+    },
+    {
+      "key": "travel",
+      "desc": "trips, airport, hotels, holidays"
+    },
+    {
+      "key": "transport",
+      "desc": "getting around, vehicles, public transport"
+    },
+    {
+      "key": "home",
+      "desc": "house, rooms, household items"
+    },
+    {
+      "key": "feelings-opinions",
+      "desc": "emotions, opinions, preferences"
+    },
+    {
+      "key": "communication",
+      "desc": "phone, email, meetings, messages"
+    },
+    {
+      "key": "school-study",
+      "desc": "school, studying, education"
+    },
+    {
+      "key": "requests-help",
+      "desc": "asking for help, polite requests, suggestions"
+    },
+    {
+      "key": "storytelling",
+      "desc": "telling stories, sequencing, giving reasons"
+    },
+    {
+      "key": "agreeing-disagreeing",
+      "desc": "agreeing, disagreeing, discussion"
+    },
+    {
+      "key": "advice",
+      "desc": "giving and asking for advice"
+    },
+    {
+      "key": "clothing",
+      "desc": "clothes, what to wear"
+    },
+    {
+      "key": "everyday-phrases",
+      "desc": "common everyday expressions and small talk"
+    }
+  ]
+}
