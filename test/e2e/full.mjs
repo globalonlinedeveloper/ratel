@@ -115,10 +115,16 @@ try{
     }catch(e){ problems.push('xp_events query failed: '+e.message); }
     // Answering must schedule spaced-repetition review (powers "Due for review").
     try{
-      const sr=await fetch(`${SUPA_URL}/rest/v1/review_state?select=user_id&limit=20`,{headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`}});
+      const sr=await fetch(`${SUPA_URL}/rest/v1/review_state?select=stability,difficulty,due_on,reps&limit=50`,{headers:{apikey:SUPA_ANON,Authorization:`Bearer ${token}`}});
       const sj=await sr.json().catch(()=>[]);
       if(!Array.isArray(sj)||sj.length<1) problems.push('no review_state after lesson (spaced repetition not scheduling)');
-      else console.log('review_state rows:', sj.length);
+      else {
+        console.log('review_state rows:', sj.length);
+        // Inc 154: FSRS columns must be populated + sane after a graded answer.
+        const bad=sj.filter(r=>!(typeof r.stability==='number'&&r.stability>0&&typeof r.difficulty==='number'&&r.difficulty>=1&&r.difficulty<=10&&r.due_on&&Number(r.reps)>=1));
+        if(bad.length) problems.push(`FSRS state not populated/sane on ${bad.length}/${sj.length} rows (e.g. ${JSON.stringify(bad[0]).slice(0,120)})`);
+        else console.log('FSRS state ok (stability/difficulty/due_on/reps)');
+      }
     }catch(e){ problems.push('review_state query failed: '+e.message); }
     // --- Engagement writes (Leagues/streak/friends/Pro/comeback) — these write
     // to the DB and were previously unverified by the suite (the source of the
