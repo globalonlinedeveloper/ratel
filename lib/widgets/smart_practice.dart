@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../app_state.dart';
 import '../config.dart';
 import '../content.dart';
+import '../content_store.dart';
+import '../score.dart';
 import '../milestones.dart';
 import '../strings.dart';
 import '../models.dart';
@@ -47,16 +49,16 @@ class SmartPracticeCard extends StatelessWidget {
       ];
     } catch (_) {}
     try {
-      final rows = await c
-          .rpc('my_weak_areas')
-          .timeout(const Duration(seconds: 5));
-      weak = [
-        for (final r in rows as List)
-          for (final l in course.expand((u) => u.lessons))
-            if (l.id == (r['lesson_id'] ?? '').toString())
-              for (int i = 0; i < l.exercises.length && i < 2; i++)
-                '${l.id}:$i'
+      // Node-scoped weak bucket (Inc 152): the learner's weakest SKILLS
+      // (curriculum nodes, from their own attempts) -> those nodes' lessons'
+      // first exercises. Replaces the per-lesson my_weak_areas RPC so this
+      // stays consistent with the node-based English Score / weak-areas card.
+      final lessons = [
+        for (final u in course)
+          for (final l in u.lessons) (id: l.id, len: l.exercises.length)
       ];
+      weak = weakNodeDrillKeys(
+          appState.nodeTally, ContentStore.instance.lessonNode, lessons);
     } catch (_) {}
     return composeDrill(due: due, mistakes: mistakes, weak: weak);
   }

@@ -106,3 +106,27 @@ String nodeLabel(String nodeId) {
   // Sentence case (ELT convention: 'Past simple', 'Present continuous').
   return '${seg[0].toUpperCase()}${seg.substring(1)}';
 }
+
+
+/// Drill keys for the learner's weakest skills (Inc 152): the worst-first weak
+/// nodes (from [weakNodes]) expanded to the first [perLesson] exercise keys of
+/// every lesson mapped to each weak node, in [lessons] order. Pure — the
+/// node-scoped replacement for the `my_weak_areas` RPC, so Smart Practice's
+/// weak bucket stays consistent with the node-based English Score (spec §3).
+List<String> weakNodeDrillKeys(
+  Map<String, ({int correct, int total})> tally,
+  Map<String, String> lessonNode,
+  List<({String id, int len})> lessons, {
+  int perLesson = 2,
+}) {
+  final out = <String>[];
+  for (final node in weakNodes(tally)) {
+    for (final l in lessons) {
+      if (lessonNode[l.id] != node) continue;
+      for (var i = 0; i < l.len && i < perLesson; i++) {
+        out.add('${l.id}:$i');
+      }
+    }
+  }
+  return out;
+}

@@ -88,4 +88,39 @@ void main() {
     expect(nodeLabel('node:gen.a1.past-simple'), 'Past simple');
     expect(nodeLabel('node:gen.b1.vocabulary'), 'Vocabulary');
   });
+
+  test('weakNodeDrillKeys: worst-first nodes -> their lessons first exercises',
+      () {
+    // alpha 1/4=0.25 (weak), beta 3/4=0.75 (ok), gamma 1/5=0.20 (weakest).
+    final tallies = nodeTallies([
+      ...att('l1', 1, 3),
+      ...att('l2', 3, 1),
+      ...att('l3', 1, 4),
+    ], lessonNode);
+    const lessons = [
+      (id: 'l1', len: 3),
+      (id: 'l2', len: 1),
+      (id: 'l3', len: 5),
+    ];
+    final keys = weakNodeDrillKeys(tallies, lessonNode, lessons);
+    // gamma (worst) before alpha; beta (ok) excluded; <=2 exercises per lesson.
+    expect(keys, ['l3:0', 'l3:1', 'l1:0', 'l1:1']);
+  });
+
+  test('weakNodeDrillKeys: many lessons per node, perLesson cap, unmapped skip',
+      () {
+    final tally = <String, ({int correct, int total})>{
+      'n.x': (correct: 1, total: 5), // 0.20 -> weak
+      'n.y': (correct: 5, total: 5), // strong -> excluded
+    };
+    const lessonNode2 = {'la': 'n.x', 'lb': 'n.x', 'lc': 'n.y'};
+    const lessons = [
+      (id: 'la', len: 2),
+      (id: 'lb', len: 1),
+      (id: 'lc', len: 9), // maps to a non-weak node -> contributes nothing
+    ];
+    final keys = weakNodeDrillKeys(tally, lessonNode2, lessons);
+    expect(keys, ['la:0', 'la:1', 'lb:0']); // both weak-node lessons, cap honored
+    expect(weakNodeDrillKeys(const {}, lessonNode2, lessons), isEmpty);
+  });
 }
