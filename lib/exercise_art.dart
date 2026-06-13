@@ -55,3 +55,41 @@ String? exerciseArt(Exercise ex, Map<String, String> vocab) {
   }
   return null;
 }
+
+/// Every content word of [ex] (all types, all text fields except the
+/// instruction prompt), lowercased and stop-filtered. Feeds the completion
+/// recap below — the lesson is finished, so scanning answers reveals nothing.
+Iterable<String> _contentWords(Exercise ex) sync* {
+  final fields = <String>[
+    if (ex.sentence != null) ex.sentence!,
+    ...ex.options,
+    ...ex.correctOrder,
+  ];
+  for (final raw in fields) {
+    for (final w in raw.toLowerCase().split(RegExp(r'[^a-z]+'))) {
+      if (w.length >= 3 && !_stop.contains(w)) yield w;
+    }
+  }
+}
+
+/// The deduped, in-order object-art cells practiced across a FINISHED lesson's
+/// [exercises] (Inc 159 — the completion "concepts you practiced" strip).
+/// Unlike [exerciseArt] this scans every exercise type and all content text
+/// (no answer to reveal once the lesson is done); only object theme sets feed
+/// [vocab], result capped at [max].
+List<String> lessonConcepts(List<Exercise> exercises, Map<String, String> vocab,
+    {int max = 8}) {
+  if (vocab.isEmpty || exercises.isEmpty) return const [];
+  final out = <String>[];
+  final seen = <String>{};
+  for (final ex in exercises) {
+    for (final w in _contentWords(ex)) {
+      final hit = vocab[_stem(w)];
+      if (hit != null && seen.add(hit)) {
+        out.add(hit);
+        if (out.length >= max) return out;
+      }
+    }
+  }
+  return out;
+}

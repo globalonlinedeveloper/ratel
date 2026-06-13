@@ -466,6 +466,33 @@ class _LessonScreenState extends State<LessonScreen>
     ];
   }
 
+  /// Inc 159: a recap strip of the object concepts practiced in this lesson,
+  /// shown on the completion screen. Reuses the Inc-157 vocab index but scans
+  /// the whole finished lesson (no answer left to reveal). Flag-gated
+  /// (`concepts_strip`) + graceful: no matched concepts => nothing.
+  List<Widget> _conceptsStrip() {
+    if (!Flags.instance.flag('concepts_strip', true)) return const [];
+    final names = lessonConcepts(widget.lesson.exercises, _vocab);
+    if (names.isEmpty) return const [];
+    return [
+      const SizedBox(height: 18),
+      Text(
+        S.instance.t('concepts_practiced', 'Concepts you practiced'),
+        style: const TextStyle(
+            color: RatelColors.textMuted,
+            fontWeight: FontWeight.w600,
+            fontSize: 14),
+      ),
+      const SizedBox(height: 10),
+      Wrap(
+        spacing: 12,
+        runSpacing: 10,
+        alignment: WrapAlignment.center,
+        children: [for (final n in names) RatelArt(n, height: 52)],
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_finished) return _completion(context);
@@ -1724,6 +1751,7 @@ class _LessonScreenState extends State<LessonScreen>
                           ],
                         ),
                       ],
+                      ..._conceptsStrip(),
                       const SizedBox(height: 28),
                       _wideButton(
                           S.instance.t('btn_continue', 'Continue'),
