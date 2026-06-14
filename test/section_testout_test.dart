@@ -5,6 +5,7 @@ import 'package:ratel/milestones.dart';
 import 'package:ratel/placement.dart';
 import 'package:ratel/screens/home_screen.dart';
 import 'package:ratel/screens/section_test_screen.dart';
+import 'package:ratel/widgets/ratel_scaffold.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
@@ -61,5 +62,23 @@ void main() {
     // fresh account: A2 and B1 are locked -> two Test out buttons
     expect(find.text('Test out'), findsNWidgets(2));
     await tester.pump(const Duration(seconds: 1));
+  });
+
+  testWidgets('test-out quiz renders inside RatelScaffold and lays out at 360px',
+      (tester) async {
+    const s = CourseSection(
+        title: 'Daily life', cefr: 'A2', firstUnit: 3, lastUnit: 5);
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(
+        const MaterialApp(home: SectionTestScreen(section: s)));
+    // RatelMascot loops -> pumpAndSettle would hang; advance a fixed slice.
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(RatelScaffold), findsOneWidget);
+    expect(find.textContaining('Test out'), findsOneWidget); // themed header
+    expect(find.text('Next'), findsOneWidget); // first probe CTA
+    expect(tester.takeException(), isNull); // RenderFlex overflow -> failure
   });
 }

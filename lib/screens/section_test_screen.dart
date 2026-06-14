@@ -7,6 +7,7 @@ import '../sfx.dart';
 import '../strings.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
+import '../widgets/ratel_scaffold.dart';
 
 /// Jump ahead by proving it: 8 probes over the skipped units; >=85%
 /// unlocks the section via the side-effect-free skipAhead path.
@@ -71,15 +72,13 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
       );
     }
     final ex = _probes[_i].exercise;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(S.instance
-            .t('st_title', 'Test out · {t}')
-            .replaceAll('{t}', widget.section.title)),
-      ),
+    return RatelScaffold(
+      title: S.instance
+          .t('st_title', 'Test out · {t}')
+          .replaceAll('{t}', widget.section.title),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(RatelSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -91,7 +90,7 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
                   style: const TextStyle(
                       color: RatelColors.textMuted,
                       fontWeight: FontWeight.w700)),
-              const SizedBox(height: 8),
+              const SizedBox(height: RatelSpacing.sm),
               Text(ex.prompt,
                   style: const TextStyle(
                       fontSize: 17, fontWeight: FontWeight.w700)),
@@ -106,7 +105,7 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
                   children: [
                     for (int o = 0; o < ex.options.length; o++)
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.only(bottom: RatelSpacing.sm),
                         child: InkWell(
                           onTap: () => setState(() => _sel = o),
                           borderRadius: BorderRadius.circular(10),
@@ -137,7 +136,7 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
                 child: FilledButton(
                   style: FilledButton.styleFrom(
                       backgroundColor: RatelColors.teal,
-                      padding: const EdgeInsets.symmetric(vertical: 16)),
+                      padding: const EdgeInsets.symmetric(vertical: RatelSpacing.lg)),
                   onPressed: _sel == null ? null : _answer,
                   child: Text(_i + 1 < _probes.length
                       ? S.instance.t('btn_next', 'Next')
@@ -156,15 +155,17 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(RatelSpacing.xl),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                RatelMascot(
+                ExcludeSemantics(
+                  child: RatelMascot(
                     pose: _passed
                         ? RatelPose.celebrate
                         : RatelPose.encourage,
                     size: 120),
+                ),
                 const SizedBox(height: 14),
                 Text(
                     _passed
@@ -172,7 +173,7 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
                         : S.instance.t('st_fail', 'Not yet — keep going!'),
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w800)),
-                const SizedBox(height: 8),
+                const SizedBox(height: RatelSpacing.sm),
                 Text(
                     _passed
                         ? S.instance
@@ -192,14 +193,14 @@ class _SectionTestScreenState extends State<SectionTestScreen> {
                     textAlign: TextAlign.center,
                     style:
                         const TextStyle(color: RatelColors.textMuted)),
-                const SizedBox(height: 24),
+                const SizedBox(height: RatelSpacing.xl),
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
                     style: FilledButton.styleFrom(
                         backgroundColor: RatelColors.teal,
                         padding:
-                            const EdgeInsets.symmetric(vertical: 16)),
+                            const EdgeInsets.symmetric(vertical: RatelSpacing.lg)),
                     onPressed: () => Navigator.of(context).pop(),
                     child: Text(S.instance.t('btn_continue', 'Continue')),
                   ),
