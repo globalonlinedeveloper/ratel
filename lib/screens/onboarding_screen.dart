@@ -40,11 +40,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 480),
             child: ListView(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(RatelSpacing.xl),
               children: [
-                const SizedBox(height: 8),
-                const Center(child: RatelMascot(pose: RatelPose.wave, size: 130)),
-                const SizedBox(height: 8),
+                const SizedBox(height: RatelSpacing.sm),
+                const Center(child: ExcludeSemantics(child: RatelMascot(pose: RatelPose.wave, size: 130))),
+                const SizedBox(height: RatelSpacing.sm),
                 Center(
                   child: SegmentedButton<String>(
                     showSelectedIcon: false,
@@ -65,7 +65,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     },
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: RatelSpacing.md),
                 Text(S.instance.t('ob_title', 'Welcome to Ratel!'),
                     textAlign: TextAlign.center,
                     style:
@@ -74,10 +74,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         'Be fearless about English. Two quick questions.'),
                     textAlign: TextAlign.center,
                     style: TextStyle(color: RatelColors.textMuted)),
-                const SizedBox(height: 24),
+                const SizedBox(height: RatelSpacing.xl),
                 Text(S.instance.t('ob_why', 'Why are you learning?'),
                     style: TextStyle(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 8),
+                const SizedBox(height: RatelSpacing.sm),
                 Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -92,17 +92,17 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: RatelSpacing.xl),
                 Text(S.instance.t('ob_goal', 'Set your daily goal'),
                     style: TextStyle(fontWeight: FontWeight.w700)),
-                const SizedBox(height: 8),
+                const SizedBox(height: RatelSpacing.sm),
                 Column(
                   children: [
                     for (final g in _goals)
                       _goalTile(g.$1, g.$2),
                   ],
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: RatelSpacing.xl),
                 FilledButton(
                   onPressed: _busy ? null : _start,
                   child: Text(_busy
@@ -131,7 +131,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return GestureDetector(
       onTap: () => setState(() => _goal = xp),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
+        margin: const EdgeInsets.only(bottom: RatelSpacing.sm),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: sel ? RatelColors.honey.withValues(alpha: 0.12) : context.surfaceC,
@@ -144,7 +144,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             Icon(sel ? Icons.radio_button_checked : Icons.radio_button_unchecked,
                 color: sel ? RatelColors.honey : RatelColors.textMuted, size: 20),
-            const SizedBox(width: 12),
+            const SizedBox(width: RatelSpacing.md),
             Expanded(
                 child: Text(
                     S.instance.t('ob_g_${label.toLowerCase()}', label),

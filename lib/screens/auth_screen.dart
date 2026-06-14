@@ -94,14 +94,14 @@ class _AuthScreenState extends State<AuthScreen> {
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(RatelSpacing.xl),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 380),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const RatelMascot(pose: RatelPose.wave, size: 120),
-                  const SizedBox(height: 8),
+                  const ExcludeSemantics(child: RatelMascot(pose: RatelPose.wave, size: 120)),
+                  const SizedBox(height: RatelSpacing.sm),
                   const Text('Ratel',
                       style: TextStyle(
                           fontSize: 30, fontFamily: kDisplayFont,
@@ -109,7 +109,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           color: RatelColors.honey)),
                   Text(S.instance.t('auth_tagline', 'Learn English, fearlessly.'),
                       style: TextStyle(color: RatelColors.textMuted)),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: RatelSpacing.xl),
                   if (_isSignUp) ...[
                     TextField(
                       controller: _name,
@@ -118,7 +118,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           labelText: S.instance.t('fld_name', 'Name'),
                           border: const OutlineInputBorder()),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: RatelSpacing.md),
                   ],
                   TextField(
                     controller: _email,
@@ -127,7 +127,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         labelText: S.instance.t('fld_email', 'Email'),
                         border: const OutlineInputBorder()),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: RatelSpacing.md),
                   TextField(
                     controller: _password,
                     obscureText: true,
@@ -136,7 +136,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         border: const OutlineInputBorder()),
                   ),
                   if (_message != null) ...[
-                    const SizedBox(height: 12),
+                    const SizedBox(height: RatelSpacing.md),
                     Text(_message!,
                         style: const TextStyle(color: RatelColors.coral)),
                   ],
@@ -146,7 +146,7 @@ class _AuthScreenState extends State<AuthScreen> {
                     child: FilledButton(
                       style: FilledButton.styleFrom(
                           backgroundColor: RatelColors.teal,
-                          padding: const EdgeInsets.symmetric(vertical: 16)),
+                          padding: const EdgeInsets.symmetric(vertical: RatelSpacing.lg)),
                       onPressed: _loading ? null : _submit,
                       child: _loading
                           ? const SizedBox(
@@ -159,7 +159,7 @@ class _AuthScreenState extends State<AuthScreen> {
                               : S.instance.t('btn_login', 'Log in')),
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: RatelSpacing.sm),
                   TextButton(
                     onPressed: _loading
                         ? null
