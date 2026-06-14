@@ -184,6 +184,30 @@ class RatelTokens extends ThemeExtension<RatelTokens> {
   RatelTokens lerp(covariant RatelTokens? other, double t) => other ?? this;
 }
 
+/// Fixed spacing scale (logical px) — use instead of ad-hoc numbers so the
+/// rhythm is consistent across screens (Standardization Master Plan, 0.3).
+/// Mirrors the RatelTokens gaps; provided as plain consts for `const` call
+/// sites (EdgeInsets/SizedBox). Screens adopt these in Phase 1.
+class RatelSpacing {
+  RatelSpacing._();
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 12;
+  static const double lg = 16;
+  static const double xl = 24;
+}
+
+/// Semantic type-scale shortcuts over the app TextTheme (0.3) so screens use
+/// named roles (display/title/body/caption) instead of raw `TextStyle(
+/// fontSize: ...)`. Backed by the brand `_ratelTextTheme`.
+extension RatelTypeScale on BuildContext {
+  TextTheme get _textTheme => Theme.of(this).textTheme;
+  TextStyle? get displayStyle => _textTheme.displaySmall;
+  TextStyle? get titleStyle => _textTheme.titleLarge;
+  TextStyle? get bodyStyle => _textTheme.bodyMedium;
+  TextStyle? get captionStyle => _textTheme.bodySmall;
+}
+
 TextTheme _ratelTextTheme(Color text, Color muted) => TextTheme(
       displayLarge: TextStyle(
           fontFamily: kDisplayFont, fontWeight: FontWeight.w800, color: text),
