@@ -75,12 +75,14 @@ class _PlacementScreenState extends State<PlacementScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 480),
             child: ListView(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(RatelSpacing.xl),
               children: [
                 Row(
                   children: [
                     IconButton(
                         onPressed: () => Navigator.of(context).pop(),
+                        tooltip: MaterialLocalizations.of(context)
+                            .closeButtonTooltip,
                         icon: const Icon(Icons.close)),
                     Expanded(
                       child: ClipRRect(
@@ -90,18 +92,18 @@ class _PlacementScreenState extends State<PlacementScreen> {
                             minHeight: 10),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: RatelSpacing.md),
                     Text('${_i + 1}/${_probes.length}',
                         style: TextStyle(color: context.mutedC)),
                   ],
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: RatelSpacing.lg),
                 Text(S.instance.t('pl_title', 'Placement check'),
                     style: const TextStyle(
                         fontFamily: kDisplayFont,
                         fontSize: 20,
                         fontWeight: FontWeight.w700)),
-                const SizedBox(height: 4),
+                const SizedBox(height: RatelSpacing.xs),
                 Text(
                     S.instance
                         .t('pl_sub', 'Answer what you can — no pressure.'),
@@ -111,7 +113,7 @@ class _PlacementScreenState extends State<PlacementScreen> {
                     style: const TextStyle(
                         fontSize: 16, fontWeight: FontWeight.w700)),
                 if (ex.sentence != null) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: RatelSpacing.sm),
                   Text(ex.sentence!, style: const TextStyle(fontSize: 16)),
                 ],
                 const SizedBox(height: 14),
@@ -156,7 +158,7 @@ class _PlacementScreenState extends State<PlacementScreen> {
     return GestureDetector(
       onTap: _checked ? null : () => setState(() => _selected = j),
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
+        margin: const EdgeInsets.only(bottom: RatelSpacing.sm),
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           color: tint ?? context.surfaceC,
@@ -184,18 +186,20 @@ class _PlacementScreenState extends State<PlacementScreen> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 480),
             child: Padding(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(RatelSpacing.xl),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  skip > 0
-                      ? const RatelActionAnim(
-                          action: 'gradcap',
-                          fallbackPose: RatelPose.celebrate,
-                          size: 120)
-                      : const RatelMascot(
-                          pose: RatelPose.celebrate, size: 120),
-                  const SizedBox(height: 16),
+                  ExcludeSemantics(
+                    child: skip > 0
+                        ? const RatelActionAnim(
+                            action: 'gradcap',
+                            fallbackPose: RatelPose.celebrate,
+                            size: 120)
+                        : const RatelMascot(
+                            pose: RatelPose.celebrate, size: 120),
+                  ),
+                  const SizedBox(height: RatelSpacing.lg),
                   Text(
                       S.instance
                           .t('n_correct', '{a} / {b} correct')

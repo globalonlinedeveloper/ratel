@@ -60,4 +60,25 @@ void main() {
     await tester.pump();
     expect(find.text('Pick the fruit'), findsOneWidget); // probe 2 of 2
   });
+
+  testWidgets('placement quiz lays out at 360px (custom header, no RatelScaffold)',
+      (tester) async {
+    const probe = PlacementProbe(
+        'u2l1',
+        Exercise.choice(
+            prompt: 'Pick the fruit',
+            options: ['Apple', 'Chair'],
+            correctIndex: 0));
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(const MaterialApp(
+        home: PlacementScreen(goal: 20, probes: [probe, probe])));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(LinearProgressIndicator), findsOneWidget); // custom header
+    expect(find.byTooltip('Close'), findsOneWidget); // a11y: labelled close
+    expect(find.text('Pick the fruit'), findsOneWidget);
+    expect(tester.takeException(), isNull); // RenderFlex overflow -> failure
+  });
 }

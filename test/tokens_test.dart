@@ -17,6 +17,7 @@ const _migratedScreens = <String>[
   'lib/screens/admin_screen.dart',
   'lib/screens/timed_challenge_screen.dart',
   'lib/screens/section_test_screen.dart',
+  'lib/screens/placement_screen.dart',
 ];
 final _hexColor = RegExp(r'Color\(0x');
 
