@@ -5,6 +5,7 @@ import 'package:ratel/app_state.dart';
 import 'package:ratel/models.dart';
 import 'package:ratel/screens/auth_screen.dart';
 import 'package:ratel/screens/home_screen.dart';
+import 'package:ratel/screens/settings_screen.dart';
 import 'package:ratel/screens/lesson_screen.dart';
 import 'package:ratel/screens/onboarding_screen.dart';
 import 'package:ratel/screens/section_test_screen.dart';
@@ -479,11 +480,9 @@ void main() {
   testWidgets('theme segment stays single-line Tamil at 360px (no mid-word wrap)',
       (tester) async {
     _narrowTamil(tester);
-    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
-    await tester.pump(const Duration(milliseconds: 800));
-    await tester.tap(find.byIcon(Icons.person_outline));
-    await tester.pump(const Duration(milliseconds: 700));
-    // settings sit deep in the profile scroll (lazy build — scroll first)
+    // Inc 175: the theme toggle moved to the dedicated Settings page.
+    await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
+    await tester.pump(const Duration(milliseconds: 300));
     await tester.scrollUntilVisible(find.text('வெளிச்சம்'), 400,
         scrollable: find.byType(Scrollable).first);
     await tester.pump(const Duration(milliseconds: 300));

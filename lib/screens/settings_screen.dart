@@ -1,0 +1,255 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../app_state.dart';
+import '../locales.dart';
+import '../milestones.dart';
+import '../push.dart';
+import '../sfx.dart';
+import '../strings.dart';
+import '../theme.dart';
+import '../widgets/mascot_anim.dart';
+import '../widgets/ratel_mascot.dart';
+import '../widgets/ratel_scaffold.dart';
+
+/// Dedicated Settings page (Standardization Master Plan, Phase 1 -- Pillar D,
+/// Inc 175). The preference controls (audio / learning / appearance /
+/// reminders) were lifted verbatim out of the Profile tab body into this
+/// pushed route, reached by a gear entry in Profile -- decluttering the tab.
+/// A pushed route with a title+back header => the [RatelScaffold] fit (unlike
+/// the in-body-header screens that keep a raw Scaffold). StatefulWidget for the
+/// `_listenOn` pref + the setState-driven toggles (moved with their widgets).
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
+
+  @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool _listenOn = true;
+
+  @override
+  void initState() {
+    super.initState();
+    SharedPreferences.getInstance().then((p) {
+      if (!mounted) return;
+      setState(() => _listenOn = p.getBool('listen_on') ?? true);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RatelScaffold(
+      title: S.instance.t('set_title', 'Settings'),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(
+            horizontal: RatelSpacing.lg, vertical: RatelSpacing.md),
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: RatelSpacing.lg),
+            child: Column(
+              children: [
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(S.instance.t('set_sound', 'Sound effects')),
+                  secondary:
+                      const Icon(Icons.volume_up, color: RatelColors.honey),
+                  value: Sfx.instance.soundOn,
+                  onChanged: (v) {
+                    Sfx.instance.setSoundOn(v);
+                    setState(() {});
+                  },
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(S.instance.t('set_haptics', 'Haptics')),
+                  secondary:
+                      const Icon(Icons.vibration, color: RatelColors.teal),
+                  value: Sfx.instance.hapticsOn,
+                  onChanged: (v) {
+                    Sfx.instance.setHapticsOn(v);
+                    setState(() {});
+                  },
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(S.instance.t('set_music', 'Background music')),
+                  subtitle: Text(S.instance
+                      .t('set_music_sub', 'Calm ambient loop while you learn')),
+                  secondary: Sfx.instance.musicOn
+                      ? const RatelActionAnim(
+                          action: 'headphones',
+                          fallbackPose: RatelPose.speak,
+                          size: 34)
+                      : const Icon(Icons.music_note,
+                          color: RatelColors.honey),
+                  value: Sfx.instance.musicOn,
+                  onChanged: (v) {
+                    Sfx.instance.setMusicOn(v);
+                    setState(() {});
+                  },
+                ),
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.translate,
+                      color: RatelColors.teal),
+                  title: Text(S.instance.t('set_language', 'App language')),
+                  subtitle: Text(S.instance
+                      .t('set_lang_sub', 'Server copy follows your choice')),
+                  trailing: SegmentedButton<String>(
+                    showSelectedIcon: false,
+                    style: const ButtonStyle(
+                        visualDensity: VisualDensity.compact),
+                    segments: [
+                      for (final e in Locales.instance.enabled)
+                        ButtonSegment(value: e.code, label: Text(e.nativeName)),
+                    ],
+                    selected: {S.instance.locale},
+                    onSelectionChanged: (sel) async {
+                      await S.instance.setLocale(sel.first);
+                      if (mounted) setState(() {});
+                    },
+                  ),
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(S.instance.t('set_listening', 'Listening exercises')),
+                  subtitle: Text(S.instance
+                      .t('set_listen_sub', 'Type-what-you-hear questions')),
+                  secondary: const Icon(Icons.hearing_outlined),
+                  value: _listenOn,
+                  onChanged: (v) async {
+                    setState(() => _listenOn = v);
+                    try {
+                      final p = await SharedPreferences.getInstance();
+                      await p.setBool('listen_on', v);
+                    } catch (_) {}
+                  },
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(S.instance.t('set_motion', 'Reduce motion')),
+                  subtitle: Text(
+                      S.instance.t('set_motion_sub', 'Minimize animations')),
+                  secondary:
+                      const Icon(Icons.motion_photos_off_outlined),
+                  value: reduceMotionNotifier.value,
+                  onChanged: (v) {
+                    setReduceMotion(v);
+                    setState(() {});
+                  },
+                ),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(S.instance.t('set_battle', 'Battle mode')),
+                  subtitle: Text(S.instance
+                      .t('set_battle_sub', 'Duel a rival as you answer')),
+                  secondary:
+                      const Icon(Icons.sports_kabaddi_outlined),
+                  value: battleModeNotifier.value,
+                  onChanged: (v) {
+                    setBattleMode(v);
+                    setState(() {});
+                  },
+                ),
+                const SizedBox(height: RatelSpacing.md),
+                SizedBox(
+                  width: double.infinity,
+                  child: SegmentedButton<ThemeMode>(
+                    segments: [
+                      ButtonSegment(
+                          value: ThemeMode.system,
+                          icon: const Icon(Icons.brightness_auto_outlined),
+                          label: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child:
+                                  Text(S.instance.t('set_auto', 'Auto')))),
+                      ButtonSegment(
+                          value: ThemeMode.light,
+                          icon: const Icon(Icons.light_mode_outlined),
+                          label: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                  S.instance.t('set_light', 'Light')))),
+                      ButtonSegment(
+                          value: ThemeMode.dark,
+                          icon: const Icon(Icons.dark_mode_outlined),
+                          label: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child:
+                                  Text(S.instance.t('set_dark', 'Dark')))),
+                    ],
+                    selected: {themeModeNotifier.value},
+                    onSelectionChanged: (s) {
+                      setThemeMode(s.first);
+                      setState(() {});
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: RatelSpacing.xs),
+          ListTile(
+            dense: true,
+            leading: const Icon(Icons.schedule,
+                color: RatelColors.teal),
+            title: Text(S.instance.t('set_remind', 'Remind me at')),
+            subtitle: Text(S.instance.t(
+                'set_remind_sub', 'Daily streak reminder, your local time')),
+            trailing: DropdownButton<int>(
+              value: localHourFromUtc(appState.reminderHourUtc,
+                  DateTime.now().timeZoneOffset),
+              underline: const SizedBox.shrink(),
+              items: [
+                for (int h = 0; h < 24; h++)
+                  DropdownMenuItem(
+                      value: h,
+                      child: Text('${h.toString().padLeft(2, '0')}:30')),
+              ],
+              onChanged: (h) {
+                if (h == null) return;
+                appState.setReminderHour(utcHourFromLocal(
+                    h, DateTime.now().timeZoneOffset));
+                setState(() {});
+              },
+            ),
+          ),
+          if (!kIsWeb) ...[
+            const SizedBox(height: RatelSpacing.xs),
+            FutureBuilder<String>(
+              future: Push.instance.statusLabel(),
+              builder: (context, snap) {
+                final st = snap.data ?? '…';
+                return ListTile(
+                  dense: true,
+                  leading: const Icon(Icons.notifications_active_outlined,
+                      color: RatelColors.honey),
+                  title: Text(
+                      S.instance.t('set_push', 'Daily streak reminders')),
+                  subtitle: Text(st == 'Off'
+                      ? S.instance.t('push_off_hint',
+                          'Off — enable in system settings if asked before')
+                      : st),
+                  trailing: st == 'On'
+                      ? const Icon(Icons.check_circle,
+                          color: RatelColors.teal, size: 20)
+                      : TextButton(
+                          onPressed: () async {
+                            await Push.instance.requestAgain();
+                            if (context.mounted) {
+                              (context as Element).markNeedsBuild();
+                            }
+                          },
+                          child: Text(S.instance.t('btn_enable', 'Enable'))),
+                );
+              },
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}

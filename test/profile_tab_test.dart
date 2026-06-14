@@ -31,6 +31,8 @@ void main() {
     expect(tester.takeException(), isNull); // a RenderFlex overflow auto-fails
     expect(find.text('Learner'), findsOneWidget); // guest display name
     expect(find.text('English Score'), findsOneWidget); // moved _englishScoreCard
+    // Inc 175: inline settings moved to a dedicated page -> a Settings entry
+    expect(find.text('Settings'), findsOneWidget);
   });
 
   testWidgets('is a no-back-header tab body (no RatelScaffold/AppBar)',
