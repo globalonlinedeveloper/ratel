@@ -19,6 +19,9 @@ class RatelColors {
   static const Color textMuted = Color(0xFF757470);
   static const Color hearts = Color(0xFFD4537E);
   static const Color border = Color(0xFFEAEAEA);
+  /// 'EN' language-badge avatar fill (Learn-tab header). Inc 172:
+  /// lifted from learn_tab so the tab body holds no raw hex (token-lint).
+  static const Color enBadge = Color(0xFF185FA5);
 }
 
 /// Dark-mode palette (warm charcoal, brand-true).
@@ -54,6 +57,11 @@ extension RatelThemeColors on BuildContext {
   /// no raw hex (token-lint allowlist).
   Color get avatarBgC =>
       isDark ? const Color(0xFF35302A) : const Color(0xFFFAEEDA);
+
+  /// Idle/locked path-node + unready-chest fill (warm dark / soft grey).
+  /// Inc 172: lifted from learn_tab so the tab body holds no raw hex.
+  Color get lockedNodeC =>
+      isDark ? const Color(0xFF3A3733) : const Color(0xFFD9D9D9);
 
   /// Solid accent wash readable in BOTH modes: blends the accent over the
   /// current surface (light -> soft pastel, dark -> deep accent-washed

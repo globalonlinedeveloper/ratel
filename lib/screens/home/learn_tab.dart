@@ -104,17 +104,17 @@ class _LearnTabState extends State<LearnTab> {
   Widget _checkpoint(int index) {
     final String name = _checkpointArt[index % _checkpointArt.length];
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: RatelSpacing.xs),
       child: Row(
         children: [
           Expanded(
               child: Divider(
                   color: context.faintBorderC, indent: 28, endIndent: 14)),
-          Image.asset('assets/images/ratel-$name.webp',
+          ExcludeSemantics(child: Image.asset('assets/images/ratel-$name.webp',
               width: 60,
               height: 60,
               errorBuilder: (_, _, _) =>
-                  const SizedBox(width: 60, height: 60)),
+                  const SizedBox(width: 60, height: 60))),
           Expanded(
               child: Divider(
                   color: context.faintBorderC, indent: 14, endIndent: 28)),
@@ -205,7 +205,7 @@ class _LearnTabState extends State<LearnTab> {
           child: NotificationListener<ScrollNotification>(
             onNotification: _onPathScroll,
             child: SingleChildScrollView(
-              padding: const EdgeInsets.only(top: 12, bottom: 16),
+              padding: const EdgeInsets.only(top: RatelSpacing.md, bottom: RatelSpacing.lg),
               child: Column(children: path),
             ),
           ),
@@ -255,7 +255,7 @@ class _LearnTabState extends State<LearnTab> {
         unit.lessons.take(3).every((l) => appState.isCompleted(l.id));
     final bool claimed = _chests.contains('$u');
     final Color grey =
-        context.isDark ? const Color(0xFF3A3733) : const Color(0xFFD9D9D9);
+        context.lockedNodeC;
     final Widget core = Container(
       key: Key('chest_$u'),
       width: 56,
@@ -331,7 +331,7 @@ class _LearnTabState extends State<LearnTab> {
                 style: const TextStyle(
                     fontSize: 18, fontWeight: FontWeight.w800)),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 18),
+              padding: const EdgeInsets.fromLTRB(RatelSpacing.xl, 0, RatelSpacing.xl, 18),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -375,7 +375,7 @@ class _LearnTabState extends State<LearnTab> {
             ),
             const StreakCalendar(),
             Padding(
-              padding: const EdgeInsets.fromLTRB(24, 2, 24, 8),
+              padding: const EdgeInsets.fromLTRB(RatelSpacing.xl, 2, RatelSpacing.xl, RatelSpacing.sm),
               child: Text(
                   S.instance.t('streak_tip',
                       "Practice every day so your streak won't break!"),
@@ -405,7 +405,7 @@ class _LearnTabState extends State<LearnTab> {
               children: [
                 const Icon(Icons.diamond,
                     color: RatelColors.teal, size: 26),
-                const SizedBox(width: 8),
+                const SizedBox(width: RatelSpacing.sm),
                 Text('${appState.gems}',
                     style: const TextStyle(
                         fontSize: 26, fontWeight: FontWeight.w800)),
@@ -440,7 +440,7 @@ class _LearnTabState extends State<LearnTab> {
                     .replaceAll('{n}', '$freezeCost')),
               ),
             if (!appState.isPro && appState.hearts < 5) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: RatelSpacing.sm),
               FilledButton.tonalIcon(
                 onPressed: () {
                   Navigator.of(ctx).pop();
@@ -505,7 +505,7 @@ class _LearnTabState extends State<LearnTab> {
                             .replaceAll('{t}', fmtCountdown(next)),
                 style: const TextStyle(color: RatelColors.textMuted)),
             if (!appState.isPro && appState.hearts < 5) ...[
-              const SizedBox(height: 12),
+              const SizedBox(height: RatelSpacing.md),
               FilledButton.tonalIcon(
                 onPressed: () {
                   final int cost =
@@ -531,7 +531,7 @@ class _LearnTabState extends State<LearnTab> {
                         '${Flags.instance.intOf('gem_refill_cost', 350)}')),
               ),
             ],
-            const SizedBox(height: 12),
+            const SizedBox(height: RatelSpacing.md),
             SizedBox(
               width: double.infinity,
               child: FilledButton(
@@ -546,7 +546,7 @@ class _LearnTabState extends State<LearnTab> {
             // KIND upsell — always BELOW the practice-earns-heart option
             // (anti-goals: no guilt loops, no dark patterns).
             if (!appState.isPro) ...[
-              const SizedBox(height: 8),
+              const SizedBox(height: RatelSpacing.sm),
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton.icon(
@@ -576,18 +576,18 @@ class _LearnTabState extends State<LearnTab> {
 
   Widget _header() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      padding: const EdgeInsets.fromLTRB(RatelSpacing.lg, RatelSpacing.md, RatelSpacing.lg, RatelSpacing.md),
       color: context.surfaceC,
       child: Row(
         children: [
           const CircleAvatar(
             radius: 14,
-            backgroundColor: Color(0xFF185FA5),
+            backgroundColor: RatelColors.enBadge,
             child: Text('EN',
                 style: TextStyle(
                     color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: RatelSpacing.sm),
           const Text('English',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
           const Spacer(),
@@ -603,7 +603,7 @@ class _LearnTabState extends State<LearnTab> {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: RatelSpacing.md),
           MergeSemantics(
             child: Semantics(
               button: true,
@@ -617,9 +617,9 @@ class _LearnTabState extends State<LearnTab> {
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: RatelSpacing.md),
           _numStat(Icons.bolt, appState.xp, RatelColors.honey),
-          const SizedBox(width: 12),
+          const SizedBox(width: RatelSpacing.md),
           MergeSemantics(
             child: Semantics(
               button: true,
@@ -696,7 +696,7 @@ class _LearnTabState extends State<LearnTab> {
       showDragHandle: true,
       builder: (ctx) => SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, RatelSpacing.xl),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -714,11 +714,11 @@ class _LearnTabState extends State<LearnTab> {
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: RatelSpacing.xs),
               Text(S.instance.t('gb_sub', 'Key phrases from this unit'),
                   style: const TextStyle(
                       color: RatelColors.textMuted, fontSize: 12.5)),
-              const SizedBox(height: 12),
+              const SizedBox(height: RatelSpacing.md),
               for (final (i, entry)
                   in guidebookFor(unit).indexed) ...[
                 Row(
@@ -749,7 +749,7 @@ class _LearnTabState extends State<LearnTab> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: RatelSpacing.md),
               ],
             ],
           ),
@@ -775,8 +775,8 @@ class _LearnTabState extends State<LearnTab> {
     final int done =
         unit.lessons.where((l) => appState.isCompleted(l.id)).length;
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      margin: const EdgeInsets.fromLTRB(RatelSpacing.lg, RatelSpacing.sm, RatelSpacing.lg, 0),
+      padding: const EdgeInsets.symmetric(horizontal: RatelSpacing.md, vertical: RatelSpacing.sm),
       decoration: BoxDecoration(
         color: unitAccent(u),
         borderRadius: BorderRadius.circular(12),
@@ -785,7 +785,7 @@ class _LearnTabState extends State<LearnTab> {
         children: [
           Icon(_unitIcons[u % _unitIcons.length],
               color: Colors.white, size: 18),
-          const SizedBox(width: 8),
+          const SizedBox(width: RatelSpacing.sm),
           Expanded(
             child: Text(
                 S.instance
@@ -821,8 +821,8 @@ class _LearnTabState extends State<LearnTab> {
     }
     final int total = last - s.firstUnit + 1;
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 18, 16, 0),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: const EdgeInsets.fromLTRB(RatelSpacing.lg, 18, RatelSpacing.lg, 0),
+      padding: const EdgeInsets.symmetric(horizontal: RatelSpacing.lg, vertical: RatelSpacing.md),
       decoration: BoxDecoration(
         color: context.surfaceC,
         borderRadius: BorderRadius.circular(16),
@@ -842,7 +842,7 @@ class _LearnTabState extends State<LearnTab> {
                     fontWeight: FontWeight.w800,
                     fontSize: 13)),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: RatelSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -892,7 +892,7 @@ class _LearnTabState extends State<LearnTab> {
           key: _unitKeyFor(index),
           onTap: () => _showGuidebook(index, unit),
           child: Container(
-      margin: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+      margin: const EdgeInsets.fromLTRB(RatelSpacing.lg, RatelSpacing.md, RatelSpacing.lg, RatelSpacing.xs),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
           color: unitAccent(index), borderRadius: BorderRadius.circular(14)),
@@ -929,7 +929,7 @@ class _LearnTabState extends State<LearnTab> {
                     fontSize: 12,
                     fontWeight: FontWeight.w700)),
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: RatelSpacing.sm),
           const Icon(Icons.menu_book, color: Colors.white70, size: 16),
         ],
       ),
@@ -956,7 +956,7 @@ class _LearnTabState extends State<LearnTab> {
     final (Color bg, IconData icon) = switch (state) {
       NodeState.done => (accent ?? RatelColors.teal, Icons.check),
       NodeState.locked => (
-          context.isDark ? const Color(0xFF3A3733) : const Color(0xFFD9D9D9),
+          context.lockedNodeC,
           trophy ? Icons.emoji_events : Icons.lock
         ),
       NodeState.current => (RatelColors.honey, Icons.star),
@@ -977,7 +977,7 @@ class _LearnTabState extends State<LearnTab> {
                 size: 28),
           ),
           if (title != null) ...[
-            const SizedBox(height: 4),
+            const SizedBox(height: RatelSpacing.xs),
             SizedBox(
               width: 130,
               child: Text(title,
@@ -1048,11 +1048,11 @@ class _LearnTabState extends State<LearnTab> {
               ),
             ],
           ),
-          const SizedBox(width: 12),
-          const RatelActionAnim(
+          const SizedBox(width: RatelSpacing.md),
+          const ExcludeSemantics(child: RatelActionAnim(
               action: 'walk',
               fallbackPose: RatelPose.encourage,
-              size: 72),
+              size: 72)),
         ],
       ),
     );

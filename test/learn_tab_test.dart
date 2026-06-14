@@ -9,6 +9,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// extracted verbatim from the home god-screen into [LearnTab]. A tab body is
 /// NOT a pushed route (no AppBar/back header); tab switches go through the
 /// [onSwitchTab] callback. The header stat keys must survive the move.
+/// Inc 172: token/a11y migration (RatelSpacing + the 3 raw hex moved to
+/// theme.dart tokens [BuildContext.lockedNodeC]/[RatelColors.enBadge] +
+/// decorative mascots wrapped in ExcludeSemantics) — a no-visual-change
+/// pass these render+no-overflow tests guard for free.
 void main() {
   setUp(() {
     SharedPreferences.setMockInitialValues({});
