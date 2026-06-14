@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../widgets/friends_feed.dart';
 import '../strings.dart';
 import '../theme.dart';
+import '../widgets/ratel_scaffold.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/ratel_mascot.dart';
 import '../app_state.dart';
@@ -55,8 +56,8 @@ class _FriendsScreenState extends State<FriendsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(S.instance.t('fr_title', 'Friends'))),
+    return RatelScaffold(
+      title: S.instance.t('fr_title', 'Friends'),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [

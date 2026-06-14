@@ -5,6 +5,7 @@ import '../config.dart';
 import '../content.dart';
 import '../milestones.dart';
 import '../theme.dart';
+import '../widgets/ratel_scaffold.dart';
 
 /// Admin triage: open exercise reports grouped by exercise, the live
 /// prompt shown for context, one tap resolves the group.
@@ -80,8 +81,8 @@ class _ReportQueueScreenState extends State<ReportQueueScreen> {
   @override
   Widget build(BuildContext context) {
     final groups = _groups;
-    return Scaffold(
-      appBar: AppBar(title: const Text('Report queue')),
+    return RatelScaffold(
+      title: 'Report queue',
       body: groups == null
           ? const Center(child: CircularProgressIndicator())
           : groups.isEmpty
