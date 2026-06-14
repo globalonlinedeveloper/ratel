@@ -79,18 +79,18 @@ try{
     if(pxp<10) problems.push(`XP not persisted (total_xp=${pxp})`);
     else console.log('persisted total_xp:', pxp);
   } else { problems.push('no token for persistence check'); }
-  // The Sound/Haptics settings live in SwitchListTiles, whose title is merged
-  // into one accessible node -> match the aria-label/semantics text, not a
-  // standalone text node, and scroll-retry until it renders into the tree.
-  const hasSoundToggle=async()=>page.evaluate(()=>{
-    const hit=(x)=>(x||'').toLowerCase().includes('sound effects');
+  // Inc 175: settings moved to a dedicated page; verify the Settings ENTRY
+  // is present in Profile (its subtitle 'Sound, language, appearance, ...')
+  // -> match the merged aria-label/semantics text, scroll-retry until shown.
+  const hasSettingsEntry=async()=>page.evaluate(()=>{
+    const hit=(x)=>(x||'').toLowerCase().includes('appearance');
     return Array.from(document.querySelectorAll('[aria-label]')).some(e=>hit(e.getAttribute('aria-label')))
       || Array.from(document.querySelectorAll('flt-semantics')).some(e=>hit(e.textContent));
   });
-  let soundToggle=false, sdl=Date.now()+9000;
-  while(Date.now()<sdl){ await page.mouse.move(240,520); await page.mouse.wheel(0,360); await page.waitForTimeout(550); await sem(page); if(await hasSoundToggle()){soundToggle=true;break;} }
+  let settingsEntry=false, sdl=Date.now()+9000;
+  while(Date.now()<sdl){ await page.mouse.move(240,520); await page.mouse.wheel(0,360); await page.waitForTimeout(550); await sem(page); if(await hasSettingsEntry()){settingsEntry=true;break;} }
   await page.screenshot({path:'e2e-settings.png'});
-  if(!soundToggle) problems.push('Sound settings toggle missing in Profile');
+  if(!settingsEntry) problems.push('Settings entry missing in Profile');
   const hasLabel=async(txt)=>page.evaluate((t)=>{
     const hit=(x)=>(x||'').toLowerCase().includes(t);
     return Array.from(document.querySelectorAll('[aria-label]')).some(e=>hit(e.getAttribute('aria-label')))

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
-import 'package:ratel/screens/home_screen.dart';
+import 'package:ratel/screens/settings_screen.dart';
 import 'package:ratel/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -27,10 +27,9 @@ void main() {
       (tester) async {
     S.instance.debugSet('quit_title',
         en: "Wait, don't go!", ta: 'இருங்கள், போகாதீர்கள்!');
-    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
-    await tester.pump(const Duration(milliseconds: 600));
-    await tester.tap(find.text('Profile'));
-    await tester.pump(const Duration(milliseconds: 600));
+    // Inc 175: the language control moved to the dedicated Settings page.
+    await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
+    await tester.pump(const Duration(milliseconds: 400));
     await tester.scrollUntilVisible(find.text('App language'), 240,
         scrollable: find.byType(Scrollable).first);
     await tester.tap(find.text('தமிழ்'));

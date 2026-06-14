@@ -5,7 +5,7 @@ import 'package:ratel/app_state.dart';
 import 'package:ratel/content.dart';
 import 'package:ratel/milestones.dart';
 import 'package:ratel/models.dart';
-import 'package:ratel/screens/home_screen.dart';
+import 'package:ratel/screens/settings_screen.dart';
 import 'package:ratel/screens/lesson_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -136,10 +136,9 @@ void main() {
 
   testWidgets('Profile switch writes the listen_on preference',
       (tester) async {
-    await tester.pumpWidget(const MaterialApp(home: HomeScreen()));
-    await tester.pump(const Duration(milliseconds: 600));
-    await tester.tap(find.text('Profile'));
-    await tester.pump(const Duration(milliseconds: 600));
+    // Inc 175: the listening toggle moved to the dedicated Settings page.
+    await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
+    await tester.pump(const Duration(milliseconds: 400));
     await tester.scrollUntilVisible(find.text('Listening exercises'), 240,
         scrollable: find.byType(Scrollable).first);
     await tester.tap(find.text('Listening exercises'));
