@@ -14,7 +14,6 @@ import '../widgets/hearts_sheet.dart';
 import '../widgets/daily_chest.dart';
 import '../widgets/perfect_week.dart';
 import '../widgets/monthly_quest.dart';
-import '../widgets/smart_practice.dart';
 import '../widgets/badge_gallery.dart';
 import '../widgets/anniversary_card.dart';
 import '../widgets/ratel_mascot.dart';
@@ -26,7 +25,6 @@ import '../comeback.dart';
 import '../milestones.dart';
 import '../guidebook.dart';
 import 'section_test_screen.dart';
-import 'timed_challenge_screen.dart';
 import 'report_queue_screen.dart';
 import '../models.dart';
 import '../content.dart';
@@ -39,11 +37,11 @@ import 'admin_screen.dart';
 import 'onboarding_screen.dart';
 import 'friends_screen.dart';
 import 'coach_screen.dart';
+import 'home/practice_tab.dart';
 import 'paywall_screen.dart';
 import '../widgets/transitions.dart';
 import '../widgets/rolling_number.dart';
 import '../widgets/streak_flame.dart';
-import '../widgets/mistakes_review.dart';
 import '../widgets/weak_areas_summary.dart';
 import '../widgets/leagues_board.dart';
 import '../widgets/daily_nudge.dart';
@@ -229,7 +227,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return _buildLearn(context);
       case 1:
-        return _buildPractice();
+        return const PracticeTab();
       case 2:
         return const CoachScreen();
       case 3:
@@ -243,175 +241,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildLeagues() {
     return const LeaguesBoard();
-  }
-
-  Widget _buildPractice() {
-    return ListView(
-      padding: const EdgeInsets.all(16),
-      children: [
-        Text(S.instance.t('nav_practice', 'Practice'),
-            style: const TextStyle(fontSize: 20, fontFamily: kDisplayFont, fontWeight: FontWeight.w700)),
-        const SizedBox(height: 12),
-        const SmartPracticeCard(),
-        Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          padding:
-              const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-          decoration: BoxDecoration(
-            color: context.tintC(RatelColors.coral),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(color: context.faintBorderC),
-          ),
-          child: Row(
-            children: [
-              const Icon(Icons.timer_outlined,
-                  color: RatelColors.coral),
-              const SizedBox(width: 10),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(S.instance.t('tc_card_title', 'Timed challenge'),
-                        style:
-                            const TextStyle(fontWeight: FontWeight.w800)),
-                    Text(
-                        S.instance.t('tc_card_sub',
-                            'Beat the clock — no hearts at risk'),
-                        style: const TextStyle(
-                            color: RatelColors.textMuted,
-                            fontSize: 12)),
-                  ],
-                ),
-              ),
-              FilledButton(
-                style: FilledButton.styleFrom(
-                    backgroundColor: RatelColors.coral,
-                    visualDensity: VisualDensity.compact),
-                onPressed: () => Navigator.of(context).push(
-                    ratelRoute(const TimedChallengeScreen())),
-                child: Text(S.instance.t('btn_go', 'Go')),
-              ),
-            ],
-          ),
-        ),
-        const MistakesReview(),
-        Text(S.instance.t('rv_title', 'Revisit lessons'),
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-        const SizedBox(height: 4),
-        Text(S.instance.t('rv_sub', 'Replay any lesson to sharpen up.'),
-            style: const TextStyle(color: RatelColors.textMuted)),
-        const SizedBox(height: 12),
-        ...List.generate(course.length, (u) {
-          final unit = course[u];
-          final int doneCount =
-              unit.lessons.where((l) => appState.isCompleted(l.id)).length;
-          final bool hasCurrent =
-              unit.lessons.any((l) => !appState.isCompleted(l.id)) &&
-                  (u == 0 ||
-                      course[u - 1]
-                          .lessons
-                          .every((l) => appState.isCompleted(l.id)));
-          return Container(
-            margin: const EdgeInsets.only(bottom: 10),
-            decoration: BoxDecoration(
-              color: context.surfaceC,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: context.borderC),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: Material(
-              type: MaterialType.transparency,
-              child: Theme(
-              data: Theme.of(context)
-                  .copyWith(dividerColor: Colors.transparent),
-              child: ExpansionTile(
-                initiallyExpanded: hasCurrent,
-                leading: CircleAvatar(
-                  radius: 16,
-                  backgroundColor: unitAccent(u),
-                  child: Text('${u + 1}',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w800,
-                          fontSize: 13)),
-                ),
-                title: Text(unit.subtitle,
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w700, fontSize: 15)),
-                subtitle: Text(
-                    S.instance
-                        .t('n_lessons', '{a}/{b} lessons')
-                        .replaceAll('{a}', '$doneCount')
-                        .replaceAll('{b}', '${unit.lessons.length}'),
-                    style: const TextStyle(
-                        color: RatelColors.textMuted, fontSize: 12)),
-                children: [
-                  for (final l in unit.lessons) _practiceRow(context, l),
-                ],
-              ),
-            ),
-            ),
-          );
-        }),
-      ],
-    );
-  }
-
-  Widget _practiceRow(BuildContext context, Lesson l) {
-    final bool done = appState.isCompleted(l.id);
-    {
-      {
-          return Padding(
-            padding: EdgeInsets.zero,
-            child: InkWell(
-              onTap: () {
-                if (appState.hearts <= 0 && !appState.isPro) {
-                  showHeartsSheet(context);
-                  return;
-                }
-                Navigator.of(context)
-                    .push(ratelRoute(LessonScreen(lesson: l)));
-              },
-              borderRadius: BorderRadius.circular(14),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 16,
-                      backgroundColor:
-                          done ? RatelColors.teal : RatelColors.honey,
-                      child: Icon(done ? Icons.check : Icons.play_arrow,
-                          color: Colors.white, size: 20),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l.title,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.w600, fontSize: 16)),
-                          Text(
-                              S.instance
-                                  .t('n_exercises', '{n} exercises')
-                                  .replaceAll(
-                                      '{n}', '${l.exercises.length}'),
-                              style: const TextStyle(
-                                  color: RatelColors.textMuted, fontSize: 13)),
-                        ],
-                      ),
-                    ),
-                    const Icon(Icons.chevron_right,
-                        color: RatelColors.textMuted),
-                  ],
-                ),
-              ),
-            ),
-          );
-      }
-    }
   }
 
   Widget _buildProfile() {
