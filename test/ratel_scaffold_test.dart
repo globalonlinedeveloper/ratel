@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
 import 'package:ratel/screens/friends_screen.dart';
+import 'package:ratel/screens/paywall_screen.dart';
 import 'package:ratel/screens/report_queue_screen.dart';
 import 'package:ratel/widgets/ratel_scaffold.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -111,5 +112,16 @@ void main() {
     await tester.pumpWidget(host(const FriendsScreen()));
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.byType(RatelScaffold), findsOneWidget);
+  });
+
+  testWidgets('paywall is wrapped in RatelScaffold (360px, no overflow)',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 760);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(host(const PaywallScreen()));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(RatelScaffold), findsOneWidget);
+    expect(find.widgetWithText(AppBar, 'Ratel Pro'), findsOneWidget);
   });
 }

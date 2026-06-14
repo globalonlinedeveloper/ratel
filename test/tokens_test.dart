@@ -13,6 +13,7 @@ import 'package:ratel/theme.dart';
 const _migratedScreens = <String>[
   'lib/screens/report_queue_screen.dart',
   'lib/screens/friends_screen.dart',
+  'lib/screens/paywall_screen.dart',
 ];
 final _hexColor = RegExp(r'Color\(0x');
 

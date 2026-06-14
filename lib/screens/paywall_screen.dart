@@ -4,6 +4,7 @@ import '../theme.dart';
 import '../app_state.dart';
 import '../strings.dart';
 import '../widgets/ratel_mascot.dart';
+import '../widgets/ratel_scaffold.dart';
 
 /// Ratel Pro paywall. Lists the plan + benefits and starts the 7-day trial.
 /// NOTE: this is TEST mode — `start_pro_trial` unlocks Pro with no charge.
@@ -33,20 +34,22 @@ class _PaywallScreenState extends State<PaywallScreen> {
   @override
   Widget build(BuildContext context) {
     final pro = appState.isPro;
-    return Scaffold(
-      appBar: AppBar(title: Text(S.instance.t('pw_title', 'Ratel Pro'))),
+    return RatelScaffold(
+      title: S.instance.t('pw_title', 'Ratel Pro'),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           Center(
             child: Column(
               children: [
-                Image.asset('assets/images/ratel-crown.webp',
-                    width: 120,
-                    height: 120,
-                    errorBuilder: (_, _, _) => const RatelMascot(
-                        pose: RatelPose.celebrate, size: 120)),
-                const SizedBox(height: 8),
+                ExcludeSemantics(
+                  child: Image.asset('assets/images/ratel-crown.webp',
+                      width: 120,
+                      height: 120,
+                      errorBuilder: (_, _, _) => const RatelMascot(
+                          pose: RatelPose.celebrate, size: 120)),
+                ),
+                const SizedBox(height: RatelSpacing.sm),
                 Text(
                     pro
                         ? S.instance.t('pw_head_pro', "You're Ratel Pro ✨")
@@ -84,7 +87,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                   style: const TextStyle(fontWeight: FontWeight.w600)),
               tint: RatelColors.teal,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: RatelSpacing.md),
             OutlinedButton(
               onPressed: _busy ? null : _cancel,
               child: Text(_busy
@@ -101,7 +104,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                 S.instance.t('pw_monthly', 'Monthly'),
                 Flags.instance.str('price_month', '\$9.99/mo'),
                 S.instance.t('pw_cancel_any', 'Cancel anytime'), false),
-            const SizedBox(height: 16),
+            const SizedBox(height: RatelSpacing.lg),
             SizedBox(
               width: double.infinity,
               child: FilledButton(
@@ -134,12 +137,12 @@ class _PaywallScreenState extends State<PaywallScreen> {
   }
 
   Widget _benefit(IconData icon, String title, String body) => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.only(bottom: RatelSpacing.md),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Icon(icon, color: RatelColors.honey),
-            const SizedBox(width: 12),
+            const SizedBox(width: RatelSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -164,7 +167,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
             for (final (i, t) in [label, free, proV].indexed)
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    vertical: 8, horizontal: 8),
+                    vertical: RatelSpacing.sm, horizontal: RatelSpacing.sm),
                 child: Text(t,
                     textAlign:
                         i == 0 ? TextAlign.left : TextAlign.center,
@@ -232,7 +235,7 @@ class _PaywallScreenState extends State<PaywallScreen> {
                               fontWeight: FontWeight.w700, fontSize: 16)),
                     ),
                     if (best) ...[
-                      const SizedBox(width: 8),
+                      const SizedBox(width: RatelSpacing.sm),
                       Container(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 8, vertical: 2),
