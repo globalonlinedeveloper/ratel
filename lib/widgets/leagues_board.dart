@@ -65,13 +65,13 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 2),
+              padding: const EdgeInsets.fromLTRB(RatelSpacing.lg, RatelSpacing.lg, RatelSpacing.lg, 2),
               child: Text('$tier ${S.instance.t('lg_league', 'League')}',
                   style: const TextStyle(
                       fontSize: 20, fontWeight: FontWeight.w700)),
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+              padding: const EdgeInsets.fromLTRB(RatelSpacing.lg, 0, RatelSpacing.lg, RatelSpacing.xs),
               child: Row(
                 children: [
                   Text(S.instance.t('lg_week', 'This week · top 5 advance'),
@@ -102,7 +102,7 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
             ),
             if (rows.isNotEmpty && rows.length < 5)
               Padding(
-                padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
+                padding: const EdgeInsets.fromLTRB(RatelSpacing.lg, 2, RatelSpacing.lg, 2),
                 child: Text(
                     'Quiet week — invite friends from Profile and race them!',
                     style: TextStyle(
@@ -115,14 +115,14 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
                 return const SizedBox.shrink();
               }
               return Padding(
-                padding: const EdgeInsets.fromLTRB(16, 2, 16, 2),
+                padding: const EdgeInsets.fromLTRB(RatelSpacing.lg, 2, RatelSpacing.lg, 2),
                 child: Row(
                   children: [
-                    const RatelActionAnim(
+                    const ExcludeSemantics(child: RatelActionAnim(
                         action: 'trophy',
                         fallbackPose: RatelPose.celebrate,
-                        size: 52),
-                    const SizedBox(width: 8),
+                        size: 52)),
+                    const SizedBox(width: RatelSpacing.sm),
                     Expanded(
                       child: Text(
               S.instance.t('lg_promo', 'Promotion zone — hold your spot!'),
@@ -142,7 +142,7 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
                       subtitle:
                           'Earn XP this week to enter the league and climb the board.')
                   : ListView.builder(
-                      padding: const EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(RatelSpacing.lg),
                       itemCount: rows.length,
                       itemBuilder: (context, i) {
                         final r = rows[i];
@@ -153,7 +153,7 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
                             (r['display_name'] ?? '').toString().trim();
                         final xp = (r['weekly_xp'] as num?)?.toInt() ?? 0;
                         return Container(
-                          margin: const EdgeInsets.only(bottom: 8),
+                          margin: const EdgeInsets.only(bottom: RatelSpacing.sm),
                           padding: const EdgeInsets.symmetric(
                               horizontal: 12, vertical: 10),
                           decoration: BoxDecoration(
@@ -193,7 +193,7 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
                                     style: const TextStyle(
                                         color: Colors.white, fontSize: 13)),
                               ),
-                              const SizedBox(width: 12),
+                              const SizedBox(width: RatelSpacing.md),
                               Expanded(
                                 child: Text(
                                     isYou
@@ -224,7 +224,7 @@ class _LeaguesBoardState extends State<LeaguesBoard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 2),
+            padding: const EdgeInsets.fromLTRB(RatelSpacing.lg, RatelSpacing.lg, RatelSpacing.lg, 2),
             child: Text(title,
                 style:
                     const TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),

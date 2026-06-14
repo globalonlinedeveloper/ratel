@@ -139,16 +139,16 @@ class _CoachScreenState extends State<CoachScreen> {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+          padding: const EdgeInsets.fromLTRB(RatelSpacing.lg, RatelSpacing.md, RatelSpacing.lg, RatelSpacing.md),
           color: context.surfaceC,
           child: Row(
             children: [
-              _waiting
+              ExcludeSemantics(child: _waiting
                   ? const RatelActionAnim(
                       action: 'listening',
                       fallbackPose: RatelPose.think,
                       size: 52)
-                  : const RatelMascot(pose: RatelPose.idle, size: 52),
+                  : const RatelMascot(pose: RatelPose.idle, size: 52)),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(
@@ -184,7 +184,7 @@ class _CoachScreenState extends State<CoachScreen> {
         Expanded(
           child: ListView.builder(
             controller: _scroll,
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+            padding: const EdgeInsets.fromLTRB(RatelSpacing.lg, 14, RatelSpacing.lg, RatelSpacing.sm),
             itemCount: _msgs.length,
             itemBuilder: (context, i) =>
                 _bubble(_msgs[i], i == _msgs.length - 1),
@@ -199,7 +199,7 @@ class _CoachScreenState extends State<CoachScreen> {
                     width: 14,
                     height: 14,
                     child: CircularProgressIndicator(strokeWidth: 2)),
-                const SizedBox(width: 8),
+                const SizedBox(width: RatelSpacing.sm),
                 Text(S.instance.t('coach_typing', 'Ratel is typing...'),
                     style: const TextStyle(
                         color: RatelColors.textMuted, fontSize: 13)),
@@ -211,11 +211,11 @@ class _CoachScreenState extends State<CoachScreen> {
               height: 96,
               child: ListView(
                 scrollDirection: Axis.horizontal,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
+                padding: const EdgeInsets.symmetric(horizontal: RatelSpacing.md),
                 children: [
                   for (final sc in kCoachScenarios)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: RatelSpacing.xs),
                       child: InkWell(
                         onTap: () => _send(sc.prompt),
                         borderRadius: BorderRadius.circular(14),
@@ -237,7 +237,7 @@ class _CoachScreenState extends State<CoachScreen> {
                               children: [
                                 Icon(sc.icon,
                                     size: 20, color: RatelColors.teal),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: RatelSpacing.sm),
                                 Text(S.instance.t('coach_roleplay', 'Roleplay'),
                                     style: TextStyle(
                                         fontSize: 10,
@@ -260,11 +260,11 @@ class _CoachScreenState extends State<CoachScreen> {
             height: 44,
             child: ListView(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: RatelSpacing.md),
               children: [
                 for (var i = 0; i < _starters.length; i++)
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: RatelSpacing.xs),
                     child: ActionChip(
                       // chip label localizes; the sent message stays English
                       // (the Coach conversation IS the English practice).
@@ -281,7 +281,7 @@ class _CoachScreenState extends State<CoachScreen> {
         SafeArea(
           top: false,
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(12, 6, 12, 10),
+            padding: const EdgeInsets.fromLTRB(RatelSpacing.md, 6, RatelSpacing.md, 10),
             child: Row(
               children: [
                 Expanded(
@@ -302,7 +302,7 @@ class _CoachScreenState extends State<CoachScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: RatelSpacing.sm),
                 IconButton.filled(
                   onPressed: _waiting ? null : () => _send(_input.text),
                   icon: const Icon(Icons.send),
@@ -354,8 +354,8 @@ class _CoachScreenState extends State<CoachScreen> {
       children: [
         const Padding(
           padding: EdgeInsets.only(bottom: 10),
-          child: RatelActionAnim(
-              action: 'teacher', fallbackPose: RatelPose.point, size: 44),
+          child: ExcludeSemantics(child: RatelActionAnim(
+              action: 'teacher', fallbackPose: RatelPose.point, size: 44)),
         ),
         const SizedBox(width: 6),
         Expanded(child: bubble),
