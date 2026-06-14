@@ -3,6 +3,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
 import '../content.dart';
 import '../content_store.dart';
+import '../widgets/ratel_scaffold.dart';
+import '../widgets/skeleton.dart';
+import '../widgets/empty_state.dart';
+import '../widgets/error_state.dart';
 
 /// Admin-only content editor. Browses lessons (from the active course), lists a
 /// lesson's exercises from the DB (with their ids), and edits an exercise's
@@ -13,13 +17,14 @@ class AdminScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Content admin')),
+    return RatelScaffold(
+      title: 'Content admin',
       body: ListView(
         children: [
           for (final unit in course) ...[
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
+              padding: const EdgeInsets.fromLTRB(
+                  RatelSpacing.lg, RatelSpacing.lg, RatelSpacing.lg, RatelSpacing.xs),
               child: Text(unit.title,
                   style: const TextStyle(
                       fontWeight: FontWeight.w700, fontSize: 16)),
@@ -42,16 +47,21 @@ class AdminScreen extends StatelessWidget {
 
 class AdminLessonScreen extends StatefulWidget {
   const AdminLessonScreen(
-      {super.key, required this.lessonId, required this.title});
+      {super.key,
+      required this.lessonId,
+      required this.title,
+      this.futureOverride});
   final String lessonId;
   final String title;
+  final Future<List<Map<String, dynamic>>>? futureOverride; // test injection
 
   @override
   State<AdminLessonScreen> createState() => _AdminLessonScreenState();
 }
 
 class _AdminLessonScreenState extends State<AdminLessonScreen> {
-  late Future<List<Map<String, dynamic>>> _future = _load();
+  late Future<List<Map<String, dynamic>>> _future =
+      widget.futureOverride ?? _load();
 
   Future<List<Map<String, dynamic>>> _load() async {
     final rows = await Supabase.instance.client
@@ -65,15 +75,25 @@ class _AdminLessonScreenState extends State<AdminLessonScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.title)),
+    return RatelScaffold(
+      title: widget.title,
       body: FutureBuilder<List<Map<String, dynamic>>>(
         future: _future,
         builder: (context, snap) {
           if (snap.connectionState != ConnectionState.done) {
-            return const Center(child: CircularProgressIndicator());
+            return const SkeletonList();
+          }
+          if (snap.hasError) {
+            return ErrorState(
+                onRetry: () =>
+                    setState(() => _future = widget.futureOverride ?? _load()));
           }
           final rows = snap.data ?? const [];
+          if (rows.isEmpty) {
+            return const RatelEmptyState(
+                title: 'No exercises yet',
+                subtitle: 'This lesson has no exercises in the database.');
+          }
           return ListView.separated(
             itemCount: rows.length,
             separatorBuilder: (_, _) => const Divider(height: 1),
@@ -174,14 +194,14 @@ class _AdminExerciseEditState extends State<AdminExerciseEdit> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Edit exercise')),
+    return RatelScaffold(
+      title: 'Edit exercise',
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(RatelSpacing.lg),
         children: [
           _field('Prompt', _prompt),
           if (_type == 'choice') _field('Sentence (optional)', _sentence),
-          const SizedBox(height: 8),
+          const SizedBox(height: RatelSpacing.sm),
           Text(_type == 'choice' ? 'Options (tap to mark correct)' : 'Word tiles',
               style: const TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
@@ -204,7 +224,7 @@ class _AdminExerciseEditState extends State<AdminExerciseEdit> {
               ],
             ),
           if (_type == 'wordBank') ...[
-            const SizedBox(height: 8),
+            const SizedBox(height: RatelSpacing.sm),
             _field('Correct order (space-separated)', _order),
           ],
           if (_error != null) ...[
