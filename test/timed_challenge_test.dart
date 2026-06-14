@@ -5,6 +5,7 @@ import 'package:ratel/milestones.dart';
 import 'package:ratel/models.dart';
 import 'package:ratel/placement.dart';
 import 'package:ratel/screens/timed_challenge_screen.dart';
+import 'package:ratel/widgets/ratel_scaffold.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 const Exercise _q = Exercise.choice(
@@ -73,5 +74,24 @@ void main() {
     await tester.pump(const Duration(seconds: 19));
     expect(find.text('Nice run!'), findsOneWidget);
     await tester.pump(const Duration(seconds: 1));
+  });
+
+  testWidgets('gate renders inside RatelScaffold and lays out at 360px',
+      (tester) async {
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(const MaterialApp(
+        home: TimedChallengeScreen(
+            pool: [_q], duration: Duration(seconds: 3))));
+    // SkeletonBox/RatelMascot loop forever -> pumpAndSettle would hang; advance
+    // a fixed slice instead (session-craft gotcha).
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byType(RatelScaffold), findsOneWidget);
+    expect(find.text('Timed challenge'), findsOneWidget); // themed header title
+    expect(find.text('Beat the clock!'), findsOneWidget);
+    expect(find.text('Start'), findsOneWidget);
+    expect(tester.takeException(), isNull); // RenderFlex overflow -> failure
   });
 }

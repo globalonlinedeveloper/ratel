@@ -15,6 +15,7 @@ const _migratedScreens = <String>[
   'lib/screens/friends_screen.dart',
   'lib/screens/paywall_screen.dart',
   'lib/screens/admin_screen.dart',
+  'lib/screens/timed_challenge_screen.dart',
 ];
 final _hexColor = RegExp(r'Color\(0x');
 

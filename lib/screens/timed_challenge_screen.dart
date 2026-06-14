@@ -12,6 +12,7 @@ import '../sfx.dart';
 import '../strings.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
+import '../widgets/ratel_scaffold.dart';
 
 /// Opt-in, kind by design: NO hearts at risk, ever. Beat the clock,
 /// keep your best, earn a few gems.
@@ -115,24 +116,25 @@ class _TimedChallengeScreenState extends State<TimedChallengeScreen> {
   }
 
   Widget _gate(BuildContext context) {
-    return Scaffold(
-      appBar:
-          AppBar(title: Text(S.instance.t('tc_title', 'Timed challenge'))),
+    return RatelScaffold(
+      title: S.instance.t('tc_title', 'Timed challenge'),
       body: SafeArea(
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(RatelSpacing.xl),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                RatelMascot(
+                ExcludeSemantics(
+                  child: RatelMascot(
                     pose: _done ? RatelPose.celebrate : RatelPose.point,
                     size: 110),
-                const SizedBox(height: 12),
+                ),
+                const SizedBox(height: RatelSpacing.md),
                 Text(_done ? 'Nice run!' : 'Beat the clock!',
                     style: const TextStyle(
                         fontSize: 22, fontWeight: FontWeight.w800)),
-                const SizedBox(height: 8),
+                const SizedBox(height: RatelSpacing.sm),
                 Text(
                     _done
                         ? 'Score ${_correct * 10} · $_correct correct '
@@ -172,20 +174,20 @@ class _TimedChallengeScreenState extends State<TimedChallengeScreen> {
                   )
                 else
                   Padding(
-                    padding: const EdgeInsets.only(bottom: 4),
+                    padding: const EdgeInsets.only(bottom: RatelSpacing.xs),
                     child: Text(S.instance.t('tc_armed', '+15s boost armed!'),
                         style: const TextStyle(
                             color: RatelColors.coral,
                             fontWeight: FontWeight.w800)),
                   ),
-                const SizedBox(height: 8),
+                const SizedBox(height: RatelSpacing.sm),
                 SizedBox(
                   width: double.infinity,
                   child: FilledButton(
                     style: FilledButton.styleFrom(
                         backgroundColor: RatelColors.teal,
                         padding:
-                            const EdgeInsets.symmetric(vertical: 16)),
+                            const EdgeInsets.symmetric(vertical: RatelSpacing.lg)),
                     onPressed: _pool.isEmpty ? null : _start,
                     child: Text(_done ? 'Run it again' : 'Start'),
                   ),
@@ -203,7 +205,7 @@ class _TimedChallengeScreenState extends State<TimedChallengeScreen> {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(RatelSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -229,13 +231,13 @@ class _TimedChallengeScreenState extends State<TimedChallengeScreen> {
                 const SizedBox(height: 6),
                 Text(ex.sentence!, style: const TextStyle(fontSize: 16)),
               ],
-              const SizedBox(height: 12),
+              const SizedBox(height: RatelSpacing.md),
               Expanded(
                 child: ListView(
                   children: [
                     for (int o = 0; o < ex.options.length; o++)
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 8),
+                        padding: const EdgeInsets.only(bottom: RatelSpacing.sm),
                         child: OutlinedButton(
                           style: OutlinedButton.styleFrom(
                               padding: const EdgeInsets.symmetric(
