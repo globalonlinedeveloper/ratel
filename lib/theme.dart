@@ -22,6 +22,11 @@ class RatelColors {
   /// 'EN' language-badge avatar fill (Learn-tab header). Inc 172:
   /// lifted from learn_tab so the tab body holds no raw hex (token-lint).
   static const Color enBadge = Color(0xFF185FA5);
+  /// lesson_screen accents (Inc 173.., detokenised so the screen is hex-clean):
+  static const Color fixChip = Color(0xFFE08330);   // 'FIXING MISTAKES' chip
+  static const Color selected = Color(0xFF378ADD);  // selected (unanswered) option
+  static const Color scoreStat = Color(0xFF7B5EA7); // completion SCORE stat chip
+  static const Color speedStat = Color(0xFF4A7FB5); // completion SPEED stat chip
 }
 
 /// Dark-mode palette (warm charcoal, brand-true).

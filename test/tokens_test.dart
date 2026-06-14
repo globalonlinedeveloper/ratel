@@ -27,6 +27,7 @@ const _migratedScreens = <String>[
   'lib/widgets/leagues_board.dart',
   'lib/screens/home_screen.dart',
   'lib/screens/auth_gate.dart',
+  'lib/screens/lesson_screen.dart',
 ];
 final _hexColor = RegExp(r'Color\(0x');
 

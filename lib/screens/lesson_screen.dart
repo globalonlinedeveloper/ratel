@@ -227,7 +227,7 @@ class _LessonScreenState extends State<LessonScreen>
       _fixPhase = true;
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.fromLTRB(16, 0, 16, 96),
+          margin: const EdgeInsets.fromLTRB(RatelSpacing.lg, 0, RatelSpacing.lg, 96),
           duration: const Duration(milliseconds: 2200),
           content: Text(S.instance.t('fix_phase_toast',
               "Let's fix your mistakes — no hearts at risk!"))));
@@ -290,8 +290,8 @@ class _LessonScreenState extends State<LessonScreen>
         Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            const RatelMascot(pose: RatelPose.speak, size: 52),
-            const SizedBox(width: 8),
+            const ExcludeSemantics(child: RatelMascot(pose: RatelPose.speak, size: 52)),
+            const SizedBox(width: RatelSpacing.sm),
             Flexible(
               child: Container(
                 padding: const EdgeInsets.symmetric(
@@ -312,7 +312,7 @@ class _LessonScreenState extends State<LessonScreen>
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: RatelSpacing.lg),
         _typedField(S.instance.t('chat_hint', 'Type your reply')),
       ],
     );
@@ -368,10 +368,10 @@ class _LessonScreenState extends State<LessonScreen>
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('assets/images/ratel-crying-anim.webp',
+            ExcludeSemantics(child: Image.asset('assets/images/ratel-crying-anim.webp',
                 width: 96,
                 height: 96,
-                errorBuilder: (_, _, _) => const SizedBox(height: 8)),
+                errorBuilder: (_, _, _) => const SizedBox(height: RatelSpacing.sm))),
             const SizedBox(height: 10),
             Text(S.instance.t('quit_body',
                 "Quit now and this lesson's progress is gone.")),
@@ -462,7 +462,7 @@ class _LessonScreenState extends State<LessonScreen>
     if (name == null) return const [];
     return [
       Center(child: RatelArt(name, height: 92)),
-      const SizedBox(height: 12),
+      const SizedBox(height: RatelSpacing.md),
     ];
   }
 
@@ -512,7 +512,7 @@ class _LessonScreenState extends State<LessonScreen>
         children: [
           SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(RatelSpacing.lg),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -546,23 +546,23 @@ class _LessonScreenState extends State<LessonScreen>
                           fontSize: 12,
                           fontWeight: FontWeight.w700)),
                   if (_fixPhase) ...[
-                    const SizedBox(width: 8),
+                    const SizedBox(width: RatelSpacing.sm),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                          color: context.tintC(const Color(0xFFE08330)),
+                          color: context.tintC(RatelColors.fixChip),
                           borderRadius: BorderRadius.circular(12)),
                       child: Text(
                           S.instance.t('fix_chip', 'FIXING MISTAKES'),
                           style: const TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w800,
-                              color: Color(0xFFE08330))),
+                              color: RatelColors.fixChip)),
                     ),
                   ],
                   if (_combo >= 2) ...[
-                    const SizedBox(width: 8),
+                    const SizedBox(width: RatelSpacing.sm),
                     Container(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 2),
@@ -621,7 +621,7 @@ class _LessonScreenState extends State<LessonScreen>
                       ),
                     ),
                   ],
-                  const SizedBox(width: 12),
+                  const SizedBox(width: RatelSpacing.md),
                   const Icon(Icons.favorite, color: RatelColors.hearts, size: 20),
                   const SizedBox(width: 3),
                   Text('${appState.hearts}',
@@ -639,11 +639,11 @@ class _LessonScreenState extends State<LessonScreen>
                           isBoss: _isBoss,
                           width: 196,
                           height: 98)
-                      : _mascotSlot(),
-                  const SizedBox(width: 12),
+                      : ExcludeSemantics(child: _mascotSlot()),
+                  const SizedBox(width: RatelSpacing.md),
                   Expanded(
                     child: Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(RatelSpacing.md),
                       decoration: BoxDecoration(
                         color: context.surfaceC,
                         borderRadius: BorderRadius.circular(12),
@@ -663,7 +663,7 @@ class _LessonScreenState extends State<LessonScreen>
                 Text(_ex.sentence!,
                     style: const TextStyle(
                         fontSize: 20, fontWeight: FontWeight.w600)),
-                const SizedBox(height: 16),
+                const SizedBox(height: RatelSpacing.lg),
               ],
               Expanded(
                 child: AnimatedBuilder(
@@ -700,7 +700,7 @@ class _LessonScreenState extends State<LessonScreen>
 
   Widget _statChip(IconData icon, String value, String label, Color c) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: RatelSpacing.md, vertical: RatelSpacing.sm),
       decoration: BoxDecoration(
         color: context.tintC(c),
         borderRadius: BorderRadius.circular(12),
@@ -717,7 +717,7 @@ class _LessonScreenState extends State<LessonScreen>
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(icon, size: 14, color: c),
-              const SizedBox(width: 4),
+              const SizedBox(width: RatelSpacing.xs),
               Text(value,
                   style: TextStyle(
                       fontSize: 13, fontWeight: FontWeight.w800,
@@ -873,7 +873,7 @@ class _LessonScreenState extends State<LessonScreen>
     if (_explanation != null) {
       return Container(
         margin: const EdgeInsets.only(bottom: 10),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(RatelSpacing.md),
         decoration: BoxDecoration(
           color: context.tintC(RatelColors.honey),
           borderRadius: BorderRadius.circular(12),
@@ -885,7 +885,7 @@ class _LessonScreenState extends State<LessonScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Icon(Icons.auto_awesome, color: RatelColors.honey, size: 18),
-            const SizedBox(width: 8),
+            const SizedBox(width: RatelSpacing.sm),
             Expanded(child: Text(_explanation!)),
           ],
         ),
@@ -944,8 +944,8 @@ class _LessonScreenState extends State<LessonScreen>
       fill = context.tintC(RatelColors.coral);
       width = 2;
     } else if (!_answered && i == _selected) {
-      border = const Color(0xFF378ADD);
-      fill = context.tintC(const Color(0xFF378ADD));
+      border = RatelColors.selected;
+      fill = context.tintC(RatelColors.selected);
       width = 2;
     }
     return Padding(
@@ -1005,7 +1005,7 @@ class _LessonScreenState extends State<LessonScreen>
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: RatelSpacing.lg),
         Wrap(
           spacing: 8,
           runSpacing: 8,
@@ -1277,7 +1277,7 @@ class _LessonScreenState extends State<LessonScreen>
             ],
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: RatelSpacing.lg),
         for (final idx in available)
           _lineTile(_ex.options[idx],
               onTap: _answered
@@ -1289,7 +1289,7 @@ class _LessonScreenState extends State<LessonScreen>
 
   Widget _lineTile(String text, {VoidCallback? onTap, bool bold = false}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: RatelSpacing.sm),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(10),
@@ -1371,14 +1371,14 @@ class _LessonScreenState extends State<LessonScreen>
             ? RatelColors.honey
             : context.faintBorderC;
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.only(bottom: RatelSpacing.sm),
       child: InkWell(
         onTap: done || _answered ? null : onTap,
         borderRadius: BorderRadius.circular(10),
         child: Container(
           width: double.infinity,
           padding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+              const EdgeInsets.symmetric(horizontal: RatelSpacing.md, vertical: RatelSpacing.md),
           decoration: BoxDecoration(
             color: done ? context.tintC(RatelColors.teal) : context.surfaceC,
             borderRadius: BorderRadius.circular(10),
@@ -1421,10 +1421,10 @@ class _LessonScreenState extends State<LessonScreen>
               Text(S.instance.t('report_btn', 'Report this exercise'),
                   style: const TextStyle(
                       fontSize: 17, fontWeight: FontWeight.w800)),
-              const SizedBox(height: 12),
+              const SizedBox(height: RatelSpacing.md),
               for (final r in reasons)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.only(bottom: RatelSpacing.sm),
                   child: OutlinedButton(
                     onPressed: () {
                       appState.reportExercise(
@@ -1458,7 +1458,7 @@ class _LessonScreenState extends State<LessonScreen>
           Expanded(
             child: OutlinedButton(
               style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16)),
+                  padding: const EdgeInsets.symmetric(vertical: RatelSpacing.lg)),
               onPressed: _skip,
               child: Text(S.instance.t('btn_skip', 'Skip')),
             ),
@@ -1469,7 +1469,7 @@ class _LessonScreenState extends State<LessonScreen>
             child: FilledButton(
               style: FilledButton.styleFrom(
                 backgroundColor: RatelColors.teal,
-                padding: const EdgeInsets.symmetric(vertical: 16),
+                padding: const EdgeInsets.symmetric(vertical: RatelSpacing.lg),
               ),
               onPressed: _canCheck ? _check : null,
               child: Text(S.instance.t('btn_check', 'Check')),
@@ -1485,7 +1485,7 @@ class _LessonScreenState extends State<LessonScreen>
         Row(
           children: [
             Icon(_isCorrect ? Icons.check_circle : Icons.cancel, color: c),
-            const SizedBox(width: 8),
+            const SizedBox(width: RatelSpacing.sm),
             Expanded(
               child: Text(
                 _isCorrect
@@ -1526,7 +1526,7 @@ class _LessonScreenState extends State<LessonScreen>
       child: FilledButton(
         style: FilledButton.styleFrom(
           backgroundColor: RatelColors.teal,
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          padding: const EdgeInsets.symmetric(vertical: RatelSpacing.lg),
         ),
         onPressed: onPressed,
         child: Text(label),
@@ -1546,7 +1546,7 @@ class _LessonScreenState extends State<LessonScreen>
             Positioned.fill(
               child: Center(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
+                  padding: const EdgeInsets.all(RatelSpacing.xl),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -1556,9 +1556,9 @@ class _LessonScreenState extends State<LessonScreen>
                         curve: Curves.elasticOut,
                         builder: (context, s, child) =>
                             Transform.scale(scale: s, child: child),
-                        child: _completionAnim(),
+                        child: ExcludeSemantics(child: _completionAnim()),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: RatelSpacing.lg),
                       Text(
                           widget.reviewMode
                               ? S.instance.t('review_complete',
@@ -1587,7 +1587,7 @@ class _LessonScreenState extends State<LessonScreen>
                             children: [
                               const Icon(Icons.school,
                                   size: 30, color: RatelColors.honey),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: RatelSpacing.sm),
                               Flexible(
                                   child: Text(
                                       S.instance.t('unit_complete',
@@ -1606,7 +1606,7 @@ class _LessonScreenState extends State<LessonScreen>
                             children: [
                               const Icon(Icons.military_tech,
                                   size: 30, color: RatelColors.honey),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: RatelSpacing.sm),
                               Flexible(
                                   child: Text(
                                       S.instance.t('new_achievement',
@@ -1625,7 +1625,7 @@ class _LessonScreenState extends State<LessonScreen>
                             children: [
                               const Icon(Icons.task_alt,
                                   size: 30, color: RatelColors.teal),
-                              const SizedBox(width: 8),
+                              const SizedBox(width: RatelSpacing.sm),
                               Flexible(
                                   child: Text(
                                       S.instance.t('mistakes_cleared',
@@ -1636,7 +1636,7 @@ class _LessonScreenState extends State<LessonScreen>
                             ],
                           ),
                         ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: RatelSpacing.sm),
                       widget.reviewMode
                           ? Text(
                               S.instance
@@ -1689,7 +1689,7 @@ class _LessonScreenState extends State<LessonScreen>
                                     Icons.school,
                                     '$_scoreBefore → $v',
                                     'SCORE',
-                                    const Color(0xFF7B5EA7)),
+                                    RatelColors.scoreStat),
                               ),
                             _statChip(
                                 Icons.track_changes,
@@ -1701,7 +1701,7 @@ class _LessonScreenState extends State<LessonScreen>
                                 Icons.timer_outlined,
                                 '${_elapsed.inMinutes}:${(_elapsed.inSeconds % 60).toString().padLeft(2, '0')}',
                                 speedTier(_elapsed),
-                                const Color(0xFF4A7FB5)),
+                                RatelColors.speedStat),
                           ],
                         )),
                       ],
@@ -1734,7 +1734,7 @@ class _LessonScreenState extends State<LessonScreen>
                         ),
                       ),
                       if (!widget.reviewMode && appState.streak > 0) ...[
-                        const SizedBox(height: 16),
+                        const SizedBox(height: RatelSpacing.lg),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
