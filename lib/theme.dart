@@ -49,6 +49,12 @@ extension RatelThemeColors on BuildContext {
   Color get faintBorderC =>
       isDark ? const Color(0xFF34312C) : const Color(0xFFD8D8D8);
 
+  /// Tinted halo behind the Profile avatar mascot (warm cream / warm dark).
+  /// Inc 170: lifted from home_screen's Profile tab so the tab body holds
+  /// no raw hex (token-lint allowlist).
+  Color get avatarBgC =>
+      isDark ? const Color(0xFF35302A) : const Color(0xFFFAEEDA);
+
   /// Solid accent wash readable in BOTH modes: blends the accent over the
   /// current surface (light -> soft pastel, dark -> deep accent-washed
   /// surface), so default text keeps contrast. Use for answer-state fills,
