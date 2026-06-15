@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'art.dart';
 import 'concepts.dart';
+import 'sentences.dart';
 import 'flags.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'strings.dart';
@@ -55,6 +56,7 @@ Future<void> main() async {
   await S.instance.load(); // server copy for the active locale + its fallback chain
   await Art.instance.load(); // remote art index (bundled-first, Inc 140)
   await Concepts.instance.load(); // reuse-layer index (Inc 182, Phase 3.1)
+  await Sentences.instance.load(); // example-sentence reuse layer (Inc 202)
   // share-link friend code (web): stow now, redeem after sign-in
   try {
     final code = friendCodeFromUri(Uri.base);

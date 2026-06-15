@@ -13,6 +13,9 @@ import '../../widgets/mascot_anim.dart';
 import '../../theme.dart';
 import '../../flags.dart';
 import '../../strings.dart';
+import '../../tts.dart';
+import '../../sfx.dart';
+import '../../sentences.dart';
 import '../../milestones.dart';
 import '../../guidebook.dart';
 import '../section_test_screen.dart';
@@ -751,11 +754,64 @@ class _LearnTabState extends State<LearnTab> {
                 ),
                 const SizedBox(height: RatelSpacing.md),
               ],
+              ..._guidebookSentences(unit),
             ],
           ),
         ),
       ),
     );
+  }
+
+  /// Inc 202 -- the unit's curated example sentences (`sent:<unit>.*`) beneath
+  /// the guidebook key-phrases: English + tap-to-hear + the meaning in the
+  /// learner's language (shown once seeded). Flag `unit_sentences`; empty -> [].
+  List<Widget> _guidebookSentences(Unit unit) {
+    if (!Flags.instance.flag('unit_sentences', true)) return const [];
+    final sents = Sentences.instance.forUnit(unit.id);
+    if (sents.isEmpty) return const [];
+    final loc = S.instance.locale;
+    return [
+      const SizedBox(height: RatelSpacing.sm),
+      Text(S.instance.t('gb_sentences', 'Example sentences'),
+          style: const TextStyle(
+              color: RatelColors.textMuted, fontSize: 12.5)),
+      const SizedBox(height: RatelSpacing.md),
+      for (final s in sents) ...[
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(s.en,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700, fontSize: 14)),
+                  if (sentenceMeaning(s, loc) != null)
+                    Text(sentenceMeaning(s, loc)!,
+                        style: TextStyle(
+                            color: context.mutedC, fontSize: 13)),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            InkWell(
+              onTap: () {
+                Sfx.instance.tap();
+                Tts.instance.speak(s.en);
+              },
+              borderRadius: BorderRadius.circular(8),
+              child: const Padding(
+                padding: EdgeInsets.all(4),
+                child: Icon(Icons.volume_up_outlined,
+                    size: 18, color: RatelColors.honey),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: RatelSpacing.md),
+      ],
+    ];
   }
 
   /// Locked = some lesson in an earlier unit is still incomplete.

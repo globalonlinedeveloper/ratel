@@ -8,6 +8,7 @@ import '../exercise_kit.dart';
 import '../spelling.dart';
 import '../art.dart';
 import '../concepts.dart';
+import '../sentences.dart';
 import '../exercise_art.dart';
 import '../exercise_audio.dart';
 import '../widgets/ratel_art.dart';
@@ -507,6 +508,60 @@ class _LessonScreenState extends State<LessonScreen>
         alignment: WrapAlignment.center,
         children: [for (final n in names) RatelArt(n, height: 52)],
       ),
+    ];
+  }
+
+  /// Inc 202 -- completion recap: a few of the unit's curated example sentences
+  /// (`sent:<unit>.*`, unit derived from the lesson id) with tap-to-hear + the
+  /// meaning in the learner's language (once seeded). Flag `unit_sentences`.
+  List<Widget> _sentencesStrip() {
+    if (!Flags.instance.flag('unit_sentences', true)) return const [];
+    final sents = Sentences.instance.forUnit(unitOfLessonId(widget.lesson.id));
+    if (sents.isEmpty) return const [];
+    final loc = S.instance.locale;
+    return [
+      const SizedBox(height: 18),
+      Text(
+        S.instance.t('phrases_from_unit', 'Phrases from this unit'),
+        style: const TextStyle(
+            color: RatelColors.textMuted,
+            fontWeight: FontWeight.w600,
+            fontSize: 14),
+      ),
+      const SizedBox(height: 10),
+      for (final s in sents.take(3))
+        Padding(
+          padding: const EdgeInsets.only(bottom: RatelSpacing.sm),
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(s.en,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(fontWeight: FontWeight.w600)),
+                  ),
+                  const SizedBox(width: 6),
+                  InkWell(
+                    onTap: () => _say(s.en),
+                    borderRadius: BorderRadius.circular(8),
+                    child: const Padding(
+                      padding: EdgeInsets.all(2),
+                      child: Icon(Icons.volume_up_outlined,
+                          size: 18, color: RatelColors.honey),
+                    ),
+                  ),
+                ],
+              ),
+              if (sentenceMeaning(s, loc) != null)
+                Text(sentenceMeaning(s, loc)!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: RatelColors.textMuted, fontSize: 13)),
+            ],
+          ),
+        ),
     ];
   }
 
@@ -1904,6 +1959,7 @@ class _LessonScreenState extends State<LessonScreen>
                         ),
                       ],
                       ..._conceptsStrip(),
+                      ..._sentencesStrip(),
                       const SizedBox(height: 28),
                       _wideButton(
                           S.instance.t('btn_continue', 'Continue'),
