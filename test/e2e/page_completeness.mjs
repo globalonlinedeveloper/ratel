@@ -13,6 +13,7 @@ const URL_ = (process.env.SUPABASE_URL || 'https://fkbmodjtxatrqcghhfba.supabase
 const KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2';
 const H = { apikey: KEY, Authorization: `Bearer ${KEY}` };
 const IMAGE_FLOOR = Number(process.env.IMAGE_FLOOR || 33);
+const WHY_FLOOR = Number(process.env.WHY_FLOOR || 54);
 
 async function getAll(p) {
   const r = await fetch(`${URL_}/rest/v1/${p}`, { headers: H });
@@ -84,4 +85,8 @@ if (tot.img < IMAGE_FLOOR) {
   console.error(`PAGE-COMPLETENESS FAIL: image-covered ${tot.img} < floor ${IMAGE_FLOOR}`);
   process.exit(1);
 }
-console.log(`PAGE-COMPLETENESS OK -- image floor ${IMAGE_FLOOR} held (img ${tot.img}/${tot.n}); audio+why backfill pending (owner-gated cost).`);
+if (tot.why < WHY_FLOOR) {
+  console.error(`PAGE-COMPLETENESS FAIL: why-covered ${tot.why} < floor ${WHY_FLOOR}`);
+  process.exit(1);
+}
+console.log(`PAGE-COMPLETENESS OK -- image floor ${IMAGE_FLOOR} held (img ${tot.img}/${tot.n}); why floor ${WHY_FLOOR} held (why ${tot.why}/${tot.n}); audio backfill pending.`);

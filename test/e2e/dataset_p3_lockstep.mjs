@@ -76,10 +76,12 @@ for (const u of ['u1', 'u2', 'u3', 'u4', 'u5', 'u6', 'u7', 'u8', 'u9', 'u10', 'u
   if (n < 5) problems.push(`seed spine: expected >=5 ${u} sentences, found ${n}`);
 }
 if (concepts.length < 76) problems.push(`seed spine: expected >=76 concepts, found ${concepts.length}`);
+const taTerms = terms.filter((t) => t.lang === 'ta' && t.term).length;
+if (taTerms < 76) problems.push(`seed spine: expected >=76 Tamil terms (owner-QA'd live), found ${taTerms}`);
 
 if (problems.length) {
   console.error(`DATASET P3 LOCKSTEP FAIL (${problems.length} problems):`);
   for (const p of problems.slice(0, 20)) console.error('  ' + p);
   process.exit(1);
 }
-console.log(`DATASET P3 LOCKSTEP OK -- reuse layer seeded + self-generated: concepts ${concepts.length} (8 art anchors), concept_terms ${terms.length}, sentences ${sentences.length} (u1-u11), audio_manifest ${audio.length}.`);
+console.log(`DATASET P3 LOCKSTEP OK -- reuse layer seeded + self-generated: concepts ${concepts.length} (8 art anchors), concept_terms ${terms.length} (en+ta), sentences ${sentences.length} (u1-u11), audio_manifest ${audio.length}.`);
