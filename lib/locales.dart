@@ -68,7 +68,24 @@ class Locales {
       out.add(LocaleEntry(code, name.isEmpty ? code : name));
     }
     if (fb.isNotEmpty) _fallback = fb;
+    // Inc 196 — picker order: English family first (US base, then variants),
+    // then every other language A-Z by native name (Latin scripts first, then
+    // grouped by script via Unicode order). Owner-chosen 'English first, A-Z'.
+    out.sort((a, b) {
+      int rank(String c) => c == 'en' ? 0 : (c.startsWith('en') ? 1 : 2);
+      final r = rank(a.code) - rank(b.code);
+      return r != 0 ? r : a.nativeName.toLowerCase().compareTo(b.nativeName.toLowerCase());
+    });
     if (out.isNotEmpty) enabled = out;
+  }
+
+
+  /// Inc 196 — representative flag emoji for a locale code (picker affordance
+  /// only). NB a flag is a COUNTRY, not a language: several Indian languages
+  /// intentionally share IN. Falls back to a neutral white flag.
+  static String flagFor(String code) {
+    const m = <String, String>{'en': '🇺🇸', 'en-GB': '🇬🇧', 'en-IN': '🇮🇳', 'en-AU': '🇦🇺', 'es': '🇪🇸', 'es-US': '🇺🇸', 'fr': '🇫🇷', 'fr-CA': '🇨🇦', 'nl': '🇳🇱', 'nl-BE': '🇧🇪', 'de': '🇩🇪', 'it': '🇮🇹', 'pt': '🇧🇷', 'ru': '🇷🇺', 'uk': '🇺🇦', 'pl': '🇵🇱', 'cs': '🇨🇿', 'sk': '🇸🇰', 'sl': '🇸🇮', 'hr': '🇭🇷', 'sr': '🇷🇸', 'bg': '🇧🇬', 'ro': '🇷🇴', 'el': '🇬🇷', 'hu': '🇭🇺', 'fi': '🇫🇮', 'sv': '🇸🇪', 'da': '🇩🇰', 'nb': '🇳🇴', 'et': '🇪🇪', 'lt': '🇱🇹', 'lv': '🇱🇻', 'tr': '🇹🇷', 'id': '🇮🇩', 'sw': '🇰🇪', 'vi': '🇻🇳', 'th': '🇹🇭', 'ja': '🇯🇵', 'ko': '🇰🇷', 'zh': '🇨🇳', 'yue': '🇭🇰', 'hi': '🇮🇳', 'ta': '🇮🇳', 'ta-Latn': '🇮🇳', 'te': '🇮🇳', 'kn': '🇮🇳', 'ml': '🇮🇳', 'mr': '🇮🇳', 'gu': '🇮🇳', 'bn': '🇧🇩', 'pa': '🇮🇳'};
+    return m[code] ?? '\u{1F3F3}\u{FE0F}';
   }
 
   void debugSet(List<LocaleEntry> e) => enabled = e;

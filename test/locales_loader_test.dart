@@ -17,8 +17,10 @@ void main() {
       {'code': 'hi', 'native_name': 'हिन्दी', 'enabled': true},
     ]);
     final codes = Locales.instance.enabled.map((e) => e.code).toList();
-    expect(codes, ['en', 'ta', 'hi']);
-    expect(Locales.instance.enabled[2].nativeName, 'हिन्दी');
+    // Inc 196 — sorted: en (English family) first, then A-Z by native name
+    // (Devanagari हिन्दी sorts before Tamil தமிழ் by Unicode).
+    expect(codes, ['en', 'hi', 'ta']);
+    expect(Locales.instance.enabled[2].nativeName, 'தமிழ்');
   });
 
   test('empty/blank rows are skipped; empty fetch keeps prior list', () {
