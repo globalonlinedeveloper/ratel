@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../content.dart';
 import '../exercise_kit.dart';
+import '../spelling.dart';
 import '../art.dart';
 import '../concepts.dart';
 import '../exercise_art.dart';
@@ -67,6 +68,8 @@ class _LessonScreenState extends State<LessonScreen>
   int _correctCount = 0;
   bool _answered = false;
   bool _isCorrect = false;
+  String? _spellingTip; // locale-aware spelling/vocab tip on a variant match
+  int _lastTipIndex = -10; // throttle: no back-to-back tips
   int _missStreak = 0;
   String? _reaction;
   bool _firstToday = false;
@@ -158,6 +161,10 @@ class _LessonScreenState extends State<LessonScreen>
     setState(() {
       _answered = true;
       _isCorrect = correct;
+      _spellingTip = (correct && _index - _lastTipIndex >= 3)
+          ? spellingTip(_typedCtl.text, _correctText(), S.instance.locale)
+          : null;
+      if (_spellingTip != null) _lastTipIndex = _index;
       if (correct) {
         _missStreak = 0;
         _reaction =
@@ -240,6 +247,7 @@ class _LessonScreenState extends State<LessonScreen>
         _index++;
         _answered = false;
         _isCorrect = false;
+        _spellingTip = null;
         _selected = null;
         _picked.clear();
         _order = const [];
@@ -1632,6 +1640,24 @@ class _LessonScreenState extends State<LessonScreen>
             if (_audioOn) _speakerButton(_correctText(), small: true),
           ],
         ),
+        if (_isCorrect && _spellingTip != null)
+          Padding(
+            padding: const EdgeInsets.only(top: RatelSpacing.xs),
+            child: Row(
+              children: [
+                const Icon(Icons.lightbulb_outline,
+                    size: 16, color: RatelColors.teal),
+                const SizedBox(width: RatelSpacing.xs),
+                Expanded(
+                  child: Text(_spellingTip!,
+                      style: const TextStyle(
+                          color: RatelColors.teal,
+                          fontStyle: FontStyle.italic,
+                          fontSize: 13)),
+                ),
+              ],
+            ),
+          ),
         const SizedBox(height: 10),
         _explainBlock(),
         _wideButton(

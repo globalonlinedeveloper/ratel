@@ -1,6 +1,5 @@
-import 'package:flutter/foundation.dart' show listEquals;
-
 import 'models.dart';
+import 'spelling.dart';
 import 'typed_match.dart';
 
 /// Pure, per-type exercise logic. Every function is an EXHAUSTIVE switch
@@ -34,7 +33,7 @@ bool gradeAnswer(Exercise e,
     ExerciseType.wordBank ||
     ExerciseType.dialogueOrder ||
     ExerciseType.multiBlank =>
-      listEquals(pickedWords, e.correctOrder),
+      orderCanonMatches(pickedWords, e.correctOrder),
     ExerciseType.listenRespond => selected == e.correctIndex,
     ExerciseType.chat => typedAnswerMatches(typed, e.correctOrder),
     ExerciseType.typed ||
