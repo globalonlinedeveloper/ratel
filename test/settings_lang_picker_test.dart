@@ -51,6 +51,9 @@ void main() {
     expect(find.text('English (UK)'), findsOneWidget);
     expect(find.text('हिन्दी'), findsOneWidget);
     expect(find.text('தமிழ்'), findsOneWidget);
+    // Inc 200 — English name now shows as a subtitle under the native name
+    expect(find.text('Hindi'), findsOneWidget);
+    expect(find.text('Tamil'), findsOneWidget);
 
     await tester.tap(find.text('English (UK)'));
     await tester.pump(const Duration(milliseconds: 300));

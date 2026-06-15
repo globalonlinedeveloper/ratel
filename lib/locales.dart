@@ -88,6 +88,31 @@ class Locales {
     return m[code] ?? '\u{1F3F3}\u{FE0F}';
   }
 
+  /// Inc 200 — English display name for a locale code (picker SUBTITLE under
+  /// the native name). Mirrors [flagFor]: a stable in-code map; a code absent
+  /// here returns '' (the row then shows its native name only). Variants carry
+  /// a parenthetical region/script so they read distinctly.
+  static String englishNameFor(String code) {
+    const m = <String, String>{
+      'en': 'English (US)', 'en-GB': 'English (UK)', 'en-IN': 'English (India)',
+      'en-AU': 'English (Australia)', 'es': 'Spanish', 'es-US': 'Spanish (US)',
+      'fr': 'French', 'fr-CA': 'French (Canada)', 'nl': 'Dutch',
+      'nl-BE': 'Dutch (Belgium)', 'de': 'German', 'it': 'Italian',
+      'pt': 'Portuguese', 'ru': 'Russian', 'uk': 'Ukrainian', 'pl': 'Polish',
+      'cs': 'Czech', 'sk': 'Slovak', 'sl': 'Slovenian', 'hr': 'Croatian',
+      'sr': 'Serbian', 'bg': 'Bulgarian', 'ro': 'Romanian', 'el': 'Greek',
+      'hu': 'Hungarian', 'fi': 'Finnish', 'sv': 'Swedish', 'da': 'Danish',
+      'nb': 'Norwegian', 'et': 'Estonian', 'lt': 'Lithuanian', 'lv': 'Latvian',
+      'tr': 'Turkish', 'id': 'Indonesian', 'sw': 'Swahili', 'vi': 'Vietnamese',
+      'th': 'Thai', 'ja': 'Japanese', 'ko': 'Korean', 'zh': 'Chinese',
+      'yue': 'Cantonese', 'hi': 'Hindi', 'ta': 'Tamil',
+      'ta-Latn': 'Tamil (Latin)', 'te': 'Telugu', 'kn': 'Kannada',
+      'ml': 'Malayalam', 'mr': 'Marathi', 'gu': 'Gujarati', 'bn': 'Bengali',
+      'pa': 'Punjabi',
+    };
+    return m[code] ?? '';
+  }
+
   void debugSet(List<LocaleEntry> e) => enabled = e;
 
   /// Test seam: set the fallback chain without a network.

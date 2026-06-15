@@ -75,7 +75,20 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   Text(Locales.flagFor(e.code),
                       style: const TextStyle(fontSize: 18)),
                   const SizedBox(width: RatelSpacing.sm),
-                  Expanded(child: Text(e.nativeName)),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(e.nativeName),
+                        if (Locales.englishNameFor(e.code).isNotEmpty &&
+                            Locales.englishNameFor(e.code) != e.nativeName)
+                          Text(Locales.englishNameFor(e.code),
+                              style: const TextStyle(
+                                  fontSize: 12, color: RatelColors.textMuted)),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -36,4 +36,12 @@ void main() {
     // restore defaults for other suites
     Locales.instance.debugSet(const [LocaleEntry('en', 'English'), LocaleEntry('ta', 'தமிழ்')]);
   });
+
+  test('englishNameFor: known codes, variants, graceful unknown', () {
+    expect(Locales.englishNameFor('ta'), 'Tamil');
+    expect(Locales.englishNameFor('hi'), 'Hindi');
+    expect(Locales.englishNameFor('en'), 'English (US)');
+    expect(Locales.englishNameFor('ta-Latn'), 'Tamil (Latin)');
+    expect(Locales.englishNameFor('zz'), '');
+  });
 }
