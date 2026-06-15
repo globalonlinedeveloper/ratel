@@ -2,15 +2,36 @@ import 'models.dart';
 
 /// Topic-matched exercise art (Inc 157). Pure + testable: maps an exercise to a
 /// promoted object-art cell so a relevant illustration can sit above the prompt.
-/// Only OBJECT theme sets feed the vocab (never the mascot/UI cells), and only
-/// SAFE exercise types are illustrated (wordBank shows the sentence topic,
-/// matchPairs the left item) so an image never reveals the answer.
+/// Only OBJECT theme sets feed the vocab (never the mascot/UI cells), and each
+/// type is illustrated from an answer-reveal-SAFE source field only (see
+/// [_safeSource]) so an image never gives away the answer (Phase 2.2).
 const Set<String> kVocabSets = {'kt', 'ho', 'tr', 'mk', 'jb', 'md'};
 
-const Set<ExerciseType> _safeTypes = {
-  ExerciseType.wordBank,
-  ExerciseType.matchPairs,
-};
+/// The answer-reveal-SAFE source words to illustrate [ex], by type — NEVER the
+/// field that holds the answer. choice/typed/chat/multiBlank read the visible
+/// stimulus/template (the answer lives in options/correctOrder); wordBank reads
+/// its target sentence and matchPairs/dialogueOrder read the given items (the
+/// challenge is ORDER/MATCH, not object identity). listen/listenRespond are
+/// audio-first, so an image would replace the listening task / reveal the
+/// answer -> never illustrated.
+List<String> _safeSource(Exercise ex) {
+  switch (ex.type) {
+    case ExerciseType.wordBank:
+      return ex.correctOrder;
+    case ExerciseType.matchPairs:
+    case ExerciseType.dialogueOrder:
+      return ex.options;
+    case ExerciseType.choice:
+    case ExerciseType.typed:
+    case ExerciseType.chat:
+    case ExerciseType.multiBlank:
+      final s = ex.sentence;
+      return (s != null && s.isNotEmpty) ? [s] : const [];
+    case ExerciseType.listen:
+    case ExerciseType.listenRespond:
+      return const [];
+  }
+}
 
 const Set<String> _stop = {
   'the', 'and', 'for', 'you', 'your', 'are', 'was', 'were', 'with', 'this',
@@ -41,12 +62,11 @@ Map<String, String> buildVocab(Map<String, String> namePaths,
 }
 
 /// The art cell to illustrate [ex], or null when there's no confident match
-/// (the common case -> no image). Grammar items and answer-revealing types
-/// (choice/typed/...) are never illustrated.
+/// (the common case -> no image). Each type reads only its answer-safe source
+/// ([_safeSource]); listen/listenRespond and pure-grammar items get nothing.
 String? exerciseArt(Exercise ex, Map<String, String> vocab) {
-  if (vocab.isEmpty || !_safeTypes.contains(ex.type)) return null;
-  final src = ex.type == ExerciseType.wordBank ? ex.correctOrder : ex.options;
-  for (final raw in src) {
+  if (vocab.isEmpty) return null;
+  for (final raw in _safeSource(ex)) {
     for (final w in raw.toLowerCase().split(RegExp(r'[^a-z]+'))) {
       if (w.length < 3 || _stop.contains(w)) continue;
       final hit = vocab[_stem(w)];
