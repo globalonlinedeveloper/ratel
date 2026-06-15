@@ -11,6 +11,7 @@ const URL_ = (process.env.SUPABASE_URL || 'https://fkbmodjtxatrqcghhfba.supabase
 const KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2';
 const FLOOR_TA = 311; // ta UI-string coverage; raise consciously as keys grow
 const FLOOR_EX = 272; // live legacy exercises carrying stable keys
+const FLOOR_ENGB = 6; // en-GB British spelling deltas (W1 Part C); deltas-only
 const STATES = new Set(['draft', 'live', 'deprecated']);
 const H = { apikey: KEY, Authorization: `Bearer ${KEY}` };
 
@@ -22,7 +23,7 @@ async function getAll(path) {
 
 const problems = [];
 
-const locales = await getAll('locales?select=code,enabled,plural_categories&limit=200');
+const locales = await getAll('locales?select=code,enabled,plural_categories,fallback&limit=200');
 const byCode = Object.fromEntries(locales.map((l) => [l.code, l]));
 for (const code of ['en', 'ta']) {
   const l = byCode[code];
@@ -32,17 +33,31 @@ for (const code of ['en', 'ta']) {
   if (!pc.includes('one') || !pc.includes('other'))
     problems.push(`locales: '${code}' plural_categories missing one/other (${JSON.stringify(pc)})`);
 }
+// en-GB accent locale (W1 Part C, Inc 191): a fallback-delta locale -- enabled,
+// fallback='en', carrying ONLY British spelling deltas (rest inherit en via the
+// Inc-189 resolver chain). Same mechanism as any accent (en/es/fr/nl variants).
+const gbLoc = byCode['en-GB'];
+if (!gbLoc) {
+  problems.push("locales: missing 'en-GB'");
+} else {
+  if (!gbLoc.enabled) problems.push("locales: 'en-GB' not enabled");
+  if (gbLoc.fallback !== 'en')
+    problems.push(`locales: 'en-GB' fallback '${gbLoc.fallback}' != 'en'`);
+}
 
 const rows = await getAll('app_strings?select=key,locale,val,state&limit=20000');
 const keys = new Set();
 let taRows = 0;
+let gbRows = 0;
 for (const r of rows) {
   keys.add(r.key);
   if (!STATES.has(r.state)) problems.push(`app_strings ${r.key}/${r.locale}: bad state ${JSON.stringify(r.state)}`);
   if (r.val == null || r.val === '') problems.push(`app_strings ${r.key}/${r.locale}: empty val`);
   if (r.locale === 'ta') taRows++;
+  if (r.locale === 'en-GB') gbRows++;
 }
 if (taRows < FLOOR_TA) problems.push(`ta string rows ${taRows} < floor ${FLOOR_TA}`);
+if (gbRows < FLOOR_ENGB) problems.push(`en-GB delta rows ${gbRows} < floor ${FLOOR_ENGB}`);
 
 const ex = await getAll('content_exercises?select=id,lesson_id,sort_order,key,legacy_key,state&limit=5000');
 const live = ex.filter((e) => e.state === 'live');
@@ -63,4 +78,4 @@ if (problems.length) {
   for (const p of problems.slice(0, 15)) console.error('  ' + p);
   process.exit(1);
 }
-console.log(`APP_STRINGS/P1 LOCKSTEP OK -- app_strings ${keys.size} keys / ${taRows} ta rows (floor ${FLOOR_TA}); ${live.length} live exercises stable-keyed + legacy-frozen (floor ${FLOOR_EX}); locales en+ta enabled w/ CLDR plural categories.`);
+console.log(`APP_STRINGS/P1 LOCKSTEP OK -- app_strings ${keys.size} keys / ${taRows} ta rows (floor ${FLOOR_TA}) / ${gbRows} en-GB deltas (floor ${FLOOR_ENGB}); ${live.length} live exercises stable-keyed + legacy-frozen (floor ${FLOOR_EX}); locales en+ta enabled w/ CLDR plural categories; en-GB fallback-delta locale enabled (fallback=en).`);
