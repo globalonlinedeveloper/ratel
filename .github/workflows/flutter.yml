@@ -219,6 +219,74 @@ jobs:
             --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co \
             --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
 
+  windows:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.44.1'
+          cache: true
+
+      - name: Build Windows (compile validation)
+        run: |
+          flutter config --enable-windows-desktop
+          flutter pub get
+          flutter build windows --release --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
+
+  macos:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-15
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.44.1'
+          cache: true
+
+      - name: Build macOS (compile validation)
+        run: |
+          flutter config --enable-macos-desktop
+          flutter pub get
+          flutter build macos --release --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
+
+  linux:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.44.1'
+          cache: true
+
+      - name: Install Linux desktop build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+
+      - name: Build Linux (compile validation)
+        run: |
+          flutter config --enable-linux-desktop
+          flutter pub get
+          flutter build linux --release --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
+
   android-e2e:
     needs: android
     if: github.ref == 'refs/heads/main'
