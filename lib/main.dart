@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'art.dart';
+import 'concepts.dart';
 import 'flags.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'strings.dart';
@@ -53,6 +54,7 @@ Future<void> main() async {
   await S.instance.restoreLocale();
   await Locales.instance.load(); // enabled UI-locale registry (data-driven picker)
   await Art.instance.load(); // remote art index (bundled-first, Inc 140)
+  await Concepts.instance.load(); // reuse-layer index (Inc 182, Phase 3.1)
   // share-link friend code (web): stow now, redeem after sign-in
   try {
     final code = friendCodeFromUri(Uri.base);

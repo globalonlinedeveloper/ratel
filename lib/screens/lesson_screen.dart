@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../content.dart';
 import '../exercise_kit.dart';
 import '../art.dart';
+import '../concepts.dart';
 import '../exercise_art.dart';
 import '../exercise_audio.dart';
 import '../widgets/ratel_art.dart';
@@ -1091,12 +1092,20 @@ class _LessonScreenState extends State<LessonScreen>
 
   bool get _tapWordOn => Flags.instance.flag('tap_word', true);
 
+  bool get _wordPictureOn => Flags.instance.flag('word_picture', true);
+
   /// Phase 2.3: tap a word in the stimulus to hear it (device TTS today; a
   /// picture + meaning from `concept_terms` will enrich this once Phase 3
   /// seeds the reuse layer — graceful until then).
   void _wordSheet(String word) {
     if (word.trim().isEmpty) return;
     Sfx.instance.tap();
+    // Phase 3.1 (Inc 182): enrich with the reuse layer -- object-art picture +
+    // the meaning in the learner's language -- when this word maps to a seeded
+    // concept. Graceful: no match -> the text-only hear sheet, as before.
+    final hit = _wordPictureOn
+        ? Concepts.instance.lookup(word, meaningLang: S.instance.locale)
+        : null;
     showModalBottomSheet<void>(
       context: context,
       showDragHandle: true,
@@ -1108,9 +1117,24 @@ class _LessonScreenState extends State<LessonScreen>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              if (hit != null && hit.hasArt)
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: RatelSpacing.md),
+                    child: Semantics(
+                      label: word,
+                      image: true,
+                      child: RatelArt(hit.artName!, height: 120),
+                    ),
+                  ),
+                ),
               Text(word,
                   style: const TextStyle(
                       fontSize: 24, fontWeight: FontWeight.w800)),
+              if (hit != null && hit.hasMeaning) ...[
+                const SizedBox(height: RatelSpacing.xs),
+                Text(hit.meaning!, style: const TextStyle(fontSize: 18)),
+              ],
               const SizedBox(height: RatelSpacing.md),
               Row(
                 children: [
