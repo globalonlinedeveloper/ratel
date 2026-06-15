@@ -22,12 +22,25 @@ async function getAll(p) {
   if (!r.ok) { console.error(`read failed ${p}: ${r.status}`); process.exit(1); }
   return r.json();
 }
+// Inc 197 -- PostgREST caps a single response at 1000 rows; concept_terms grew
+// to 3.4k (44-locale gloss). Page with Range so the gate sees every row.
+async function getAllPaged(p, pageSize = 1000) {
+  const out = [];
+  for (let from = 0; ; from += pageSize) {
+    const r = await fetch(`${URL_}/rest/v1/${p}`, { headers: { ...H, Range: `${from}-${from + pageSize - 1}`, 'Range-Unit': 'items' } });
+    if (!r.ok && r.status !== 206) { console.error(`read failed ${p}: ${r.status}`); process.exit(1); }
+    const batch = await r.json();
+    out.push(...batch);
+    if (batch.length < pageSize) break;
+  }
+  return out;
+}
 const selfGen = (prov) => prov != null && prov.license === 'self-generated';
 const problems = [];
 const [sentences, concepts, terms, audio] = await Promise.all([
   getAll('sentences?select=meaning_id,lang,variant,text,state,provenance,concept_tags&limit=5000'),
   getAll('concepts?select=id,art_name,provenance&limit=5000'),
-  getAll('concept_terms?select=concept_id,lang,variant,term&limit=5000'),
+  getAllPaged('concept_terms?select=concept_id,lang,variant,term'),
   getAll('audio_manifest?select=content_key,locale,voice,speed,path,state&limit=5000'),
 ]);
 
@@ -46,6 +59,17 @@ for (const t of terms) {
   if (!cids.has(t.concept_id)) problems.push(`concept_term '${t.term}': concept '${t.concept_id}' missing`);
   if (!t.variant) problems.push(`concept_term ${t.concept_id}/${t.lang}: empty variant`);
   if (!t.term) problems.push(`concept_term ${t.concept_id}/${t.lang}: empty term`);
+}
+
+// ---- Inc 197: concept-gloss coverage (44-locale Learning-language gloss) ----
+// Each glossed language must name every concept (>= the EN concept count).
+const GLOSS_LANGS = ['en','ta','hi','te','kn','ml','mr','gu','bn','pa','ta-Latn','es','fr','it','pt','ro','de','nl','sv','da','nb','fi','ru','uk','bg','pl','cs','sk','sl','sr','hr','lt','lv','ja','ko','zh','yue','vi','th','id','sw','tr','hu','el','et'];
+const FLOOR_GLOSS = enByConcept.size; // = number of EN concepts (76)
+const byLang = {};
+for (const t of terms) byLang[t.lang] = (byLang[t.lang] || 0) + 1;
+for (const lg of GLOSS_LANGS) {
+  const n = byLang[lg] || 0;
+  if (n < FLOOR_GLOSS) problems.push(`concept gloss '${lg}' ${n} < floor ${FLOOR_GLOSS}`);
 }
 
 // ---- sentences: state, license, text, and concept_tags referential ----
@@ -84,4 +108,4 @@ if (problems.length) {
   for (const p of problems.slice(0, 20)) console.error('  ' + p);
   process.exit(1);
 }
-console.log(`DATASET P3 LOCKSTEP OK -- reuse layer seeded + self-generated: concepts ${concepts.length} (8 art anchors), concept_terms ${terms.length} (en+ta), sentences ${sentences.length} (u1-u11), audio_manifest ${audio.length}.`);
+console.log(`DATASET P3 LOCKSTEP OK (gloss ${GLOSS_LANGS.length} langs >=${FLOOR_GLOSS}) -- reuse layer seeded + self-generated: concepts ${concepts.length} (8 art anchors), concept_terms ${terms.length} (en+ta), sentences ${sentences.length} (u1-u11), audio_manifest ${audio.length}.`);
