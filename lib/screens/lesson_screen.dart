@@ -7,6 +7,7 @@ import '../content.dart';
 import '../exercise_kit.dart';
 import '../art.dart';
 import '../exercise_art.dart';
+import '../exercise_audio.dart';
 import '../widgets/ratel_art.dart';
 import '../flags.dart';
 import '../strings.dart';
@@ -310,6 +311,8 @@ class _LessonScreenState extends State<LessonScreen>
                     style: const TextStyle(fontSize: 16)),
               ),
             ),
+            if (_audioOn && (_ex.sentence ?? '').trim().isNotEmpty)
+              _speakerButton(spokenText(_ex.sentence!)),
           ],
         ),
         const SizedBox(height: RatelSpacing.lg),
@@ -660,9 +663,18 @@ class _LessonScreenState extends State<LessonScreen>
                   _ex.type != ExerciseType.listenRespond &&
                   _ex.type != ExerciseType.multiBlank &&
                   _ex.type != ExerciseType.chat) ...[
-                Text(_ex.sentence!,
-                    style: const TextStyle(
-                        fontSize: 20, fontWeight: FontWeight.w600)),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(_ex.sentence!,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w600)),
+                    ),
+                    if (_audioOn && audioStimulus(_ex) != null)
+                      _speakerButton(audioStimulus(_ex)!),
+                  ],
+                ),
                 const SizedBox(height: RatelSpacing.lg),
               ],
               Expanded(
@@ -1059,6 +1071,28 @@ class _LessonScreenState extends State<LessonScreen>
   }
 
   // ---- listen ("type what you hear") ----
+  bool get _audioOn => Flags.instance.flag('item_audio', true);
+
+  /// Phase 2.1: speak [text] for any item. Device TTS today; pre-recorded
+  /// audio_manifest clips will be preferred here once seeded (the resolver
+  /// seam). Guarded no-op when TTS is unavailable (test VM / no platform).
+  void _say(String text, {bool slow = false}) {
+    if (text.trim().isEmpty) return;
+    Sfx.instance.tap();
+    Tts.instance.speak(text, slow: slow);
+  }
+
+  /// A compact tap-to-hear speaker for an item's stimulus or solution.
+  Widget _speakerButton(String text, {bool small = false}) {
+    return IconButton(
+      visualDensity: VisualDensity.compact,
+      tooltip: S.instance.t('act_listen', 'Listen'),
+      onPressed: () => _say(text),
+      icon: Icon(Icons.volume_up_outlined,
+          size: small ? 18 : 22, color: RatelColors.honey),
+    );
+  }
+
   void _speakListen() {
     if (_ex.type == ExerciseType.listen && _ex.correctOrder.isNotEmpty) {
       Tts.instance.speak(_ex.correctOrder.first);
@@ -1497,6 +1531,7 @@ class _LessonScreenState extends State<LessonScreen>
                 style: TextStyle(color: c, fontWeight: FontWeight.w600),
               ),
             ),
+            if (_audioOn) _speakerButton(_correctText(), small: true),
             IconButton(
               visualDensity: VisualDensity.compact,
               tooltip: S.instance.t('report_btn', 'Report this exercise'),
