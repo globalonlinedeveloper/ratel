@@ -2,6 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'config.dart';
+import 'locales.dart';
 
 /// Server-driven copy + the i18n seam.
 ///
@@ -70,10 +71,21 @@ class S {
   String _resolve(String key, String def) {
     final row = _rows[key];
     if (row == null) return def;
-    final v = row[locale] ?? '';
-    if (v.isNotEmpty) return v;
+    // Walk the locale's fallback chain (locale -> base -> ... -> en) and return
+    // the first non-empty delta. No language is special-cased: en-GB->en and
+    // ta-Latn->ta use the one mechanism (Locales.fallbackOf). A variant that
+    // stores only deltas inherits everything else from its base.
+    var cur = locale;
+    final seen = <String>{};
+    while (cur.isNotEmpty && seen.add(cur)) {
+      final v = row[cur] ?? '';
+      if (v.isNotEmpty) return v;
+      final next = Locales.instance.fallbackOf(cur);
+      if (next == cur) break;
+      cur = next;
+    }
     final en = row['en'] ?? '';
-    return en.isNotEmpty ? en : def; // locale empty -> en -> in-code default
+    return en.isNotEmpty ? en : def; // chain exhausted -> en pivot -> in-code default
   }
 
   // ---------------------------------------------------------------------------
@@ -187,20 +199,28 @@ class S {
     return sb.toString();
   }
 
-  /// Persisted choice; restored by [restoreLocale] at startup.
+  /// Persisted choice; restored by [restoreLocale] at startup. Accepts ANY
+  /// enabled locale (en, ta, en-GB, es, …) — an unrecognized code resolves to
+  /// 'en'. The picker (Settings) draws its options from the same enabled set.
   Future<void> setLocale(String l) async {
-    locale = l == 'ta' ? 'ta' : 'en';
+    locale = _isPickable(l) ? l : 'en';
     try {
       final p = await SharedPreferences.getInstance();
       await p.setString('app_locale', locale);
     } catch (_) {}
   }
 
+  /// 'en' is always valid (the pivot); any other code must be an enabled locale.
+  bool _isPickable(String l) =>
+      l == 'en' || Locales.instance.enabled.any((e) => e.code == l);
+
   Future<void> restoreLocale() async {
     try {
       final p = await SharedPreferences.getInstance();
       final l = p.getString('app_locale');
-      if (l == 'ta') locale = 'ta';
+      // setLocale only ever persists a validated code, so replay it as-is
+      // (this keeps a picked variant like en-GB across restarts).
+      if (l != null && l.isNotEmpty) locale = l;
     } catch (_) {}
   }
 

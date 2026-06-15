@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/app_state.dart';
 import 'package:ratel/screens/settings_screen.dart';
+import 'package:ratel/locales.dart';
 import 'package:ratel/strings.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -10,6 +11,8 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     S.instance.debugClear();
     S.instance.locale = 'en';
+    Locales.instance.debugSet(
+        const [LocaleEntry('en', 'English'), LocaleEntry('ta', 'தமிழ்')]);
     appState.reset();
   });
 
@@ -32,7 +35,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     await tester.scrollUntilVisible(find.text('App language'), 240,
         scrollable: find.byType(Scrollable).first);
-    await tester.tap(find.text('தமிழ்'));
+    await tester.tap(find.text('App language')); // open the picker dialog
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.tap(find.text('தமிழ்')); // choose Tamil from the dialog
     await tester.pump(const Duration(milliseconds: 400));
     expect(S.instance.locale, 'ta');
     expect(S.instance.t('quit_title', 'x'), 'இருங்கள், போகாதீர்கள்!');

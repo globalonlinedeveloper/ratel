@@ -39,6 +39,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
     });
   }
 
+  /// Native name for [code] from the enabled registry (else the code itself).
+  String _localeName(String code) {
+    for (final e in Locales.instance.enabled) {
+      if (e.code == code) return e.nativeName;
+    }
+    return code;
+  }
+
+  /// Scalable App-language picker over the enabled registry (`locales.enabled`):
+  /// a tap-to-open dialog list of native names. Works for the two locales today
+  /// AND the ~50-locale LTR set as they enable (a SegmentedButton would
+  /// overflow). The pick drives [S.setLocale]; the resolver honours it via the
+  /// fallback chain, so an accent variant shows its deltas and inherits the rest.
+  Future<void> _pickLanguage() async {
+    final current = S.instance.locale;
+    final chosen = await showDialog<String>(
+      context: context,
+      builder: (ctx) => SimpleDialog(
+        title: Text(S.instance.t('set_language', 'App language')),
+        children: [
+          for (final e in Locales.instance.enabled)
+            SimpleDialogOption(
+              onPressed: () => Navigator.pop(ctx, e.code),
+              child: Row(
+                children: [
+                  Icon(
+                    e.code == current
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_unchecked,
+                    color: RatelColors.teal,
+                    size: 20,
+                  ),
+                  const SizedBox(width: RatelSpacing.md),
+                  Expanded(child: Text(e.nativeName)),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+    if (chosen != null) {
+      await S.instance.setLocale(chosen);
+      if (mounted) setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return RatelScaffold(
@@ -96,22 +142,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   leading: const Icon(Icons.translate,
                       color: RatelColors.teal),
                   title: Text(S.instance.t('set_language', 'App language')),
-                  subtitle: Text(S.instance
-                      .t('set_lang_sub', 'Server copy follows your choice')),
-                  trailing: SegmentedButton<String>(
-                    showSelectedIcon: false,
-                    style: const ButtonStyle(
-                        visualDensity: VisualDensity.compact),
-                    segments: [
-                      for (final e in Locales.instance.enabled)
-                        ButtonSegment(value: e.code, label: Text(e.nativeName)),
-                    ],
-                    selected: {S.instance.locale},
-                    onSelectionChanged: (sel) async {
-                      await S.instance.setLocale(sel.first);
-                      if (mounted) setState(() {});
-                    },
-                  ),
+                  subtitle: Text(_localeName(S.instance.locale)),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: _pickLanguage,
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
