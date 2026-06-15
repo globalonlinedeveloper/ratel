@@ -1,5 +1,6 @@
 // Inc 146 -- DATASET P3 lockstep gate (anon, zero spend).
 // Inc 182 -- EXTENDED for Phase 3.1: the reuse layer is now SEEDED for Unit 2,
+// Inc 184/187 -- spine completed across the whole course (u1-u11; A1 u1-u5, A2/B1 u6-u11).
 // so this gate locks that spine and enforces the license-quarantine law.
 // Invariants (all anon-readable, public-read):
 //   * sentences / concepts / concept_terms / audio_manifest anon-readable
@@ -70,15 +71,15 @@ for (const id of ['concept:apple', 'concept:bread', 'concept:umbrella', 'concept
   if (!cids.has(id)) problems.push(`seed spine: ${id} missing`);
   else if (!artByConcept.get(id)) problems.push(`seed spine: ${id} has no art_name (picture)`);
 }
-for (const u of ['u1', 'u2', 'u3', 'u4', 'u5']) {
+for (const u of ['u1', 'u2', 'u3', 'u4', 'u5', 'u6', 'u7', 'u8', 'u9', 'u10', 'u11']) {
   const n = sentences.filter((s) => s.meaning_id.startsWith(`sent:${u}.`)).length;
   if (n < 5) problems.push(`seed spine: expected >=5 ${u} sentences, found ${n}`);
 }
-if (concepts.length < 47) problems.push(`seed spine: expected >=47 concepts, found ${concepts.length}`);
+if (concepts.length < 76) problems.push(`seed spine: expected >=76 concepts, found ${concepts.length}`);
 
 if (problems.length) {
   console.error(`DATASET P3 LOCKSTEP FAIL (${problems.length} problems):`);
   for (const p of problems.slice(0, 20)) console.error('  ' + p);
   process.exit(1);
 }
-console.log(`DATASET P3 LOCKSTEP OK -- reuse layer seeded + self-generated: concepts ${concepts.length} (8 art anchors), concept_terms ${terms.length}, sentences ${sentences.length} (u1-u5), audio_manifest ${audio.length}.`);
+console.log(`DATASET P3 LOCKSTEP OK -- reuse layer seeded + self-generated: concepts ${concepts.length} (8 art anchors), concept_terms ${terms.length}, sentences ${sentences.length} (u1-u11), audio_manifest ${audio.length}.`);
