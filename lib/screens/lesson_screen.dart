@@ -9,6 +9,7 @@ import '../art.dart';
 import '../exercise_art.dart';
 import '../exercise_audio.dart';
 import '../widgets/ratel_art.dart';
+import '../widgets/word_tap_text.dart';
 import '../flags.dart';
 import '../strings.dart';
 import '../push.dart';
@@ -307,8 +308,12 @@ class _LessonScreenState extends State<LessonScreen>
                   ),
                   border: Border.all(color: context.faintBorderC),
                 ),
-                child: Text(_ex.sentence ?? '',
-                    style: const TextStyle(fontSize: 16)),
+                child: _tapWordOn
+                    ? WordTapText(_ex.sentence ?? '',
+                        style: const TextStyle(fontSize: 16),
+                        onWord: _wordSheet)
+                    : Text(_ex.sentence ?? '',
+                        style: const TextStyle(fontSize: 16)),
               ),
             ),
             if (_audioOn && (_ex.sentence ?? '').trim().isNotEmpty)
@@ -668,9 +673,14 @@ class _LessonScreenState extends State<LessonScreen>
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
-                      child: Text(_ex.sentence!,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.w600)),
+                      child: _tapWordOn
+                          ? WordTapText(_ex.sentence!,
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w600),
+                              onWord: _wordSheet)
+                          : Text(_ex.sentence!,
+                              style: const TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.w600)),
                     ),
                     if (_audioOn && audioStimulus(_ex) != null)
                       _speakerButton(audioStimulus(_ex)!),
@@ -1078,6 +1088,53 @@ class _LessonScreenState extends State<LessonScreen>
 
   // ---- listen ("type what you hear") ----
   bool get _audioOn => Flags.instance.flag('item_audio', true);
+
+  bool get _tapWordOn => Flags.instance.flag('tap_word', true);
+
+  /// Phase 2.3: tap a word in the stimulus to hear it (device TTS today; a
+  /// picture + meaning from `concept_terms` will enrich this once Phase 3
+  /// seeds the reuse layer — graceful until then).
+  void _wordSheet(String word) {
+    if (word.trim().isEmpty) return;
+    Sfx.instance.tap();
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+              RatelSpacing.lg, 0, RatelSpacing.lg, RatelSpacing.lg),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(word,
+                  style: const TextStyle(
+                      fontSize: 24, fontWeight: FontWeight.w800)),
+              const SizedBox(height: RatelSpacing.md),
+              Row(
+                children: [
+                  FilledButton.icon(
+                    style: FilledButton.styleFrom(
+                        backgroundColor: RatelColors.honey),
+                    onPressed: () => _say(word),
+                    icon: const Icon(Icons.volume_up, size: 20),
+                    label: Text(S.instance.t('act_hear', 'Hear')),
+                  ),
+                  const SizedBox(width: RatelSpacing.sm),
+                  OutlinedButton.icon(
+                    onPressed: () => _say(word, slow: true),
+                    icon: const Text('🐢', style: TextStyle(fontSize: 16)),
+                    label: Text(S.instance.t('btn_slower', 'Slower')),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   /// Phase 2.1: speak [text] for any item. Device TTS today; pre-recorded
   /// audio_manifest clips will be preferred here once seeded (the resolver
