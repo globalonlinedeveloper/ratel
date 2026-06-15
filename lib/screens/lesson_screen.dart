@@ -838,8 +838,13 @@ class _LessonScreenState extends State<LessonScreen>
   Future<void> _explain() async {
     final key = '${widget.lesson.id}:$_eIdx:'
         '${explainSuffixFor(_ex, selected: _selected)}';
-    // Bundled seed first: free, instant, offline; covers all current content.
-    final local = ExplainStore.instance.lookup(key);
+    // Phase 2.4: a per-exercise concept "why" (key `lessonId:eIdx:why`) takes
+    // priority — it explains the item regardless of correctness and is what
+    // Phase 3 pre-seeds for EVERY item; otherwise the answer-specific bundled
+    // key (covers wrong answers today). Both are free/instant/offline.
+    final whyKey = '${widget.lesson.id}:$_eIdx:why';
+    final local =
+        ExplainStore.instance.lookup(whyKey) ?? ExplainStore.instance.lookup(key);
     if (local != null) {
       setState(() => _explanation = local);
       return;
@@ -1547,7 +1552,7 @@ class _LessonScreenState extends State<LessonScreen>
           ],
         ),
         const SizedBox(height: 10),
-        if (!_isCorrect) _explainBlock(),
+        _explainBlock(),
         _wideButton(
             _isLast &&
                     (_fixPhase ||
