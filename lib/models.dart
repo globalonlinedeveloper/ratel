@@ -132,18 +132,20 @@ class Lesson {
     required this.exercises,
   }) : titleEn = title;
 
-  /// Locale-aware display title (Inc 158).
-  String get title => S.instance.tr(titleEn, titleTa);
+  /// Locale-aware display title (Inc 198: per-locale via app_strings).
+  String get title => S.instance.t('lesson:$id:title', titleEn);
 }
 
 /// A unit groups lessons under a theme.
 class Unit {
+  final String id;
   final String titleEn;
   final String subtitleEn;
   final String titleTa; // Tamil drafts (Inc 158); '' -> EN fallback
   final String subtitleTa;
   final List<Lesson> lessons;
   const Unit({
+    this.id = '',
     required String title,
     required String subtitle,
     this.titleTa = '',
@@ -152,7 +154,7 @@ class Unit {
   })  : titleEn = title,
         subtitleEn = subtitle;
 
-  /// Locale-aware display strings (Inc 158).
-  String get title => S.instance.tr(titleEn, titleTa);
-  String get subtitle => S.instance.tr(subtitleEn, subtitleTa);
+  /// Locale-aware display strings (Inc 198: per-locale via app_strings).
+  String get title => S.instance.t('unit:$id:title', titleEn);
+  String get subtitle => S.instance.t('unit:$id:subtitle', subtitleEn);
 }

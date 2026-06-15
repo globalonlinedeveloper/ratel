@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'config.dart';
+import 'locales.dart';
 
 /// Reuse layer (Inc 182, Phase 3.1). A language-neutral catalogue of meanings:
 /// each [ConceptEntry] is optionally illustrated by an object-art cell
@@ -51,6 +52,21 @@ Map<String, String> buildEnTermIndex(Iterable<ConceptEntry> concepts) {
 }
 
 /// Pure: resolve [word] to a [ConceptHit] via [index] (enTerm->id) + [byId];
+// Inc 198 -- resolve a concept meaning through the locale fallback chain so a
+// variant learner (es-US->es, fr-CA->fr, nl-BE->nl) inherits its base meaning.
+String? _meaningFor(ConceptEntry c, String lang) {
+  var cur = lang;
+  final seen = <String>{};
+  while (cur.isNotEmpty && cur != 'en' && seen.add(cur)) {
+    final v = c.terms[cur];
+    if (v != null && v.isNotEmpty) return v;
+    final next = Locales.instance.fallbackOf(cur);
+    if (next == cur) break;
+    cur = next;
+  }
+  return null;
+}
+
 /// the meaning line uses [meaningLang] (skipped for 'en' — no self-gloss).
 /// Null when no concept matches (the common case -> graceful, no enrichment).
 ConceptHit? lookupConcept(
@@ -69,7 +85,7 @@ ConceptHit? lookupConcept(
     id: id,
     artName: c.artName,
     headword: c.terms['en'],
-    meaning: meaningLang == 'en' ? null : c.terms[meaningLang],
+    meaning: meaningLang == 'en' ? null : _meaningFor(c, meaningLang),
   );
 }
 

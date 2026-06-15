@@ -2,33 +2,40 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/models.dart';
 import 'package:ratel/strings.dart';
 
+// Inc 198 -- content titles are per-locale via app_strings (keys
+// unit:<id>:title / unit:<id>:subtitle / lesson:<id>:title), replacing the
+// Inc-158 title_ta columns. The S resolver + fallback chain localize them; an
+// unglossed locale falls back to the EN source.
 void main() {
-  tearDown(() => S.instance.locale = 'en');
+  setUp(() => S.instance
+    ..debugClear()
+    ..locale = 'en');
+  tearDown(() => S.instance
+    ..debugClear()
+    ..locale = 'en');
 
-  test('S.tr picks ta only in ta locale with a non-empty value', () {
-    S.instance.locale = 'en';
-    expect(S.instance.tr('Family', 'குடும்பம்'), 'Family');
-    S.instance.locale = 'ta';
-    expect(S.instance.tr('Family', 'குடும்பம்'), 'குடும்பம்');
-    expect(S.instance.tr('Family', ''), 'Family'); // empty ta -> EN fallback
-  });
+  test('lesson + unit titles resolve per locale via app_strings', () {
+    final l = Lesson(id: 'u1l1', title: 'Greetings', exercises: const []);
+    final u = Unit(
+        id: 'u1', title: 'Unit 1', subtitle: 'Everyday basics', lessons: const []);
+    S.instance
+      ..debugSetLocale('lesson:u1l1:title', 'ta', 'வணக்கம்')
+      ..debugSetLocale('unit:u1:title', 'ta', 'அலகு 1')
+      ..debugSetLocale('unit:u1:subtitle', 'ta', 'தினசரி அடிப்படைகள்');
 
-  test('Lesson/Unit titles localize via getter; EN stays byte-identical', () {
-    const l = Lesson(
-        id: 'x', title: 'Family', titleTa: 'குடும்பம்', exercises: []);
-    const u = Unit(
-        title: 'Unit 1', subtitle: 'Everyday basics',
-        titleTa: 'அலகு 1', subtitleTa: 'தினசரி அடிப்படைகள்', lessons: []);
     S.instance.locale = 'en';
-    expect(l.title, 'Family');
+    expect(l.title, 'Greetings');
     expect(u.title, 'Unit 1');
     expect(u.subtitle, 'Everyday basics');
+
     S.instance.locale = 'ta';
-    expect(l.title, 'குடும்பம்');
+    expect(l.title, 'வணக்கம்');
     expect(u.title, 'அலகு 1');
     expect(u.subtitle, 'தினசரி அடிப்படைகள்');
-    // EN-only content (no ta draft) stays EN even in ta locale.
-    const l2 = Lesson(id: 'y', title: 'Greetings', exercises: []);
-    expect(l2.title, 'Greetings');
+
+    // a locale with no title row falls back to the EN source
+    S.instance.locale = 'de';
+    expect(l.title, 'Greetings');
+    expect(u.title, 'Unit 1');
   });
 }

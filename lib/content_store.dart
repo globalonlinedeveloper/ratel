@@ -139,6 +139,7 @@ class ContentStore {
       }
       if (builtLessons.isEmpty) continue;
       out.add(Unit(
+        id: uid,
         title: (u['title'] ?? '').toString(),
         subtitle: (u['subtitle'] ?? '').toString(),
         titleTa: (u['title_ta'] ?? '').toString(),
