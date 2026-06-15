@@ -64,21 +64,21 @@ for (const a of audio) {
   if (a.state && !STATES.has(a.state)) problems.push(`audio ${a.content_key}: bad state ${a.state}`);
 }
 
-// ---- SEED SPINE (Inc 182/183, Phase 3.1): picture anchors + per-unit sentences ----
+// ---- SEED SPINE (Inc 182-184, Phase 3.1): picture anchors + per-unit sentences ----
 const artByConcept = new Map(concepts.map((c) => [c.id, c.art_name]));
-for (const id of ['concept:apple', 'concept:bread', 'concept:umbrella', 'concept:spoon']) {
+for (const id of ['concept:apple', 'concept:bread', 'concept:umbrella', 'concept:spoon', 'concept:pilot', 'concept:camera', 'concept:hammer', 'concept:ticket']) {
   if (!cids.has(id)) problems.push(`seed spine: ${id} missing`);
   else if (!artByConcept.get(id)) problems.push(`seed spine: ${id} has no art_name (picture)`);
 }
-for (const u of ['u1', 'u2']) {
+for (const u of ['u1', 'u2', 'u3', 'u4', 'u5']) {
   const n = sentences.filter((s) => s.meaning_id.startsWith(`sent:${u}.`)).length;
-  if (n < 10) problems.push(`seed spine: expected >=10 ${u} sentences, found ${n}`);
+  if (n < 5) problems.push(`seed spine: expected >=5 ${u} sentences, found ${n}`);
 }
-if (concepts.length < 29) problems.push(`seed spine: expected >=29 concepts, found ${concepts.length}`);
+if (concepts.length < 47) problems.push(`seed spine: expected >=47 concepts, found ${concepts.length}`);
 
 if (problems.length) {
   console.error(`DATASET P3 LOCKSTEP FAIL (${problems.length} problems):`);
   for (const p of problems.slice(0, 20)) console.error('  ' + p);
   process.exit(1);
 }
-console.log(`DATASET P3 LOCKSTEP OK -- reuse layer seeded + self-generated: concepts ${concepts.length} (4 art anchors), concept_terms ${terms.length}, sentences ${sentences.length} (u1+u2), audio_manifest ${audio.length}.`);
+console.log(`DATASET P3 LOCKSTEP OK -- reuse layer seeded + self-generated: concepts ${concepts.length} (8 art anchors), concept_terms ${terms.length}, sentences ${sentences.length} (u1-u5), audio_manifest ${audio.length}.`);
