@@ -30,17 +30,38 @@ class S {
   Future<void> load() async {
     if (!Config.hasSupabase) return;
     try {
+      // Inc 199 FIX: fetch ONLY the active locale + its fallback chain (+ en
+      // pivot), not every locale. app_strings grew past PostgREST's 1000-row
+      // response cap (~17k rows across 50 locales), so the old single
+      // `.limit(20000)` silently returned just the first 1000 rows and most
+      // strings fell back to English. A per-locale fetch stays tiny (<1k) and
+      // is re-run on every [setLocale] so a switch loads the new locale's rows.
+      final wanted = localesToLoad(locale);
       final rows = await Supabase.instance.client
           .from('app_strings')
           .select('key, locale, val')
-          // All enabled-locale rows (tiny today: en+ta). FUTURE: when many
-          // locales enable, filter by the enabled set or paginate.
-          .limit(20000)
-          .timeout(const Duration(seconds: 4));
+          .inFilter('locale', wanted)
+          .limit(5000)
+          .timeout(const Duration(seconds: 5));
       ingestRows(List<Map<String, dynamic>>.from(rows));
     } catch (_) {
       // offline/slow: in-code defaults carry the app
     }
+  }
+
+  /// The locales whose rows the resolver may need for [loc]: the locale itself,
+  /// each fallback base up the chain, and the `en` pivot. Pure + testable.
+  static List<String> localesToLoad(String loc) {
+    final out = <String>{'en'};
+    var cur = loc;
+    final seen = <String>{};
+    while (cur.isNotEmpty && seen.add(cur)) {
+      out.add(cur);
+      final next = Locales.instance.fallbackOf(cur);
+      if (next == cur) break;
+      cur = next;
+    }
+    return out.toList();
   }
 
   /// Pure ingest of long-format (key, locale, val) rows into [_rows].
@@ -208,6 +229,7 @@ class S {
       final p = await SharedPreferences.getInstance();
       await p.setString('app_locale', locale);
     } catch (_) {}
+    await load(); // Inc 199: fetch the newly-selected locale's rows (merges in)
   }
 
   /// 'en' is always valid (the pivot); any other code must be an enabled locale.

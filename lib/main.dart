@@ -50,9 +50,9 @@ Future<void> main() async {
   await loadThemeMode();
   await loadReduceMotion();
   await Flags.instance.load(); // remote config before dependent loads
-  await S.instance.load(); // server copy (in-code defaults if offline)
-  await S.instance.restoreLocale();
-  await Locales.instance.load(); // enabled UI-locale registry (data-driven picker)
+  await S.instance.restoreLocale(); // know the saved locale FIRST (Inc 199)
+  await Locales.instance.load(); // registry + fallback chain (data-driven picker)
+  await S.instance.load(); // server copy for the active locale + its fallback chain
   await Art.instance.load(); // remote art index (bundled-first, Inc 140)
   await Concepts.instance.load(); // reuse-layer index (Inc 182, Phase 3.1)
   // share-link friend code (web): stow now, redeem after sign-in
