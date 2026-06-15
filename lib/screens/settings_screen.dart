@@ -81,6 +81,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
     if (chosen != null) {
       await S.instance.setLocale(chosen);
+      // Inc 194 FIX (locale propagation): re-inflate the home's locale-keyed
+      // subtree so EVERY tab re-localizes immediately. SettingsScreen is a
+      // pushed route, so its own setState() only re-localizes THIS page; the
+      // tabs underneath rebuild on `appState` (home_screen's ListenableBuilder
+      // -> KeyedSubtree(ValueKey('locale-..'))) which nothing was notifying, so
+      // they stayed in the OLD language until a full reload. Affects all langs.
+      appState.notify();
       if (mounted) setState(() {});
     }
   }

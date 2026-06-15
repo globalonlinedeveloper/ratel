@@ -59,4 +59,39 @@ void main() {
     final p = await SharedPreferences.getInstance();
     expect(p.getString('app_locale'), 'en-GB');
   });
+
+  testWidgets('picking a language notifies appState so other tabs re-localize',
+      (tester) async {
+    Locales.instance.debugSet(const [
+      LocaleEntry('en', 'English'),
+      LocaleEntry('hi', 'हिन्दी'),
+    ]);
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    var notified = 0;
+    void onChange() => notified++;
+    appState.addListener(onChange);
+    addTearDown(() => appState.removeListener(onChange));
+
+    await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    await tester.scrollUntilVisible(find.text('App language'), 240,
+        scrollable: find.byType(Scrollable).first);
+    await tester.tap(find.text('App language'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    final before = notified; // ignore any incidental notifies during build
+    await tester.tap(find.text('हिन्दी'));
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(S.instance.locale, 'hi');
+    // The locale PICK itself must notify appState; without it the home never
+    // rebuilds and other tabs stay in the old language until reload.
+    expect(notified, greaterThan(before));
+  });
 }
