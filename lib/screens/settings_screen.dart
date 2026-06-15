@@ -47,6 +47,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return code;
   }
 
+  /// Native name + English name for the current-language tile (mirrors the
+  /// picker rows). The English part is dropped when absent or identical (the
+  /// English/en-* variants whose native name already reads in English).
+  String _localeLabel(String code) {
+    final native = _localeName(code);
+    final en = Locales.englishNameFor(code);
+    return (en.isEmpty || en == native) ? native : '$native \u00b7 $en';
+  }
+
   /// Scalable App-language picker over the enabled registry (`locales.enabled`):
   /// a tap-to-open dialog list of native names. Works for the two locales today
   /// AND the ~50-locale LTR set as they enable (a SegmentedButton would
@@ -165,7 +174,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   leading: const Icon(Icons.translate,
                       color: RatelColors.teal),
                   title: Text(S.instance.t('set_language', 'App language')),
-                  subtitle: Text(_localeName(S.instance.locale)),
+                  subtitle: Text(_localeLabel(S.instance.locale)),
                   trailing: const Icon(Icons.chevron_right),
                   onTap: _pickLanguage,
                 ),

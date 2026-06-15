@@ -43,6 +43,8 @@ void main() {
 
     await tester.scrollUntilVisible(find.text('App language'), 240,
         scrollable: find.byType(Scrollable).first);
+    // Inc 201 — current-language tile subtitle now shows native \u00b7 English
+    expect(find.text('English \u00b7 English (US)'), findsOneWidget);
     await tester.tap(find.text('App language')); // open the picker dialog
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
