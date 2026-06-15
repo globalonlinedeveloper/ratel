@@ -265,6 +265,11 @@ jobs:
     needs: verify
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    # Allowed-to-fail: blocked by upstream rive_common >=0.13.0 which builds its
+    # bundled SheenBidi/harfbuzz with -Werror (fails -Wunused-variable on Linux
+    # clang). Non-gating; this job auto-goes-green once rive is bumped to a
+    # fixed version (pairs with the future Rive-mascot work).
+    continue-on-error: true
     steps:
       - name: Check out code
         uses: actions/checkout@v4
