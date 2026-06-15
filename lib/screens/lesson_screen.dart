@@ -655,6 +655,7 @@ class _LessonScreenState extends State<LessonScreen>
                       child: Text(_bubble()),
                     ),
                   ),
+                  _reportButton(),
                 ],
               ),
               const SizedBox(height: 20),
@@ -1436,6 +1437,17 @@ class _LessonScreenState extends State<LessonScreen>
   }
 
   // ---- report this exercise ----
+  /// Phase 2.5: a standard report flag, shown on EVERY item in EVERY state
+  /// (the prompt row) — not only after answering — so the quality loop into
+  /// `exercise_reports` is always one tap away.
+  Widget _reportButton() => IconButton(
+        visualDensity: VisualDensity.compact,
+        tooltip: S.instance.t('report_btn', 'Report this exercise'),
+        onPressed: _reportSheet,
+        icon: const Icon(Icons.flag_outlined,
+            size: 18, color: RatelColors.textMuted),
+      );
+
   void _reportSheet() {
     const reasons = [
       'My answer should be accepted',
@@ -1532,13 +1544,6 @@ class _LessonScreenState extends State<LessonScreen>
               ),
             ),
             if (_audioOn) _speakerButton(_correctText(), small: true),
-            IconButton(
-              visualDensity: VisualDensity.compact,
-              tooltip: S.instance.t('report_btn', 'Report this exercise'),
-              onPressed: _reportSheet,
-              icon: const Icon(Icons.flag_outlined,
-                  size: 18, color: RatelColors.textMuted),
-            ),
           ],
         ),
         const SizedBox(height: 10),

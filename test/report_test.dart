@@ -30,4 +30,22 @@ void main() {
     await tester.pump(const Duration(seconds: 5)); // drain snackbar
     appState.hearts = 5;
   });
+
+  testWidgets('report is available BEFORE answering too (every item)',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(
+        home: LessonScreen(lesson: builtInCourse.first.lessons.first)));
+    await tester.pump(const Duration(milliseconds: 400));
+    // No answer yet — the report flag is already there (Phase 2.5).
+    expect(find.byIcon(Icons.flag_outlined), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.flag_outlined));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 450));
+    expect(find.text('Report this exercise'), findsOneWidget);
+    await tester.tap(find.text('Something is wrong here'));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.textContaining('Thanks!'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 5));
+    appState.hearts = 5;
+  });
 }
