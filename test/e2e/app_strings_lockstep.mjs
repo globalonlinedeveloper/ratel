@@ -12,6 +12,7 @@ const KEY = process.env.SUPABASE_ANON_KEY || 'sb_publishable_RINvN2-MTrfUgOIZ_ox
 const FLOOR_TA = 311; // ta UI-string coverage; raise consciously as keys grow
 const FLOOR_EX = 272; // live legacy exercises carrying stable keys
 const FLOOR_ENGB = 6; // en-GB British spelling deltas (W1 Part C); deltas-only
+const FLOOR_LTR = 50; // staged ~50-locale Chirp-3-HD LTR registry roadmap (W1 batch)
 const STATES = new Set(['draft', 'live', 'deprecated']);
 const H = { apikey: KEY, Authorization: `Bearer ${KEY}` };
 
@@ -23,7 +24,7 @@ async function getAll(path) {
 
 const problems = [];
 
-const locales = await getAll('locales?select=code,enabled,plural_categories,fallback&limit=200');
+const locales = await getAll('locales?select=code,enabled,plural_categories,fallback,direction&limit=200');
 const byCode = Object.fromEntries(locales.map((l) => [l.code, l]));
 for (const code of ['en', 'ta']) {
   const l = byCode[code];
@@ -43,6 +44,25 @@ if (!gbLoc) {
   if (!gbLoc.enabled) problems.push("locales: 'en-GB' not enabled");
   if (gbLoc.fallback !== 'en')
     problems.push(`locales: 'en-GB' fallback '${gbLoc.fallback}' != 'en'`);
+}
+// Full LTR registry roadmap (W1 batch, Inc 192): the ~50-locale Chirp-3-HD LTR
+// set is STAGED in `locales` (enabled only after per-language native-QA). Lock:
+// the English accents are live, the roadmap count holds, NO RTL is stored, and
+// every fallback target resolves to an existing row (chains never dangle).
+for (const code of ['en-IN', 'en-AU']) {
+  const l = byCode[code];
+  if (!l) { problems.push(`locales: missing accent '${code}'`); continue; }
+  if (!l.enabled) problems.push(`locales: accent '${code}' not enabled`);
+  if (l.fallback !== 'en-GB')
+    problems.push(`locales: '${code}' fallback '${l.fallback}' != 'en-GB'`);
+}
+if (locales.length < FLOOR_LTR)
+  problems.push(`locales registry ${locales.length} < LTR floor ${FLOOR_LTR}`);
+for (const l of locales) {
+  if (l.direction && l.direction !== 'ltr')
+    problems.push(`locales: '${l.code}' is ${l.direction} (RTL deferred -- must not be stored yet)`);
+  if (l.fallback && !byCode[l.fallback])
+    problems.push(`locales: '${l.code}' fallback '${l.fallback}' has no row (dangling chain)`);
 }
 
 const rows = await getAll('app_strings?select=key,locale,val,state&limit=20000');
@@ -78,4 +98,5 @@ if (problems.length) {
   for (const p of problems.slice(0, 15)) console.error('  ' + p);
   process.exit(1);
 }
-console.log(`APP_STRINGS/P1 LOCKSTEP OK -- app_strings ${keys.size} keys / ${taRows} ta rows (floor ${FLOOR_TA}) / ${gbRows} en-GB deltas (floor ${FLOOR_ENGB}); ${live.length} live exercises stable-keyed + legacy-frozen (floor ${FLOOR_EX}); locales en+ta enabled w/ CLDR plural categories; en-GB fallback-delta locale enabled (fallback=en).`);
+const enabledCodes = locales.filter((l) => l.enabled).map((l) => l.code).sort();
+console.log(`APP_STRINGS/P1 LOCKSTEP OK -- app_strings ${keys.size} keys / ${taRows} ta rows (floor ${FLOOR_TA}) / ${gbRows} en-GB deltas (floor ${FLOOR_ENGB}); ${live.length} live exercises stable-keyed + legacy-frozen (floor ${FLOOR_EX}); locales registry ${locales.length} rows (LTR floor ${FLOOR_LTR}), 0 RTL, chains resolve; enabled picker = [${enabledCodes.join(', ')}].`);
