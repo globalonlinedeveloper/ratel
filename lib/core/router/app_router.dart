@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/screens/age_check_screen.dart';
 import '../../features/auth/screens/auth_hub_screen.dart';
+import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/otp_screen.dart';
+import '../../features/auth/screens/parental_consent_screen.dart';
+import '../../features/auth/screens/phone_verify_screen.dart';
 import '../../features/auth/screens/privacy_choices_screen.dart';
 import '../../features/auth/screens/returning_unlock_screen.dart';
 import '../../features/auth/screens/signup_screen.dart';
@@ -27,8 +31,15 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/privacy', builder: (_, _) => const PrivacyChoicesScreen()),
     GoRoute(path: '/age', builder: (_, _) => const AgeCheckScreen()),
     GoRoute(
-      path: '/forgot',
-      builder: (_, _) => const PlaceholderScreen(title: 'Forgot password'),
+      path: '/parental',
+      builder: (_, _) => const ParentalConsentScreen(),
+    ),
+    GoRoute(path: '/phone', builder: (_, _) => const PhoneVerifyScreen()),
+    GoRoute(path: '/otp', builder: (_, _) => const OtpScreen()),
+    GoRoute(path: '/forgot', builder: (_, _) => const ForgotPasswordScreen()),
+    GoRoute(
+      path: '/reset-sent',
+      builder: (_, _) => const PlaceholderScreen(title: 'Reset link sent'),
     ),
   ],
 );
