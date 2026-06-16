@@ -262,6 +262,8 @@ jobs:
     needs: sanity
     if: github.ref == 'refs/heads/main'
     runs-on: windows-2022
+    permissions:
+      contents: write
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -279,10 +281,31 @@ jobs:
           flutter pub get
           flutter build windows --release --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
 
+      - name: Package Windows app
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath ratel-windows.zip -Force
+
+      - name: Upload Windows artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ratel-windows
+          path: ratel-windows.zip
+
+      - name: Publish rolling "latest-windows" release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-windows
+          name: Ratel Windows (latest main)
+          body: >-
+            Unsigned Windows desktop build (release) from the latest main commit.
+            Unzip and run ratel.exe. SmartScreen may warn because it is unsigned.
+          files: ratel-windows.zip
+
   macos:
     needs: sanity
     if: github.ref == 'refs/heads/main'
     runs-on: macos-15
+    permissions:
+      contents: write
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -299,6 +322,27 @@ jobs:
           flutter config --enable-macos-desktop
           flutter pub get
           flutter build macos --release --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
+
+      - name: Package macOS app
+        run: |
+          APP=$(ls -d build/macos/Build/Products/Release/*.app | head -1)
+          ditto -c -k --keepParent "$APP" ratel-macos.zip
+
+      - name: Upload macOS artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ratel-macos
+          path: ratel-macos.zip
+
+      - name: Publish rolling "latest-macos" release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-macos
+          name: Ratel macOS (latest main)
+          body: >-
+            Unsigned macOS .app (release) from the latest main commit. Unzip;
+            first launch needs right-click -> Open (Gatekeeper, unsigned).
+          files: ratel-macos.zip
 
   linux:
     needs: sanity
