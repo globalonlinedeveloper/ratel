@@ -30,6 +30,9 @@ import '../../features/onboarding/screens/start_point_screen.dart';
 import '../../features/learn/screens/lesson_choice_screen.dart';
 import '../../features/learn/screens/lesson_listen_screen.dart';
 import '../../features/learn/screens/lesson_speaking_screen.dart';
+import '../../features/learn/screens/home_screen.dart';
+import '../../features/learn/screens/why_card_screen.dart';
+import '../../features/learn/screens/wrong_feedback_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -105,6 +108,9 @@ final GoRouter appRouter = GoRouter(
       path: '/lesson/listen',
       builder: (_, _) => const LessonListenScreen(),
     ),
+    GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+    GoRoute(path: '/why', builder: (_, _) => const WhyCardScreen()),
+    GoRoute(path: '/wrong', builder: (_, _) => const WrongFeedbackScreen()),
   ],
 );
 
