@@ -33,6 +33,9 @@ import '../../features/learn/screens/lesson_speaking_screen.dart';
 import '../../features/learn/screens/home_screen.dart';
 import '../../features/learn/screens/why_card_screen.dart';
 import '../../features/learn/screens/wrong_feedback_screen.dart';
+import '../../features/learn/screens/ai_roleplay_screen.dart';
+import '../../features/learn/screens/lesson_complete_screen.dart';
+import '../../features/learn/screens/out_of_energy_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -111,6 +114,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
     GoRoute(path: '/why', builder: (_, _) => const WhyCardScreen()),
     GoRoute(path: '/wrong', builder: (_, _) => const WrongFeedbackScreen()),
+    GoRoute(path: '/roleplay', builder: (_, _) => const AiRoleplayScreen()),
+    GoRoute(
+      path: '/complete',
+      builder: (_, _) => const LessonCompleteScreen(),
+    ),
+    GoRoute(path: '/energy', builder: (_, _) => const OutOfEnergyScreen()),
   ],
 );
 
