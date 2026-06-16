@@ -33,14 +33,35 @@ jobs:
       - name: Analyze (catches all compile + semantic errors)
         run: flutter analyze
 
-      - name: Run tests
-        run: flutter test
+      - name: Run tests (with coverage)
+        run: flutter test --coverage
+
+      - name: Coverage summary
+        run: |
+          if [ -f coverage/lcov.info ]; then
+            COV=$(awk -F: '/^LF:/{lf+=$2} /^LH:/{lh+=$2} END{ if(lf>0) printf "%.1f", lh/lf*100 }' coverage/lcov.info)
+            echo "Line coverage: ${COV}%"
+            { echo "### Code coverage"; echo ""; echo "Line coverage: **${COV}%**"; echo ""; } >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload coverage (lcov)
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-lcov
+          path: coverage/lcov.info
+          if-no-files-found: ignore
 
       - name: Build web
         run: |
           flutter build web --release --base-href "/ratel/" \
             --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co \
             --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
+
+      - name: Web bundle size
+        run: |
+          SZ=$(du -sh build/web | cut -f1)
+          echo "Web build size: $SZ"
+          { echo "### Web bundle size"; echo ""; echo "build/web = **$SZ**"; echo ""; } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Stamp commit SHA for live verification
         run: echo "${{ github.sha }}" > build/web/commit.txt
@@ -117,6 +138,10 @@ jobs:
           name: e2e-screenshot
           path: e2e-full.png
           if-no-files-found: ignore
+
+      - name: Dependency freshness (report only)
+        run: |
+          { echo "### Outdated dependencies"; echo ""; echo '```'; flutter pub outdated 2>&1 | head -50; echo '```'; } >> "$GITHUB_STEP_SUMMARY" || true
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
