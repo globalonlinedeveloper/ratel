@@ -43,6 +43,13 @@ jobs:
             echo "Line coverage: ${COV}%"
             { echo "### Code coverage"; echo ""; echo "Line coverage: **${COV}%**"; echo ""; } >> "$GITHUB_STEP_SUMMARY"
           fi
+      - name: Coverage floor (fail if below threshold)
+        run: |
+          FLOOR=73
+          COV=$(awk -F: '/^LF:/{lf+=$2} /^LH:/{lh+=$2} END{ if(lf>0) printf "%.1f", lh/lf*100 }' coverage/lcov.info)
+          BELOW=$(awk -v c="$COV" -v f="$FLOOR" 'BEGIN{ print (c+0 < f+0) ? 1 : 0 }')
+          if [ "$BELOW" = "1" ]; then echo "::error::Coverage ${COV}% is below the ${FLOOR}% floor"; exit 1; fi
+          echo "Coverage OK: ${COV}% >= ${FLOOR}% floor"
       - name: Upload coverage (lcov)
         uses: actions/upload-artifact@v4
         with:
