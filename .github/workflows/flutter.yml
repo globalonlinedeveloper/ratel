@@ -1,7 +1,7 @@
 name: Flutter CI
 
 # Every push/PR: verify (analyze + test) + build web.
-# Pushes to main: deploy the web build to GitHub Pages (the live app URL).
+# Pushes to main: deploy web to Pages + build all native platforms.
 on:
   push:
   pull_request:
@@ -16,6 +16,9 @@ permissions:
   pages: write
   id-token: write
 
+env:
+  FLUTTER_VERSION: '3.44.1'
+
 jobs:
   verify:
     runs-on: ubuntu-latest
@@ -24,7 +27,7 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: '3.44.1'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter pub get
       - name: Analyze (strict)
@@ -40,15 +43,14 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
-          flutter-version: '3.44.1'
+          flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter pub get
       - name: Build web
         run: flutter build web --release --base-href "/ratel/" --pwa-strategy=none
       - name: Stamp commit SHA for live verification
         run: echo "${{ github.sha }}" > build/web/commit.txt
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: build/web
 
@@ -60,6 +62,110 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4
+
+  android:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      - name: Build APK (release, debug-signed for now)
+        run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ratel-android-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+
+  linux:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - name: Linux desktop build deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev
+      - run: flutter pub get
+      - name: Build Linux
+        run: flutter build linux --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ratel-linux
+          path: build/linux/x64/release/bundle
+
+  windows:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      - name: Build Windows
+        run: flutter build windows --release
+      - name: Package Windows app
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath ratel-windows.zip -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ratel-windows
+          path: ratel-windows.zip
+
+  macos:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      - name: Build macOS
+        run: flutter build macos --release
+      - name: Package macOS app
+        run: |
+          APP=$(ls -d build/macos/Build/Products/Release/*.app | head -1)
+          ditto -c -k --keepParent "$APP" ratel-macos.zip
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ratel-macos
+          path: ratel-macos.zip
+
+  ios:
+    needs: verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          cache: true
+      - run: flutter pub get
+      - name: Build iOS (no codesign — compile validation)
+        run: flutter build ios --release --no-codesign
