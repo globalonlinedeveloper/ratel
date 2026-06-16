@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../theme.dart';
 import '../widgets/ratel_mascot.dart';
 import '../analytics.dart';
+import '../widgets/ratel_button.dart';
 
 /// Email/password login + sign-up using Supabase Auth.
 class AuthScreen extends StatefulWidget {
@@ -40,12 +41,16 @@ class _AuthScreenState extends State<AuthScreen> {
         final res = await auth.signUp(
           email: email,
           password: password,
-          data: _name.text.trim().isEmpty ? null : {'full_name': _name.text.trim()},
+          data: _name.text.trim().isEmpty
+              ? null
+              : {'full_name': _name.text.trim()},
         );
         Analytics.signUp();
         if (res.session == null && mounted) {
-          setState(() =>
-              _message = 'Account created. Check your email to confirm, then log in.');
+          setState(
+            () => _message =
+                'Account created. Check your email to confirm, then log in.',
+          );
         }
       } else {
         await auth.signInWithPassword(email: email, password: password);
@@ -54,7 +59,9 @@ class _AuthScreenState extends State<AuthScreen> {
     } on AuthException catch (e) {
       if (mounted) setState(() => _message = e.message);
     } catch (_) {
-      if (mounted) setState(() => _message = 'Something went wrong. Please try again.');
+      if (mounted) {
+        setState(() => _message = 'Something went wrong. Please try again.');
+      }
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -72,8 +79,7 @@ class _AuthScreenState extends State<AuthScreen> {
       if (mounted) setState(() => _message = e.message);
     } catch (_) {
       if (mounted) {
-        setState(() => _message =
-            'Something went wrong. Please try again.');
+        setState(() => _message = 'Something went wrong. Please try again.');
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -100,23 +106,32 @@ class _AuthScreenState extends State<AuthScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const ExcludeSemantics(child: RatelMascot(pose: RatelPose.wave, size: 120)),
+                  const ExcludeSemantics(
+                    child: RatelMascot(pose: RatelPose.wave, size: 120),
+                  ),
                   const SizedBox(height: RatelSpacing.sm),
-                  const Text('Ratel',
-                      style: TextStyle(
-                          fontSize: 30, fontFamily: kDisplayFont,
-                          fontWeight: FontWeight.w800,
-                          color: RatelColors.honey)),
-                  Text(S.instance.t('auth_tagline', 'Learn English, fearlessly.'),
-                      style: TextStyle(color: RatelColors.textMuted)),
+                  const Text(
+                    'Ratel',
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontFamily: kDisplayFont,
+                      fontWeight: FontWeight.w800,
+                      color: RatelColors.honey,
+                    ),
+                  ),
+                  Text(
+                    S.instance.t('auth_tagline', 'Learn English, fearlessly.'),
+                    style: TextStyle(color: RatelColors.textMuted),
+                  ),
                   const SizedBox(height: RatelSpacing.xl),
                   if (_isSignUp) ...[
                     TextField(
                       controller: _name,
                       textCapitalization: TextCapitalization.words,
                       decoration: InputDecoration(
-                          labelText: S.instance.t('fld_name', 'Name'),
-                          border: const OutlineInputBorder()),
+                        labelText: S.instance.t('fld_name', 'Name'),
+                        border: const OutlineInputBorder(),
+                      ),
                     ),
                     const SizedBox(height: RatelSpacing.md),
                   ],
@@ -124,61 +139,59 @@ class _AuthScreenState extends State<AuthScreen> {
                     controller: _email,
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
-                        labelText: S.instance.t('fld_email', 'Email'),
-                        border: const OutlineInputBorder()),
+                      labelText: S.instance.t('fld_email', 'Email'),
+                      border: const OutlineInputBorder(),
+                    ),
                   ),
                   const SizedBox(height: RatelSpacing.md),
                   TextField(
                     controller: _password,
                     obscureText: true,
                     decoration: InputDecoration(
-                        labelText: S.instance.t('fld_password', 'Password'),
-                        border: const OutlineInputBorder()),
+                      labelText: S.instance.t('fld_password', 'Password'),
+                      border: const OutlineInputBorder(),
+                    ),
                   ),
                   if (_message != null) ...[
                     const SizedBox(height: RatelSpacing.md),
-                    Text(_message!,
-                        style: const TextStyle(color: RatelColors.coral)),
+                    Text(
+                      _message!,
+                      style: const TextStyle(color: RatelColors.coral),
+                    ),
                   ],
                   const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      style: FilledButton.styleFrom(
-                          backgroundColor: RatelColors.teal,
-                          padding: const EdgeInsets.symmetric(vertical: RatelSpacing.lg)),
-                      onPressed: _loading ? null : _submit,
-                      child: _loading
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2, color: Colors.white))
-                          : Text(_isSignUp
-                              ? S.instance.t('btn_create', 'Create account')
-                              : S.instance.t('btn_login', 'Log in')),
-                    ),
+                  RatelButton.filled(
+                    label: _isSignUp
+                        ? S.instance.t('btn_create', 'Create account')
+                        : S.instance.t('btn_login', 'Log in'),
+                    loading: _loading,
+                    onPressed: _submit,
                   ),
                   const SizedBox(height: RatelSpacing.sm),
                   TextButton(
                     onPressed: _loading
                         ? null
                         : () => setState(() {
-                              _isSignUp = !_isSignUp;
-                              _message = null;
-                            }),
-                    child: Text(_isSignUp
-                        ? S.instance
-                            .t('auth_have', 'Have an account? Log in')
-                        : S.instance.t(
-                            'auth_new', 'New here? Create an account')),
+                            _isSignUp = !_isSignUp;
+                            _message = null;
+                          }),
+                    child: Text(
+                      _isSignUp
+                          ? S.instance.t('auth_have', 'Have an account? Log in')
+                          : S.instance.t(
+                              'auth_new',
+                              'New here? Create an account',
+                            ),
+                    ),
                   ),
                   if (Flags.instance.flag('guest_mode', false)) ...[
                     const SizedBox(height: 2),
                     TextButton.icon(
                       onPressed: _loading ? null : _tryAsGuest,
                       icon: const Icon(Icons.bolt, size: 18),
-                      label: Text(S.instance.t('guest_cta', 'Just let me try it')),
+                      label: Text(
+                        S.instance.t('guest_cta', 'Just let me try it'),
+                      ),
                     ),
                   ],
                 ],
