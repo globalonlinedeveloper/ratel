@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/theme.dart';
+import 'core/widgets/mobile_frame.dart';
 
 void main() => runApp(const RatelApp());
 
@@ -15,6 +16,8 @@ class RatelApp extends StatelessWidget {
       theme: ratelTheme(),
       darkTheme: ratelDarkTheme(),
       routerConfig: appRouter,
+      builder: (BuildContext context, Widget? child) =>
+          MobileFrame(child: child ?? const SizedBox.shrink()),
     );
   }
 }
