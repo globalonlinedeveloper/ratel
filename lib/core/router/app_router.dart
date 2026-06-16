@@ -27,6 +27,9 @@ import '../../features/onboarding/screens/placement_test_screen.dart';
 import '../../features/onboarding/screens/notification_optin_screen.dart';
 import '../../features/onboarding/screens/referral_source_screen.dart';
 import '../../features/onboarding/screens/start_point_screen.dart';
+import '../../features/learn/screens/lesson_choice_screen.dart';
+import '../../features/learn/screens/lesson_listen_screen.dart';
+import '../../features/learn/screens/lesson_speaking_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -92,6 +95,15 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/onboarding/first-win',
       builder: (_, _) => const FirstWinScreen(),
+    ),
+    GoRoute(path: '/lesson/choice', builder: (_, _) => const LessonChoiceScreen()),
+    GoRoute(
+      path: '/lesson/speaking',
+      builder: (_, _) => const LessonSpeakingScreen(),
+    ),
+    GoRoute(
+      path: '/lesson/listen',
+      builder: (_, _) => const LessonListenScreen(),
     ),
   ],
 );
