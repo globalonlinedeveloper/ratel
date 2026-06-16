@@ -44,7 +44,7 @@ jobs:
           cache: true
       - run: flutter pub get
       - name: Build web
-        run: flutter build web --release --base-href "/ratel/"
+        run: flutter build web --release --base-href "/ratel/" --pwa-strategy=none
       - name: Stamp commit SHA for live verification
         run: echo "${{ github.sha }}" > build/web/commit.txt
       - name: Upload Pages artifact
