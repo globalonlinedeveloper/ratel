@@ -1,7 +1,8 @@
 name: Flutter CI
 
 # Every push/PR: verify (analyze + test) + build web.
-# Pushes to main: deploy web to Pages + build all native platforms.
+# Pushes to main: deploy web to Pages + build all native platforms and publish
+# downloadable rolling releases (android/windows/macos/linux).
 on:
   push:
   pull_request:
@@ -12,7 +13,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -91,14 +92,24 @@ jobs:
           else
             echo "::warning::KEYSTORE_B64 not set — building debug-signed APK."
           fi
-      - name: Build APK (release-signed when keystore present)
+      - name: Build APK (release; per-ABI)
         env:
           KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
-        run: flutter build apk --release --split-per-abi
+        run: |
+          flutter build apk --release --split-per-abi
+          cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk \
+             build/app/outputs/flutter-apk/app-release.apk
       - uses: actions/upload-artifact@v4
         with:
           name: ratel-android-apk
           path: build/app/outputs/flutter-apk/app-*-release.apk
+      - name: Publish rolling Android release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-android
+          name: Ratel — Android (latest main)
+          body: "Release APKs from the latest main commit. app-release.apk = arm64 (most phones)."
+          files: build/app/outputs/flutter-apk/app-*-release.apk
 
   linux:
     needs: verify
@@ -118,10 +129,19 @@ jobs:
       - run: flutter pub get
       - name: Build Linux
         run: flutter build linux --release
+      - name: Package Linux bundle
+        run: (cd build/linux/x64/release/bundle && zip -qr "$GITHUB_WORKSPACE/ratel-linux.zip" .)
       - uses: actions/upload-artifact@v4
         with:
           name: ratel-linux
-          path: build/linux/x64/release/bundle
+          path: ratel-linux.zip
+      - name: Publish rolling Linux release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-linux
+          name: Ratel — Linux (latest main)
+          body: "Linux desktop bundle from the latest main commit. Unzip and run ./ratel."
+          files: ratel-linux.zip
 
   windows:
     needs: verify
@@ -143,6 +163,13 @@ jobs:
         with:
           name: ratel-windows
           path: ratel-windows.zip
+      - name: Publish rolling Windows release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-windows
+          name: Ratel — Windows (latest main)
+          body: "Unsigned Windows desktop build. Unzip and run ratel.exe (SmartScreen may warn — unsigned)."
+          files: ratel-windows.zip
 
   macos:
     needs: verify
@@ -166,6 +193,13 @@ jobs:
         with:
           name: ratel-macos
           path: ratel-macos.zip
+      - name: Publish rolling macOS release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest-macos
+          name: Ratel — macOS (latest main)
+          body: "Unsigned macOS .app. Unzip; first launch needs right-click -> Open (Gatekeeper, unsigned)."
+          files: ratel-macos.zip
 
   ios:
     needs: verify
@@ -179,5 +213,5 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter pub get
-      - name: Build iOS (no codesign — compile validation)
+      - name: Build iOS (no codesign — compile validation only)
         run: flutter build ios --release --no-codesign
