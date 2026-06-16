@@ -12,6 +12,7 @@ class RatelListRow extends StatelessWidget {
     this.subtitle,
     this.trailing,
     this.onTap,
+    this.padding,
   });
 
   final Widget? leading;
@@ -19,6 +20,7 @@ class RatelListRow extends StatelessWidget {
   final String? subtitle;
   final Widget? trailing;
   final VoidCallback? onTap;
+  final EdgeInsetsGeometry? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -30,10 +32,12 @@ class RatelListRow extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: RatelSpacing.lg,
-          vertical: RatelSpacing.md,
-        ),
+        padding:
+            padding ??
+            const EdgeInsets.symmetric(
+              horizontal: RatelSpacing.lg,
+              vertical: RatelSpacing.md,
+            ),
         child: Row(
           children: [
             if (leading != null) ...[

@@ -11,6 +11,7 @@ import '../strings.dart';
 import '../theme.dart';
 import '../widgets/mascot_anim.dart';
 import '../widgets/ratel_chip.dart';
+import '../widgets/ratel_list_row.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/ratel_scaffold.dart';
 import '../widgets/ratel_toggle_row.dart';
@@ -188,12 +189,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     setState(() {});
                   },
                 ),
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
+                RatelListRow(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: RatelSpacing.md,
+                  ),
                   leading: const Icon(Icons.translate, color: RatelColors.teal),
-                  title: Text(S.instance.t('set_language', 'App language')),
-                  subtitle: Text(_localeLabel(S.instance.locale)),
-                  trailing: const Icon(Icons.chevron_right),
+                  title: S.instance.t('set_language', 'App language'),
+                  subtitle: _localeLabel(S.instance.locale),
                   onTap: _pickLanguage,
                 ),
                 RatelToggleRow(
