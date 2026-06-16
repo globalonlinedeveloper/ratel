@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/auth/screens/auth_hub_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
 
@@ -9,10 +10,7 @@ final GoRouter appRouter = GoRouter(
   routes: <RouteBase>[
     GoRoute(path: '/welcome', builder: (_, _) => const WelcomeScreen()),
     GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
-    GoRoute(
-      path: '/auth',
-      builder: (_, _) => const PlaceholderScreen(title: 'Sign in'),
-    ),
+    GoRoute(path: '/auth', builder: (_, _) => const AuthHubScreen()),
     GoRoute(
       path: '/signup',
       builder: (_, _) => const PlaceholderScreen(title: 'Sign up'),

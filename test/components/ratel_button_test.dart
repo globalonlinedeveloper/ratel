@@ -31,4 +31,13 @@ void main() {
         _wrap(RatelButton.outline(label: 'Use email', onPressed: () {})));
     expect(find.text('Use email'), findsOneWidget);
   });
+
+  testWidgets('neutral variant renders its label and icon', (tester) async {
+    await tester.pumpWidget(_wrap(RatelButton.neutral(
+        label: 'Continue with Google',
+        icon: Icons.g_mobiledata,
+        onPressed: () {})));
+    expect(find.text('Continue with Google'), findsOneWidget);
+    expect(find.byIcon(Icons.g_mobiledata), findsOneWidget);
+  });
 }
