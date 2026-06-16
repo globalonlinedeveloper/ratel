@@ -10,6 +10,7 @@ import '../sfx.dart';
 import '../strings.dart';
 import '../theme.dart';
 import '../widgets/mascot_anim.dart';
+import '../widgets/ratel_chip.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/ratel_scaffold.dart';
 
@@ -81,8 +82,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     size: 20,
                   ),
                   const SizedBox(width: RatelSpacing.md),
-                  Text(Locales.flagFor(e.code),
-                      style: const TextStyle(fontSize: 18)),
+                  Text(
+                    Locales.flagFor(e.code),
+                    style: const TextStyle(fontSize: 18),
+                  ),
                   const SizedBox(width: RatelSpacing.sm),
                   Expanded(
                     child: Column(
@@ -92,9 +95,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         Text(e.nativeName),
                         if (Locales.englishNameFor(e.code).isNotEmpty &&
                             Locales.englishNameFor(e.code) != e.nativeName)
-                          Text(Locales.englishNameFor(e.code),
-                              style: const TextStyle(
-                                  fontSize: 12, color: RatelColors.textMuted)),
+                          Text(
+                            Locales.englishNameFor(e.code),
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: RatelColors.textMuted,
+                            ),
+                          ),
                       ],
                     ),
                   ),
@@ -123,7 +130,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
       title: S.instance.t('set_title', 'Settings'),
       body: ListView(
         padding: const EdgeInsets.symmetric(
-            horizontal: RatelSpacing.lg, vertical: RatelSpacing.md),
+          horizontal: RatelSpacing.lg,
+          vertical: RatelSpacing.md,
+        ),
         children: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: RatelSpacing.lg),
@@ -132,8 +141,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(S.instance.t('set_sound', 'Sound effects')),
-                  secondary:
-                      const Icon(Icons.volume_up, color: RatelColors.honey),
+                  secondary: const Icon(
+                    Icons.volume_up,
+                    color: RatelColors.honey,
+                  ),
                   value: Sfx.instance.soundOn,
                   onChanged: (v) {
                     Sfx.instance.setSoundOn(v);
@@ -143,8 +154,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(S.instance.t('set_haptics', 'Haptics')),
-                  secondary:
-                      const Icon(Icons.vibration, color: RatelColors.teal),
+                  secondary: const Icon(
+                    Icons.vibration,
+                    color: RatelColors.teal,
+                  ),
                   value: Sfx.instance.hapticsOn,
                   onChanged: (v) {
                     Sfx.instance.setHapticsOn(v);
@@ -154,15 +167,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(S.instance.t('set_music', 'Background music')),
-                  subtitle: Text(S.instance
-                      .t('set_music_sub', 'Calm ambient loop while you learn')),
+                  subtitle: Text(
+                    S.instance.t(
+                      'set_music_sub',
+                      'Calm ambient loop while you learn',
+                    ),
+                  ),
                   secondary: Sfx.instance.musicOn
                       ? const RatelActionAnim(
                           action: 'headphones',
                           fallbackPose: RatelPose.speak,
-                          size: 34)
-                      : const Icon(Icons.music_note,
-                          color: RatelColors.honey),
+                          size: 34,
+                        )
+                      : const Icon(Icons.music_note, color: RatelColors.honey),
                   value: Sfx.instance.musicOn,
                   onChanged: (v) {
                     Sfx.instance.setMusicOn(v);
@@ -171,8 +188,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 ListTile(
                   contentPadding: EdgeInsets.zero,
-                  leading: const Icon(Icons.translate,
-                      color: RatelColors.teal),
+                  leading: const Icon(Icons.translate, color: RatelColors.teal),
                   title: Text(S.instance.t('set_language', 'App language')),
                   subtitle: Text(_localeLabel(S.instance.locale)),
                   trailing: const Icon(Icons.chevron_right),
@@ -180,9 +196,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: Text(S.instance.t('set_listening', 'Listening exercises')),
-                  subtitle: Text(S.instance
-                      .t('set_listen_sub', 'Type-what-you-hear questions')),
+                  title: Text(
+                    S.instance.t('set_listening', 'Listening exercises'),
+                  ),
+                  subtitle: Text(
+                    S.instance.t(
+                      'set_listen_sub',
+                      'Type-what-you-hear questions',
+                    ),
+                  ),
                   secondary: const Icon(Icons.hearing_outlined),
                   value: _listenOn,
                   onChanged: (v) async {
@@ -197,9 +219,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   contentPadding: EdgeInsets.zero,
                   title: Text(S.instance.t('set_motion', 'Reduce motion')),
                   subtitle: Text(
-                      S.instance.t('set_motion_sub', 'Minimize animations')),
-                  secondary:
-                      const Icon(Icons.motion_photos_off_outlined),
+                    S.instance.t('set_motion_sub', 'Minimize animations'),
+                  ),
+                  secondary: const Icon(Icons.motion_photos_off_outlined),
                   value: reduceMotionNotifier.value,
                   onChanged: (v) {
                     setReduceMotion(v);
@@ -209,10 +231,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(S.instance.t('set_battle', 'Battle mode')),
-                  subtitle: Text(S.instance
-                      .t('set_battle_sub', 'Duel a rival as you answer')),
-                  secondary:
-                      const Icon(Icons.sports_kabaddi_outlined),
+                  subtitle: Text(
+                    S.instance.t(
+                      'set_battle_sub',
+                      'Duel a rival as you answer',
+                    ),
+                  ),
+                  secondary: const Icon(Icons.sports_kabaddi_outlined),
                   value: battleModeNotifier.value,
                   onChanged: (v) {
                     setBattleMode(v);
@@ -220,38 +245,37 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                 ),
                 const SizedBox(height: RatelSpacing.md),
-                SizedBox(
-                  width: double.infinity,
-                  child: SegmentedButton<ThemeMode>(
-                    segments: [
-                      ButtonSegment(
-                          value: ThemeMode.system,
-                          icon: const Icon(Icons.brightness_auto_outlined),
-                          label: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child:
-                                  Text(S.instance.t('set_auto', 'Auto')))),
-                      ButtonSegment(
-                          value: ThemeMode.light,
-                          icon: const Icon(Icons.light_mode_outlined),
-                          label: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text(
-                                  S.instance.t('set_light', 'Light')))),
-                      ButtonSegment(
-                          value: ThemeMode.dark,
-                          icon: const Icon(Icons.dark_mode_outlined),
-                          label: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child:
-                                  Text(S.instance.t('set_dark', 'Dark')))),
-                    ],
-                    selected: {themeModeNotifier.value},
-                    onSelectionChanged: (s) {
-                      setThemeMode(s.first);
-                      setState(() {});
-                    },
-                  ),
+                Wrap(
+                  spacing: RatelSpacing.sm,
+                  children: [
+                    RatelChip(
+                      label: S.instance.t('set_auto', 'Auto'),
+                      icon: Icons.brightness_auto_outlined,
+                      selected: themeModeNotifier.value == ThemeMode.system,
+                      onTap: () {
+                        setThemeMode(ThemeMode.system);
+                        setState(() {});
+                      },
+                    ),
+                    RatelChip(
+                      label: S.instance.t('set_light', 'Light'),
+                      icon: Icons.light_mode_outlined,
+                      selected: themeModeNotifier.value == ThemeMode.light,
+                      onTap: () {
+                        setThemeMode(ThemeMode.light);
+                        setState(() {});
+                      },
+                    ),
+                    RatelChip(
+                      label: S.instance.t('set_dark', 'Dark'),
+                      icon: Icons.dark_mode_outlined,
+                      selected: themeModeNotifier.value == ThemeMode.dark,
+                      onTap: () {
+                        setThemeMode(ThemeMode.dark);
+                        setState(() {});
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -259,25 +283,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const SizedBox(height: RatelSpacing.xs),
           ListTile(
             dense: true,
-            leading: const Icon(Icons.schedule,
-                color: RatelColors.teal),
+            leading: const Icon(Icons.schedule, color: RatelColors.teal),
             title: Text(S.instance.t('set_remind', 'Remind me at')),
-            subtitle: Text(S.instance.t(
-                'set_remind_sub', 'Daily streak reminder, your local time')),
+            subtitle: Text(
+              S.instance.t(
+                'set_remind_sub',
+                'Daily streak reminder, your local time',
+              ),
+            ),
             trailing: DropdownButton<int>(
-              value: localHourFromUtc(appState.reminderHourUtc,
-                  DateTime.now().timeZoneOffset),
+              value: localHourFromUtc(
+                appState.reminderHourUtc,
+                DateTime.now().timeZoneOffset,
+              ),
               underline: const SizedBox.shrink(),
               items: [
                 for (int h = 0; h < 24; h++)
                   DropdownMenuItem(
-                      value: h,
-                      child: Text('${h.toString().padLeft(2, '0')}:30')),
+                    value: h,
+                    child: Text('${h.toString().padLeft(2, '0')}:30'),
+                  ),
               ],
               onChanged: (h) {
                 if (h == null) return;
-                appState.setReminderHour(utcHourFromLocal(
-                    h, DateTime.now().timeZoneOffset));
+                appState.setReminderHour(
+                  utcHourFromLocal(h, DateTime.now().timeZoneOffset),
+                );
                 setState(() {});
               },
             ),
@@ -290,17 +321,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 final st = snap.data ?? '…';
                 return ListTile(
                   dense: true,
-                  leading: const Icon(Icons.notifications_active_outlined,
-                      color: RatelColors.honey),
+                  leading: const Icon(
+                    Icons.notifications_active_outlined,
+                    color: RatelColors.honey,
+                  ),
                   title: Text(
-                      S.instance.t('set_push', 'Daily streak reminders')),
-                  subtitle: Text(st == 'Off'
-                      ? S.instance.t('push_off_hint',
-                          'Off — enable in system settings if asked before')
-                      : st),
+                    S.instance.t('set_push', 'Daily streak reminders'),
+                  ),
+                  subtitle: Text(
+                    st == 'Off'
+                        ? S.instance.t(
+                            'push_off_hint',
+                            'Off — enable in system settings if asked before',
+                          )
+                        : st,
+                  ),
                   trailing: st == 'On'
-                      ? const Icon(Icons.check_circle,
-                          color: RatelColors.teal, size: 20)
+                      ? const Icon(
+                          Icons.check_circle,
+                          color: RatelColors.teal,
+                          size: 20,
+                        )
                       : TextButton(
                           onPressed: () async {
                             await Push.instance.requestAgain();
@@ -308,7 +349,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               (context as Element).markNeedsBuild();
                             }
                           },
-                          child: Text(S.instance.t('btn_enable', 'Enable'))),
+                          child: Text(S.instance.t('btn_enable', 'Enable')),
+                        ),
                 );
               },
             ),
