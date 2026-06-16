@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/screens/auth_hub_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/signup_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
@@ -11,10 +12,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/welcome', builder: (_, _) => const WelcomeScreen()),
     GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
     GoRoute(path: '/auth', builder: (_, _) => const AuthHubScreen()),
-    GoRoute(
-      path: '/signup',
-      builder: (_, _) => const PlaceholderScreen(title: 'Sign up'),
-    ),
+    GoRoute(path: '/signup', builder: (_, _) => const SignupScreen()),
     GoRoute(
       path: '/forgot',
       builder: (_, _) => const PlaceholderScreen(title: 'Forgot password'),
