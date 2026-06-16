@@ -36,6 +36,9 @@ import '../../features/learn/screens/wrong_feedback_screen.dart';
 import '../../features/learn/screens/ai_roleplay_screen.dart';
 import '../../features/learn/screens/lesson_complete_screen.dart';
 import '../../features/learn/screens/out_of_energy_screen.dart';
+import '../../features/learn/screens/course_switcher_screen.dart';
+import '../../features/learn/screens/stories_screen.dart';
+import '../../features/learn/screens/streak_hub_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -120,6 +123,12 @@ final GoRouter appRouter = GoRouter(
       builder: (_, _) => const LessonCompleteScreen(),
     ),
     GoRoute(path: '/energy', builder: (_, _) => const OutOfEnergyScreen()),
+    GoRoute(path: '/stories', builder: (_, _) => const StoriesScreen()),
+    GoRoute(path: '/streak', builder: (_, _) => const StreakHubScreen()),
+    GoRoute(
+      path: '/courses',
+      builder: (_, _) => const CourseSwitcherScreen(),
+    ),
   ],
 );
 
