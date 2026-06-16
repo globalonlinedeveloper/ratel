@@ -8,34 +8,34 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
 permissions:
   contents: read
   pages: write
   id-token: write
 
 jobs:
-  verify:
+  # FAST sanity gate -- the dev signal (~3 min). If this is green, keep coding.
+  sanity:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
           channel: stable
           flutter-version: '3.44.1'
           cache: true
-
       - name: Install dependencies
         run: flutter pub get
-
       - name: Analyze (catches all compile + semantic errors)
         run: flutter analyze
-
       - name: Run tests (with coverage)
         run: flutter test --coverage
-
       - name: Coverage summary
         run: |
           if [ -f coverage/lcov.info ]; then
@@ -43,94 +43,117 @@ jobs:
             echo "Line coverage: ${COV}%"
             { echo "### Code coverage"; echo ""; echo "Line coverage: **${COV}%**"; echo ""; } >> "$GITHUB_STEP_SUMMARY"
           fi
-
       - name: Upload coverage (lcov)
         uses: actions/upload-artifact@v4
         with:
           name: coverage-lcov
           path: coverage/lcov.info
           if-no-files-found: ignore
-
-      - name: Build web
+      - name: Dependency freshness (report only)
         run: |
-          flutter build web --release --base-href "/ratel/" \
-            --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co \
-            --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
+          { echo "### Outdated dependencies"; echo ""; echo '```'; flutter pub outdated 2>&1 | head -50; echo '```'; } >> "$GITHUB_STEP_SUMMARY" || true
 
+  # FAST web build -> deploy so you can validate the change live ASAP.
+  web:
+    needs: sanity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.44.1'
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build web
+        run: flutter build web --release --base-href "/ratel/" --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
       - name: Web bundle size
         run: |
           SZ=$(du -sh build/web | cut -f1)
           echo "Web build size: $SZ"
           { echo "### Web bundle size"; echo ""; echo "build/web = **$SZ**"; echo ""; } >> "$GITHUB_STEP_SUMMARY"
-
       - name: Stamp commit SHA for live verification
-        run: echo "${{ github.sha }}" > build/web/commit.txt
+        run: echo "${ github.sha }" > build/web/commit.txt
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: build/web
 
+  # Heavy validation (Playwright E2E + 8 data locksteps) -- runs in PARALLEL,
+  # does NOT gate deploy. Fails red if something regresses (post-deploy safety net).
+  e2e:
+    needs: sanity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.44.1'
+          cache: true
+      - name: Install dependencies
+        run: flutter pub get
+      - name: Build web
+        run: flutter build web --release --base-href "/ratel/" --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Install Playwright
         run: |
           npm init -y >/dev/null 2>&1
           npm i playwright@1.60.0
           npx playwright install --with-deps chromium
-
       - name: E2E regression (signup -> lesson -> persistence, Playwright)
         env:
           SUPABASE_URL: https://fkbmodjtxatrqcghhfba.supabase.co
           SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
         run: node test/e2e/full.mjs
-
       - name: Art manifest <-> storage lockstep (Inc 140)
         env:
           SUPABASE_URL: https://fkbmodjtxatrqcghhfba.supabase.co
           SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
         run: node test/e2e/art_lockstep.mjs
-
       - name: Dataset P0 lockstep (Inc 141)
         env:
           SUPABASE_URL: https://fkbmodjtxatrqcghhfba.supabase.co
           SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
         run: node test/e2e/dataset_lockstep.mjs
-
-      - name: Dataset P1 lockstep (Inc 144 -- app_strings long + locales + R6)
+      - name: Dataset P1 lockstep (Inc 144)
         env:
           SUPABASE_URL: https://fkbmodjtxatrqcghhfba.supabase.co
           SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
         run: node test/e2e/app_strings_lockstep.mjs
-
-      - name: Dataset P2 lockstep (Inc 145 -- curriculum skeleton + tags)
+      - name: Dataset P2 lockstep (Inc 145)
         env:
           SUPABASE_URL: https://fkbmodjtxatrqcghhfba.supabase.co
           SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
         run: node test/e2e/dataset_p2_lockstep.mjs
-
-      - name: Dataset P3 lockstep (Inc 146 -- reuse layer schema)
+      - name: Dataset P3 lockstep (Inc 146)
         env:
           SUPABASE_URL: https://fkbmodjtxatrqcghhfba.supabase.co
           SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
         run: node test/e2e/dataset_p3_lockstep.mjs
-
-      - name: English Score lockstep (Inc 153 -- server score + cache)
+      - name: English Score lockstep (Inc 153)
         env:
           SUPABASE_URL: https://fkbmodjtxatrqcghhfba.supabase.co
           SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
         run: node test/e2e/english_score_lockstep.mjs
-
-      - name: Page-completeness QC (Inc 185 -- image/audio/why coverage + image floor)
+      - name: Page-completeness QC (Inc 185)
         env:
           SUPABASE_URL: https://fkbmodjtxatrqcghhfba.supabase.co
           SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
         run: node test/e2e/page_completeness.mjs
-
-      - name: Difficulty lockstep (Inc 186 -- priors + calibration)
+      - name: Difficulty lockstep (Inc 186)
         env:
           SUPABASE_URL: https://fkbmodjtxatrqcghhfba.supabase.co
           SUPABASE_ANON_KEY: sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
         run: node test/e2e/difficulty_lockstep.mjs
-
       - name: Upload e2e screenshot
         if: always()
         uses: actions/upload-artifact@v4
@@ -139,17 +162,8 @@ jobs:
           path: e2e-full.png
           if-no-files-found: ignore
 
-      - name: Dependency freshness (report only)
-        run: |
-          { echo "### Outdated dependencies"; echo ""; echo '```'; flutter pub outdated 2>&1 | head -50; echo '```'; } >> "$GITHUB_STEP_SUMMARY" || true
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: build/web
-
   android:
-    needs: verify
+    needs: sanity
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
@@ -221,7 +235,7 @@ jobs:
             build/app/outputs/flutter-apk/app-x86_64-release.apk
 
   ios-build:
-    needs: verify
+    needs: sanity
     if: github.ref == 'refs/heads/main'
     runs-on: macos-15
     steps:
@@ -245,7 +259,7 @@ jobs:
             --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
 
   windows:
-    needs: verify
+    needs: sanity
     if: github.ref == 'refs/heads/main'
     runs-on: windows-2022
     steps:
@@ -266,7 +280,7 @@ jobs:
           flutter build windows --release --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
 
   macos:
-    needs: verify
+    needs: sanity
     if: github.ref == 'refs/heads/main'
     runs-on: macos-15
     steps:
@@ -287,7 +301,7 @@ jobs:
           flutter build macos --release --dart-define=SUPABASE_URL=https://fkbmodjtxatrqcghhfba.supabase.co --dart-define=SUPABASE_ANON_KEY=sb_publishable_RINvN2-MTrfUgOIZ_oxWng_aamq2i_2
 
   linux:
-    needs: verify
+    needs: sanity
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     # Allowed-to-fail: blocked by upstream rive_common >=0.13.0 which builds its
@@ -379,7 +393,7 @@ jobs:
           if-no-files-found: ignore
 
   deploy:
-    needs: verify
+    needs: web
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
