@@ -46,3 +46,6 @@ app.*.map.json
 
 # secrets (never commit)
 .cowork-private/
+
+# android signing (injected by CI from secrets)
+android/app/release.keystore

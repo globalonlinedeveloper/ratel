@@ -81,12 +81,24 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           cache: true
       - run: flutter pub get
-      - name: Build APK (release, debug-signed for now)
-        run: flutter build apk --release
+      - name: Inject release keystore (if secret set)
+        env:
+          KEYSTORE_B64: ${{ secrets.KEYSTORE_B64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > android/app/release.keystore
+            echo "Release keystore injected (signed build)."
+          else
+            echo "::warning::KEYSTORE_B64 not set — building debug-signed APK."
+          fi
+      - name: Build APK (release-signed when keystore present)
+        env:
+          KEYSTORE_PASS: ${{ secrets.KEYSTORE_PASS }}
+        run: flutter build apk --release --split-per-abi
       - uses: actions/upload-artifact@v4
         with:
           name: ratel-android-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/app-*-release.apk
 
   linux:
     needs: verify
