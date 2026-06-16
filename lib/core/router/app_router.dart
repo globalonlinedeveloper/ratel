@@ -22,6 +22,9 @@ import '../../features/auth/screens/welcome_screen.dart';
 import '../../features/onboarding/screens/daily_goal_screen.dart';
 import '../../features/onboarding/screens/language_picker_screen.dart';
 import '../../features/onboarding/screens/motivation_screen.dart';
+import '../../features/onboarding/screens/notification_optin_screen.dart';
+import '../../features/onboarding/screens/referral_source_screen.dart';
+import '../../features/onboarding/screens/start_point_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -66,15 +69,15 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/onboarding/referral',
-      builder: (_, _) => const PlaceholderScreen(title: 'Referral source'),
+      builder: (_, _) => const ReferralSourceScreen(),
     ),
     GoRoute(
       path: '/onboarding/notify',
-      builder: (_, _) => const PlaceholderScreen(title: 'Notifications'),
+      builder: (_, _) => const NotificationOptinScreen(),
     ),
     GoRoute(
       path: '/onboarding/start',
-      builder: (_, _) => const PlaceholderScreen(title: 'Start point'),
+      builder: (_, _) => const StartPointScreen(),
     ),
     GoRoute(
       path: '/onboarding/placement',
