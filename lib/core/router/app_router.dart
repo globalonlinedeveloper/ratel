@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/screens/age_check_screen.dart';
 import '../../features/auth/screens/auth_hub_screen.dart';
@@ -20,8 +19,11 @@ import '../../features/auth/screens/social_consent_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
 import '../../features/onboarding/screens/daily_goal_screen.dart';
+import '../../features/onboarding/screens/first_win_screen.dart';
+import '../../features/onboarding/screens/level_result_screen.dart';
 import '../../features/onboarding/screens/language_picker_screen.dart';
 import '../../features/onboarding/screens/motivation_screen.dart';
+import '../../features/onboarding/screens/placement_test_screen.dart';
 import '../../features/onboarding/screens/notification_optin_screen.dart';
 import '../../features/onboarding/screens/referral_source_screen.dart';
 import '../../features/onboarding/screens/start_point_screen.dart';
@@ -81,30 +83,16 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(
       path: '/onboarding/placement',
-      builder: (_, _) => const PlaceholderScreen(title: 'Placement test'),
+      builder: (_, _) => const PlacementTestScreen(),
     ),
     GoRoute(
       path: '/onboarding/level',
-      builder: (_, _) => const PlaceholderScreen(title: 'Level result'),
+      builder: (_, _) => const LevelResultScreen(),
     ),
     GoRoute(
       path: '/onboarding/first-win',
-      builder: (_, _) => const PlaceholderScreen(title: 'First win'),
+      builder: (_, _) => const FirstWinScreen(),
     ),
   ],
 );
 
-/// Temporary destination for routes not yet built. Replaced as screens land.
-class PlaceholderScreen extends StatelessWidget {
-  const PlaceholderScreen({super.key, required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: const Center(child: Text('Coming soon')),
-    );
-  }
-}
