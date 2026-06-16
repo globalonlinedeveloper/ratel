@@ -1,0 +1,37 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:ratel/core/theme/theme.dart';
+import 'package:ratel/core/theme/tokens.dart';
+
+void main() {
+  testWidgets('light theme exposes Ratel tokens with teal primary',
+      (tester) async {
+    late BuildContext ctx;
+    await tester.pumpWidget(MaterialApp(
+      theme: ratelTheme(),
+      home: Builder(builder: (c) {
+        ctx = c;
+        return const SizedBox();
+      }),
+    ));
+    expect(ctx.tokens.primary, RatelColors.teal);
+    expect(ctx.tokens.brand, RatelColors.honey);
+    expect(ctx.isDark, isFalse);
+    expect(Theme.of(ctx).colorScheme.primary, RatelColors.teal);
+  });
+
+  testWidgets('dark theme swaps to the dark token set', (tester) async {
+    late BuildContext ctx;
+    await tester.pumpWidget(MaterialApp(
+      theme: ratelTheme(),
+      darkTheme: ratelDarkTheme(),
+      themeMode: ThemeMode.dark,
+      home: Builder(builder: (c) {
+        ctx = c;
+        return const SizedBox();
+      }),
+    ));
+    expect(ctx.isDark, isTrue);
+    expect(ctx.tokens.primary, RatelColorsDark.teal);
+  });
+}
