@@ -27,9 +27,17 @@ void main() {
   testWidgets('the Profile hour picker writes the converted UTC hour',
       (tester) async {
     // Inc 175: the reminder picker moved to the dedicated Settings page.
+    // Inc B: use a tall phone surface (like the other settings tests) so the
+    // kit rows' slightly larger height keeps the picker on-screen.
+    tester.view.physicalSize = const Size(360, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
     await tester.pumpWidget(const MaterialApp(home: SettingsScreen()));
     await tester.pump(const Duration(milliseconds: 400));
-    await tester.scrollUntilVisible(find.text('Remind me at'), 240,
+    // Inc B kit rows are a touch taller; scroll the picker itself into view
+    // (not just its title) so the tap target is on-screen regardless of layout.
+    await tester.scrollUntilVisible(find.byType(DropdownButton<int>), 240,
         scrollable: find.byType(Scrollable).first);
     await tester.tap(find.byType(DropdownButton<int>));
     await tester.pump();
