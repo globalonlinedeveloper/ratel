@@ -52,4 +52,18 @@ void main() {
     );
     expect(find.text('Notifications'), findsOneWidget);
   });
+
+  testWidgets('renders a leading widget when provided', (tester) async {
+    await tester.pumpWidget(
+      host(
+        RatelToggleRow(
+          leading: const Icon(Icons.volume_up),
+          title: 'Sound',
+          value: true,
+          onChanged: (_) {},
+        ),
+      ),
+    );
+    expect(find.byIcon(Icons.volume_up), findsOneWidget);
+  });
 }

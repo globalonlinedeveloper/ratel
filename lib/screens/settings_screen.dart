@@ -13,6 +13,7 @@ import '../widgets/mascot_anim.dart';
 import '../widgets/ratel_chip.dart';
 import '../widgets/ratel_mascot.dart';
 import '../widgets/ratel_scaffold.dart';
+import '../widgets/ratel_toggle_row.dart';
 
 /// Dedicated Settings page (Standardization Master Plan, Phase 1 -- Pillar D,
 /// Inc 175). The preference controls (audio / learning / appearance /
@@ -138,48 +139,49 @@ class _SettingsScreenState extends State<SettingsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: RatelSpacing.lg),
             child: Column(
               children: [
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(S.instance.t('set_sound', 'Sound effects')),
-                  secondary: const Icon(
+                RatelToggleRow(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: RatelSpacing.sm,
+                  ),
+                  leading: const Icon(
                     Icons.volume_up,
                     color: RatelColors.honey,
                   ),
+                  title: S.instance.t('set_sound', 'Sound effects'),
                   value: Sfx.instance.soundOn,
                   onChanged: (v) {
                     Sfx.instance.setSoundOn(v);
                     setState(() {});
                   },
                 ),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(S.instance.t('set_haptics', 'Haptics')),
-                  secondary: const Icon(
-                    Icons.vibration,
-                    color: RatelColors.teal,
+                RatelToggleRow(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: RatelSpacing.sm,
                   ),
+                  leading: const Icon(Icons.vibration, color: RatelColors.teal),
+                  title: S.instance.t('set_haptics', 'Haptics'),
                   value: Sfx.instance.hapticsOn,
                   onChanged: (v) {
                     Sfx.instance.setHapticsOn(v);
                     setState(() {});
                   },
                 ),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(S.instance.t('set_music', 'Background music')),
-                  subtitle: Text(
-                    S.instance.t(
-                      'set_music_sub',
-                      'Calm ambient loop while you learn',
-                    ),
+                RatelToggleRow(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: RatelSpacing.sm,
                   ),
-                  secondary: Sfx.instance.musicOn
+                  leading: Sfx.instance.musicOn
                       ? const RatelActionAnim(
                           action: 'headphones',
                           fallbackPose: RatelPose.speak,
                           size: 34,
                         )
                       : const Icon(Icons.music_note, color: RatelColors.honey),
+                  title: S.instance.t('set_music', 'Background music'),
+                  subtitle: S.instance.t(
+                    'set_music_sub',
+                    'Calm ambient loop while you learn',
+                  ),
                   value: Sfx.instance.musicOn,
                   onChanged: (v) {
                     Sfx.instance.setMusicOn(v);
@@ -194,18 +196,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   trailing: const Icon(Icons.chevron_right),
                   onTap: _pickLanguage,
                 ),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(
-                    S.instance.t('set_listening', 'Listening exercises'),
+                RatelToggleRow(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: RatelSpacing.sm,
                   ),
-                  subtitle: Text(
-                    S.instance.t(
-                      'set_listen_sub',
-                      'Type-what-you-hear questions',
-                    ),
+                  leading: const Icon(Icons.hearing_outlined),
+                  title: S.instance.t('set_listening', 'Listening exercises'),
+                  subtitle: S.instance.t(
+                    'set_listen_sub',
+                    'Type-what-you-hear questions',
                   ),
-                  secondary: const Icon(Icons.hearing_outlined),
                   value: _listenOn,
                   onChanged: (v) async {
                     setState(() => _listenOn = v);
@@ -215,29 +215,32 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     } catch (_) {}
                   },
                 ),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(S.instance.t('set_motion', 'Reduce motion')),
-                  subtitle: Text(
-                    S.instance.t('set_motion_sub', 'Minimize animations'),
+                RatelToggleRow(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: RatelSpacing.sm,
                   ),
-                  secondary: const Icon(Icons.motion_photos_off_outlined),
+                  leading: const Icon(Icons.motion_photos_off_outlined),
+                  title: S.instance.t('set_motion', 'Reduce motion'),
+                  subtitle: S.instance.t(
+                    'set_motion_sub',
+                    'Minimize animations',
+                  ),
                   value: reduceMotionNotifier.value,
                   onChanged: (v) {
                     setReduceMotion(v);
                     setState(() {});
                   },
                 ),
-                SwitchListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(S.instance.t('set_battle', 'Battle mode')),
-                  subtitle: Text(
-                    S.instance.t(
-                      'set_battle_sub',
-                      'Duel a rival as you answer',
-                    ),
+                RatelToggleRow(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: RatelSpacing.sm,
                   ),
-                  secondary: const Icon(Icons.sports_kabaddi_outlined),
+                  leading: const Icon(Icons.sports_kabaddi_outlined),
+                  title: S.instance.t('set_battle', 'Battle mode'),
+                  subtitle: S.instance.t(
+                    'set_battle_sub',
+                    'Duel a rival as you answer',
+                  ),
                   value: battleModeNotifier.value,
                   onChanged: (v) {
                     setBattleMode(v);
