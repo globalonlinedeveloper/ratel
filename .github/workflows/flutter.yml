@@ -76,7 +76,7 @@ jobs:
           echo "Web build size: $SZ"
           { echo "### Web bundle size"; echo ""; echo "build/web = **$SZ**"; echo ""; } >> "$GITHUB_STEP_SUMMARY"
       - name: Stamp commit SHA for live verification
-        run: echo "${ github.sha }" > build/web/commit.txt
+        run: echo "${{ github.sha }}" > build/web/commit.txt
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
@@ -84,7 +84,7 @@ jobs:
 
   # Heavy validation (Playwright E2E + 8 data locksteps) -- runs in PARALLEL,
   # does NOT gate deploy. Fails red if something regresses (post-deploy safety net).
-  e2e:
+  web-e2e:
     needs: sanity
     runs-on: ubuntu-latest
     steps:
