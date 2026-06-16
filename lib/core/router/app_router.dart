@@ -1,10 +1,12 @@
 import 'package:go_router/go_router.dart';
 import '../../features/auth/screens/age_check_screen.dart';
 import '../../features/auth/screens/auth_hub_screen.dart';
+import '../../features/auth/screens/delete_account_screen.dart';
 import '../../features/auth/screens/email_verify_screen.dart';
 import '../../features/auth/screens/forgot_password_screen.dart';
 import '../../features/auth/screens/guest_save_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/logout_screen.dart';
 import '../../features/auth/screens/otp_screen.dart';
 import '../../features/auth/screens/parental_consent_screen.dart';
 import '../../features/auth/screens/phone_verify_screen.dart';
@@ -44,5 +46,7 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(path: '/email-verify', builder: (_, _) => const EmailVerifyScreen()),
     GoRoute(path: '/guest-save', builder: (_, _) => const GuestSaveScreen()),
+    GoRoute(path: '/logout', builder: (_, _) => const LogoutScreen()),
+    GoRoute(path: '/delete', builder: (_, _) => const DeleteAccountScreen()),
   ],
 );

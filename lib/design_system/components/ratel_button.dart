@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/tokens.dart';
 
-enum _Variant { filled, outline, neutral }
+enum _Variant { filled, outline, neutral, dangerFilled, dangerOutline }
 
 /// Primary action button. `.filled` = teal CTA (white label); `.outline` =
-/// bordered teal; `.neutral` = hairline-bordered neutral (social / secondary
-/// options, neutral label). 48px tall (a11y tap target). Composes tokens only.
+/// bordered teal; `.neutral` = hairline-bordered neutral (social / secondary);
+/// `.dangerFilled` / `.dangerOutline` = destructive actions (log out, delete).
+/// 48px tall (a11y tap target). Composes tokens only.
 class RatelButton extends StatelessWidget {
   const RatelButton.filled({
     super.key,
@@ -31,6 +32,22 @@ class RatelButton extends StatelessWidget {
     this.loading = false,
   }) : _variant = _Variant.neutral;
 
+  const RatelButton.dangerFilled({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.icon,
+    this.loading = false,
+  }) : _variant = _Variant.dangerFilled;
+
+  const RatelButton.dangerOutline({
+    super.key,
+    required this.label,
+    this.onPressed,
+    this.icon,
+    this.loading = false,
+  }) : _variant = _Variant.dangerOutline;
+
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
@@ -40,15 +57,21 @@ class RatelButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tk = context.tokens;
-    final bool filled = _variant == _Variant.filled;
+    final Color background = switch (_variant) {
+      _Variant.filled => tk.primary,
+      _Variant.dangerFilled => tk.danger,
+      _ => Colors.transparent,
+    };
     final Color fg = switch (_variant) {
-      _Variant.filled => Colors.white,
+      _Variant.filled || _Variant.dangerFilled => Colors.white,
       _Variant.outline => tk.primary,
+      _Variant.dangerOutline => tk.danger,
       _Variant.neutral => tk.text,
     };
     final BorderSide side = switch (_variant) {
-      _Variant.filled => BorderSide.none,
+      _Variant.filled || _Variant.dangerFilled => BorderSide.none,
       _Variant.outline => BorderSide(color: tk.primary, width: 1.5),
+      _Variant.dangerOutline => BorderSide(color: tk.danger, width: 1.5),
       _Variant.neutral => BorderSide(color: tk.border, width: 1),
     };
     final bool disabled = onPressed == null || loading;
@@ -86,7 +109,7 @@ class RatelButton extends StatelessWidget {
       enabled: !disabled,
       label: label,
       child: Material(
-        color: filled ? tk.primary : Colors.transparent,
+        color: background,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(tk.radiusMd),
           side: side,
