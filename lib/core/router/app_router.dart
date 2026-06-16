@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../features/auth/screens/age_check_screen.dart';
 import '../../features/auth/screens/auth_hub_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
+import '../../features/auth/screens/privacy_choices_screen.dart';
+import '../../features/auth/screens/returning_unlock_screen.dart';
 import '../../features/auth/screens/signup_screen.dart';
+import '../../features/auth/screens/social_consent_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
 
@@ -15,6 +19,13 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
     GoRoute(path: '/auth', builder: (_, _) => const AuthHubScreen()),
     GoRoute(path: '/signup', builder: (_, _) => const SignupScreen()),
+    GoRoute(path: '/unlock', builder: (_, _) => const ReturningUnlockScreen()),
+    GoRoute(
+      path: '/social-consent',
+      builder: (_, _) => const SocialConsentScreen(),
+    ),
+    GoRoute(path: '/privacy', builder: (_, _) => const PrivacyChoicesScreen()),
+    GoRoute(path: '/age', builder: (_, _) => const AgeCheckScreen()),
     GoRoute(
       path: '/forgot',
       builder: (_, _) => const PlaceholderScreen(title: 'Forgot password'),
