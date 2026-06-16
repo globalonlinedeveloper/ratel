@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/auth/screens/age_check_screen.dart';
 import '../../features/auth/screens/auth_hub_screen.dart';
@@ -18,6 +19,9 @@ import '../../features/auth/screens/signup_screen.dart';
 import '../../features/auth/screens/social_consent_screen.dart';
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/welcome_screen.dart';
+import '../../features/onboarding/screens/daily_goal_screen.dart';
+import '../../features/onboarding/screens/language_picker_screen.dart';
+import '../../features/onboarding/screens/motivation_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -48,5 +52,56 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/guest-save', builder: (_, _) => const GuestSaveScreen()),
     GoRoute(path: '/logout', builder: (_, _) => const LogoutScreen()),
     GoRoute(path: '/delete', builder: (_, _) => const DeleteAccountScreen()),
+    GoRoute(
+      path: '/onboarding/language',
+      builder: (_, _) => const LanguagePickerScreen(),
+    ),
+    GoRoute(
+      path: '/onboarding/motivation',
+      builder: (_, _) => const MotivationScreen(),
+    ),
+    GoRoute(
+      path: '/onboarding/goal',
+      builder: (_, _) => const DailyGoalScreen(),
+    ),
+    GoRoute(
+      path: '/onboarding/referral',
+      builder: (_, _) => const PlaceholderScreen(title: 'Referral source'),
+    ),
+    GoRoute(
+      path: '/onboarding/notify',
+      builder: (_, _) => const PlaceholderScreen(title: 'Notifications'),
+    ),
+    GoRoute(
+      path: '/onboarding/start',
+      builder: (_, _) => const PlaceholderScreen(title: 'Start point'),
+    ),
+    GoRoute(
+      path: '/onboarding/placement',
+      builder: (_, _) => const PlaceholderScreen(title: 'Placement test'),
+    ),
+    GoRoute(
+      path: '/onboarding/level',
+      builder: (_, _) => const PlaceholderScreen(title: 'Level result'),
+    ),
+    GoRoute(
+      path: '/onboarding/first-win',
+      builder: (_, _) => const PlaceholderScreen(title: 'First win'),
+    ),
   ],
 );
+
+/// Temporary destination for routes not yet built. Replaced as screens land.
+class PlaceholderScreen extends StatelessWidget {
+  const PlaceholderScreen({super.key, required this.title});
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(title)),
+      body: const Center(child: Text('Coming soon')),
+    );
+  }
+}
