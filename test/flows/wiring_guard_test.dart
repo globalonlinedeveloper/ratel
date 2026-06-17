@@ -27,11 +27,10 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('Help & about: only the 3 wired rows show an affordance', (tester) async {
+  testWidgets('Help & about: all 5 rows are wired (chevron, no dead rows)', (tester) async {
     await _pump(tester, const HelpLegalScreen());
-    // FAQ / Contact / OSS are wired (chevron). Terms / Privacy remain
-    // non-interactive (onTap == null) so their open_in_new never renders.
-    expect(find.byIcon(Icons.chevron_right), findsNWidgets(3));
+    // FAQ / Contact / Terms / Privacy / OSS are all wired now.
+    expect(find.byIcon(Icons.chevron_right), findsNWidgets(5));
     expect(find.byIcon(Icons.open_in_new), findsNothing);
     expect(find.text('Privacy Policy'), findsOneWidget);
     expect(tester.takeException(), isNull);

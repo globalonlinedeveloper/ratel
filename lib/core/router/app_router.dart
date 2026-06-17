@@ -76,6 +76,8 @@ import '../../features/profile/screens/settings_hub_screen.dart';
 import '../../features/profile/screens/help_legal_screen.dart';
 import '../../features/profile/screens/faq_screen.dart';
 import '../../features/profile/screens/contact_screen.dart';
+import '../../features/profile/screens/terms_screen.dart';
+import '../../features/profile/screens/privacy_policy_screen.dart';
 import '../../features/profile/screens/notifications_screen.dart';
 import '../../features/profile/screens/privacy_data_screen.dart';
 import '../../features/profile/screens/checkout_success_screen.dart';
@@ -255,6 +257,8 @@ final List<RouteBase> appRoutes = <RouteBase>[
   GoRoute(path: '/help', builder: (_, _) => const HelpLegalScreen()),
   GoRoute(path: '/faq', builder: (_, _) => const FaqScreen()),
   GoRoute(path: '/contact', builder: (_, _) => const ContactScreen()),
+  GoRoute(path: '/terms', builder: (_, _) => const TermsScreen()),
+  GoRoute(path: '/privacy-policy', builder: (_, _) => const PrivacyPolicyScreen()),
   GoRoute(path: '/paywall', builder: (_, _) => const PaywallScreen()),
   GoRoute(
     path: '/checkout',
