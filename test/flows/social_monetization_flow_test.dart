@@ -3,11 +3,22 @@ import 'flow_harness.dart';
 
 /// Social + monetization cross-links.
 void main() {
-  testWidgets('leagues Full leaderboard -> tournament', (tester) async {
+  testWidgets('leagues Full leaderboard -> full leaderboard cohort',
+      (tester) async {
     await pumpFlow(tester, '/leagues');
     await tester.tap(find.text('Full leaderboard'));
     await tester.pumpAndSettle();
-    expect(find.text('Diamond Tournament'), findsOneWidget);
+    // Lands on the real cohort list (distinct from the tournament). The cohort
+    // subtitle is unique to the leaderboard screen.
+    expect(find.text('Your cohort this week · 30 learners'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('leaderboard rank row -> friend profile', (tester) async {
+    await pumpFlow(tester, '/leaderboard');
+    await tester.tap(find.text('mira_x'));
+    await tester.pumpAndSettle();
+    expect(find.text('12-day friend streak with you'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

@@ -131,7 +131,7 @@ class LeaguesScreen extends StatelessWidget {
                   const SizedBox(height: RatelSpacing.md),
                   RatelButton.filled(
                     label: S.t('league_cta', 'Full leaderboard'),
-                    onPressed: () => context.push('/tournament'),
+                    onPressed: () => context.push('/leaderboard'),
                   ),
                 ],
               ),
