@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../core/theme/tokens.dart';
 
 /// Design-system text field: bordered, radius md, hairline border, hint text.
-/// `obscure` adds a show/hide eye toggle (password fields).
+/// `obscure` adds a show/hide eye toggle (password fields). `errorText` renders
+/// an inline validation error (Material auto-swaps to the danger borders);
+/// `onChanged` lets screens re-validate on keystroke (disabled-until-valid).
 class RatelField extends StatefulWidget {
   const RatelField({
     super.key,
@@ -12,6 +14,8 @@ class RatelField extends StatefulWidget {
     this.keyboardType,
     this.textInputAction,
     this.onSubmitted,
+    this.onChanged,
+    this.errorText,
   });
 
   final TextEditingController? controller;
@@ -20,6 +24,8 @@ class RatelField extends StatefulWidget {
   final TextInputType? keyboardType;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onSubmitted;
+  final ValueChanged<String>? onChanged;
+  final String? errorText;
 
   @override
   State<RatelField> createState() => _RatelFieldState();
@@ -37,12 +43,15 @@ class _RatelFieldState extends State<RatelField> {
       keyboardType: widget.keyboardType,
       textInputAction: widget.textInputAction,
       onSubmitted: widget.onSubmitted,
+      onChanged: widget.onChanged,
       style: TextStyle(color: tk.text, fontSize: 14),
       decoration: InputDecoration(
         hintText: widget.hint,
         hintStyle: TextStyle(color: tk.textMuted, fontSize: 14),
         filled: true,
         fillColor: tk.surface,
+        errorText: widget.errorText,
+        errorStyle: TextStyle(color: tk.danger, fontSize: 11),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: RatelSpacing.md,
           vertical: RatelSpacing.md,
@@ -54,6 +63,14 @@ class _RatelFieldState extends State<RatelField> {
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(tk.radiusMd),
           borderSide: BorderSide(color: tk.primary, width: 1.4),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(tk.radiusMd),
+          borderSide: BorderSide(color: tk.danger, width: 1.4),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(tk.radiusMd),
+          borderSide: BorderSide(color: tk.danger, width: 1.4),
         ),
         suffixIcon: widget.obscure
             ? IconButton(

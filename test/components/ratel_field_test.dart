@@ -23,4 +23,21 @@ void main() {
     await tester.pump();
     expect(tf().obscureText, isFalse);
   });
+
+  testWidgets('renders errorText when provided', (tester) async {
+    await tester.pumpWidget(_wrap(const RatelField(hint: 'Email', errorText: 'Enter a valid email')));
+    expect(find.text('Enter a valid email'), findsOneWidget);
+  });
+
+  testWidgets('no errorText -> no error string', (tester) async {
+    await tester.pumpWidget(_wrap(const RatelField(hint: 'Email')));
+    expect(find.text('Enter a valid email'), findsNothing);
+  });
+
+  testWidgets('onChanged fires with the typed value', (tester) async {
+    String seen = '';
+    await tester.pumpWidget(_wrap(RatelField(hint: 'Email', onChanged: (String v) => seen = v)));
+    await tester.enterText(find.byType(TextField), 'hi@x.io');
+    expect(seen, 'hi@x.io');
+  });
 }
