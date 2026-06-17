@@ -81,6 +81,19 @@ class RatelSociety {
   static const Color purpleBg = Color(0xFFEEEDFE);
 }
 
+/// Illustrated-avatar skin tones (avatar builder). Raw values allowed only
+/// here in the design system (§0.3).
+class RatelSkin {
+  RatelSkin._();
+  static const List<Color> tones = <Color>[
+    Color(0xFFF0997B),
+    Color(0xFFD85A30),
+    Color(0xFFBA7517),
+    Color(0xFF712B13),
+    Color(0xFF4A1B0C),
+  ];
+}
+
 /// Spacing scale (4/8/12/16/24).
 class RatelSpacing {
   RatelSpacing._();

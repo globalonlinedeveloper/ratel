@@ -65,6 +65,9 @@ import '../../features/social/screens/classroom_screen.dart';
 import '../../features/social/screens/family_plan_screen.dart';
 import '../../features/social/screens/friend_profile_screen.dart';
 import '../../features/social/screens/friends_feed_screen.dart';
+import '../../features/profile/screens/avatar_builder_screen.dart';
+import '../../features/profile/screens/english_score_screen.dart';
+import '../../features/profile/screens/profile_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -202,6 +205,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/friend', builder: (_, _) => const FriendProfileScreen()),
     GoRoute(path: '/family', builder: (_, _) => const FamilyPlanScreen()),
     GoRoute(path: '/classroom', builder: (_, _) => const ClassroomScreen()),
+    GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
+    GoRoute(
+      path: '/english-score',
+      builder: (_, _) => const EnglishScoreScreen(),
+    ),
+    GoRoute(path: '/avatar', builder: (_, _) => const AvatarBuilderScreen()),
   ],
 );
 
