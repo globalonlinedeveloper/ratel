@@ -58,6 +58,9 @@ import '../../features/social/screens/streak_society_screen.dart';
 import '../../features/social/screens/achievement_detail_screen.dart';
 import '../../features/social/screens/achievements_screen.dart';
 import '../../features/social/screens/gem_shop_screen.dart';
+import '../../features/social/screens/diamond_tournament_screen.dart';
+import '../../features/social/screens/goal_ring_screen.dart';
+import '../../features/social/screens/leagues_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -185,6 +188,12 @@ final GoRouter appRouter = GoRouter(
       builder: (_, _) => const AchievementDetailScreen(),
     ),
     GoRoute(path: '/shop', builder: (_, _) => const GemShopScreen()),
+    GoRoute(path: '/goal-ring', builder: (_, _) => const GoalRingScreen()),
+    GoRoute(path: '/leagues', builder: (_, _) => const LeaguesScreen()),
+    GoRoute(
+      path: '/tournament',
+      builder: (_, _) => const DiamondTournamentScreen(),
+    ),
   ],
 );
 
