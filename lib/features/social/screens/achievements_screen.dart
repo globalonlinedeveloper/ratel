@@ -27,7 +27,7 @@ class AchievementsScreen extends StatelessWidget {
             : null,
       ),
       body: SafeArea(
-        child: Center(
+        child: Align(alignment: Alignment.topCenter,
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(RatelSpacing.md, 0, RatelSpacing.md, RatelSpacing.md),
             child: ConstrainedBox(

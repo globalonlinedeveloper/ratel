@@ -30,7 +30,7 @@ class _MarketStoryScreenState extends State<MarketStoryScreen> {
             : null,
       ),
       body: SafeArea(
-        child: Center(
+        child: Align(alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 440),
             child: Padding(

@@ -23,7 +23,7 @@ class LeaguesScreen extends StatelessWidget {
             : null,
       ),
       body: SafeArea(
-        child: Center(
+        child: Align(alignment: Alignment.topCenter,
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(
               RatelSpacing.md,

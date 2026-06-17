@@ -31,7 +31,7 @@ class _CourseSwitcherScreenState extends State<CourseSwitcherScreen> {
             : null,
       ),
       body: SafeArea(
-        child: Center(
+        child: Align(alignment: Alignment.topCenter,
           child: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(
               RatelSpacing.md,

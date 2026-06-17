@@ -14,7 +14,7 @@ class LessonCompleteScreen extends StatelessWidget {
     final tk = context.tokens;
     return Scaffold(
       body: SafeArea(
-        child: Center(
+        child: Align(alignment: Alignment.topCenter,
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 440),
             child: Column(
