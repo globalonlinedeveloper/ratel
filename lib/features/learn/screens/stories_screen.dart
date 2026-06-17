@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../core/i18n/strings.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../content/word_definitions.dart';
 import '../../../design_system/components/ratel_button.dart';
+import '../../../design_system/components/ratel_define_sheet.dart';
 
 /// Stories / reading — mock Page-3 · screen 10 (karaoke text + comprehension).
-/// Design-only (no backend/audio yet).
+/// Design-only (no backend/audio yet). Highlighted words are tap-to-define.
 class StoriesScreen extends StatefulWidget {
   const StoriesScreen({super.key});
 
@@ -14,6 +16,17 @@ class StoriesScreen extends StatefulWidget {
 
 class _StoriesScreenState extends State<StoriesScreen> {
   String _answer = 'Coffee';
+
+  void _define(String word) {
+    final Map<String, String>? d = lookupWord(word);
+    RatelDefineSheet.show(
+      context,
+      word: word,
+      partOfSpeech: d?['pos'],
+      definition: d?['definition'],
+      example: d?['example'],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,13 +96,16 @@ class _StoriesScreenState extends State<StoriesScreen> {
                                         const TextSpan(text: 'She walked '),
                                         WidgetSpan(
                                           alignment: PlaceholderAlignment.middle,
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              color: tk.warningBg,
-                                              borderRadius: BorderRadius.circular(3),
+                                          child: GestureDetector(
+                                            onTap: () => _define('into'),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: tk.warningBg,
+                                                borderRadius: BorderRadius.circular(3),
+                                              ),
+                                              padding: const EdgeInsets.symmetric(horizontal: 2),
+                                              child: Text('into', style: TextStyle(color: tk.text, fontSize: 12.5)),
                                             ),
-                                            padding: const EdgeInsets.symmetric(horizontal: 2),
-                                            child: Text('into', style: TextStyle(color: tk.text, fontSize: 12.5)),
                                           ),
                                         ),
                                         const TextSpan(text: ' the café…'),

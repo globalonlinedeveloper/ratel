@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../core/i18n/strings.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../content/word_definitions.dart';
 import '../../../design_system/components/ratel_button.dart';
+import '../../../design_system/components/ratel_define_sheet.dart';
 
 /// Video lesson — mock Page-4 · screen 10 (interactive-subtitle clip + quiz).
-/// Design-only (no backend/video yet).
+/// Design-only (no backend/video yet). Subtitle words are tap-to-define.
 class VideoLessonScreen extends StatefulWidget {
   const VideoLessonScreen({super.key});
 
@@ -14,6 +16,17 @@ class VideoLessonScreen extends StatefulWidget {
 
 class _VideoLessonScreenState extends State<VideoLessonScreen> {
   String _answer = 'Train';
+
+  void _define(String word) {
+    final Map<String, String>? d = lookupWord(word);
+    RatelDefineSheet.show(
+      context,
+      word: word,
+      partOfSpeech: d?['pos'],
+      definition: d?['definition'],
+      example: d?['example'],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,10 +117,13 @@ class _VideoLessonScreenState extends State<VideoLessonScreen> {
 
   InlineSpan _hl(RatelTokens tk, String word) => WidgetSpan(
         alignment: PlaceholderAlignment.middle,
-        child: Container(
-          decoration: BoxDecoration(color: tk.successBg, borderRadius: BorderRadius.circular(3)),
-          padding: const EdgeInsets.symmetric(horizontal: 2),
-          child: Text(word, style: TextStyle(color: tk.success, fontSize: 13)),
+        child: GestureDetector(
+          onTap: () => _define(word),
+          child: Container(
+            decoration: BoxDecoration(color: tk.successBg, borderRadius: BorderRadius.circular(3)),
+            padding: const EdgeInsets.symmetric(horizontal: 2),
+            child: Text(word, style: TextStyle(color: tk.success, fontSize: 13)),
+          ),
         ),
       );
 }
