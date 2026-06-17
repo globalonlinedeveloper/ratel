@@ -6,9 +6,11 @@ import '../../../design_system/components/ratel_button.dart';
 import '../../../design_system/components/ratel_field.dart';
 import '../../../design_system/components/ratel_link.dart';
 import '../../../design_system/components/ratel_medallion.dart';
+import '../validators.dart';
 
 /// Forgot password — mock Page-1 · screen 13 (request a reset link). Design-only
-/// (no backend yet). "Send reset link" routes to the reset-sent confirmation.
+/// (no backend yet). "Send reset link" stays disabled until the email is valid,
+/// then routes to the reset-sent confirmation. Error reveals once non-empty.
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
 
@@ -28,6 +30,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     final tk = context.tokens;
+    final bool valid = validateEmail(_email.text) == null;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -85,11 +88,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     controller: _email,
                     hint: S.t('forgot_email', 'Email'),
                     keyboardType: TextInputType.emailAddress,
+                    onChanged: (_) => setState(() {}),
+                    errorText: _email.text.isEmpty ? null : validateEmail(_email.text),
                   ),
                   const SizedBox(height: RatelSpacing.md),
                   RatelButton.filled(
                     label: S.t('forgot_send', 'Send reset link'),
-                    onPressed: () => context.push('/reset-sent'),
+                    onPressed: valid ? () => context.push('/reset-sent') : null,
                   ),
                   const SizedBox(height: RatelSpacing.md),
                   Center(

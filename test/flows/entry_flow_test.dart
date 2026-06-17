@@ -4,8 +4,11 @@ import 'flow_harness.dart';
 
 /// Entry flows: auth/onboarding -> the app shell.
 void main() {
-  testWidgets('login: Log in -> Home shell', (tester) async {
+  testWidgets('login: valid creds + Log in -> Home shell', (tester) async {
     await pumpFlow(tester, '/login');
+    await tester.enterText(find.byType(TextField).at(0), 'a@b.com');
+    await tester.enterText(find.byType(TextField).at(1), 'abcd1234');
+    await tester.pump();
     await tester.tap(find.text('Log in'));
     await tester.pumpAndSettle();
     expect(find.text('Unit 3 · Everyday phrases'), findsOneWidget);

@@ -5,8 +5,12 @@ import '../../../core/theme/tokens.dart';
 import '../../../design_system/components/ratel_button.dart';
 import '../../../design_system/components/ratel_field.dart';
 import '../../../design_system/components/ratel_link.dart';
+import '../validators.dart';
 
 /// Email login — mock Page-1 · screen 5. Design-only (no backend until phase 3).
+/// Validation: the CTA stays disabled until email + password are valid; a
+/// field's inline error reveals once that field is non-empty (we don't shout
+/// errors on untouched fields). On valid submit it navigates exactly as before.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -24,6 +28,13 @@ class _LoginScreenState extends State<LoginScreen> {
     _password.dispose();
     super.dispose();
   }
+
+  bool get _valid =>
+      validateEmail(_email.text) == null &&
+      validatePassword(_password.text) == null;
+
+  String? _errorFor(String text, String? Function(String) v) =>
+      text.isEmpty ? null : v(text);
 
   @override
   Widget build(BuildContext context) {
@@ -61,6 +72,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     hint: S.t('login_email', 'Email'),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
+                    onChanged: (_) => setState(() {}),
+                    errorText: _errorFor(_email.text, validateEmail),
                   ),
                   const SizedBox(height: RatelSpacing.md),
                   RatelField(
@@ -68,6 +81,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     hint: S.t('login_password', 'Password'),
                     obscure: true,
                     textInputAction: TextInputAction.done,
+                    onChanged: (_) => setState(() {}),
+                    errorText: _errorFor(_password.text, validatePassword),
                   ),
                   const SizedBox(height: RatelSpacing.sm),
                   Align(
@@ -80,7 +95,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: RatelSpacing.md),
                   RatelButton.filled(
                     label: S.t('login_cta', 'Log in'),
-                    onPressed: () => context.go('/app'),
+                    onPressed: _valid ? () => context.go('/app') : null,
                   ),
                   const SizedBox(height: RatelSpacing.lg),
                   Center(
