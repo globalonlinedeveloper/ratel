@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import '../../features/dev/screens/screen_index_screen.dart';
 import '../../features/auth/screens/age_check_screen.dart';
 import '../../features/auth/screens/auth_hub_screen.dart';
 import '../../features/auth/screens/delete_account_screen.dart';
@@ -83,8 +84,9 @@ import '../../features/profile/screens/referral_hub_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
-  initialLocation: '/splash',
+  initialLocation: '/index',
   routes: <RouteBase>[
+    GoRoute(path: '/index', builder: (_, _) => const ScreenIndexScreen()),
     GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),
     GoRoute(path: '/welcome', builder: (_, _) => const WelcomeScreen()),
     GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
