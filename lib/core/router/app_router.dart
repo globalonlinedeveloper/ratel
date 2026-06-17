@@ -84,184 +84,189 @@ import '../../features/profile/screens/promo_redeem_screen.dart';
 import '../../features/profile/screens/referral_hub_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
+/// The route table — exposed as a top-level list so flow/navigation tests
+/// can mount `GoRouter(initialLocation: <start>, routes: appRoutes)` directly.
+final List<RouteBase> appRoutes = <RouteBase>[
+  GoRoute(path: '/index', builder: (_, _) => const ScreenIndexScreen()),
+  GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),
+  GoRoute(path: '/welcome', builder: (_, _) => const WelcomeScreen()),
+  GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
+  GoRoute(path: '/auth', builder: (_, _) => const AuthHubScreen()),
+  GoRoute(path: '/signup', builder: (_, _) => const SignupScreen()),
+  GoRoute(path: '/unlock', builder: (_, _) => const ReturningUnlockScreen()),
+  GoRoute(
+    path: '/social-consent',
+    builder: (_, _) => const SocialConsentScreen(),
+  ),
+  GoRoute(path: '/privacy', builder: (_, _) => const PrivacyChoicesScreen()),
+  GoRoute(path: '/age', builder: (_, _) => const AgeCheckScreen()),
+  GoRoute(
+    path: '/parental',
+    builder: (_, _) => const ParentalConsentScreen(),
+  ),
+  GoRoute(path: '/phone', builder: (_, _) => const PhoneVerifyScreen()),
+  GoRoute(path: '/otp', builder: (_, _) => const OtpScreen()),
+  GoRoute(path: '/forgot', builder: (_, _) => const ForgotPasswordScreen()),
+  GoRoute(path: '/reset-sent', builder: (_, _) => const ResetSentScreen()),
+  GoRoute(
+    path: '/set-password',
+    builder: (_, _) => const SetNewPasswordScreen(),
+  ),
+  GoRoute(
+    path: '/email-verify',
+    builder: (_, _) => const EmailVerifyScreen(),
+  ),
+  GoRoute(path: '/guest-save', builder: (_, _) => const GuestSaveScreen()),
+  GoRoute(path: '/logout', builder: (_, _) => const LogoutScreen()),
+  GoRoute(path: '/delete', builder: (_, _) => const DeleteAccountScreen()),
+  GoRoute(
+    path: '/onboarding/language',
+    builder: (_, _) => const LanguagePickerScreen(),
+  ),
+  GoRoute(
+    path: '/onboarding/motivation',
+    builder: (_, _) => const MotivationScreen(),
+  ),
+  GoRoute(
+    path: '/onboarding/goal',
+    builder: (_, _) => const DailyGoalScreen(),
+  ),
+  GoRoute(
+    path: '/onboarding/referral',
+    builder: (_, _) => const ReferralSourceScreen(),
+  ),
+  GoRoute(
+    path: '/onboarding/notify',
+    builder: (_, _) => const NotificationOptinScreen(),
+  ),
+  GoRoute(
+    path: '/onboarding/start',
+    builder: (_, _) => const StartPointScreen(),
+  ),
+  GoRoute(
+    path: '/onboarding/placement',
+    builder: (_, _) => const PlacementTestScreen(),
+  ),
+  GoRoute(
+    path: '/onboarding/level',
+    builder: (_, _) => const LevelResultScreen(),
+  ),
+  GoRoute(
+    path: '/onboarding/first-win',
+    builder: (_, _) => const FirstWinScreen(),
+  ),
+  GoRoute(
+    path: '/lesson/choice',
+    builder: (_, _) => const LessonChoiceScreen(),
+  ),
+  GoRoute(
+    path: '/lesson/speaking',
+    builder: (_, _) => const LessonSpeakingScreen(),
+  ),
+  GoRoute(
+    path: '/lesson/listen',
+    builder: (_, _) => const LessonListenScreen(),
+  ),
+  GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+  GoRoute(path: '/app', builder: (_, _) => const MainShell()),
+  GoRoute(path: '/why', builder: (_, _) => const WhyCardScreen()),
+  GoRoute(path: '/wrong', builder: (_, _) => const WrongFeedbackScreen()),
+  GoRoute(path: '/roleplay', builder: (_, _) => const AiRoleplayScreen()),
+  GoRoute(path: '/complete', builder: (_, _) => const LessonCompleteScreen()),
+  GoRoute(path: '/energy', builder: (_, _) => const OutOfEnergyScreen()),
+  GoRoute(path: '/stories', builder: (_, _) => const StoriesScreen()),
+  GoRoute(path: '/streak', builder: (_, _) => const StreakHubScreen()),
+  GoRoute(path: '/courses', builder: (_, _) => const CourseSwitcherScreen()),
+  GoRoute(path: '/practice', builder: (_, _) => const PracticeHubScreen()),
+  GoRoute(
+    path: '/practice/smart',
+    builder: (_, _) => const SmartPracticeScreen(),
+  ),
+  GoRoute(
+    path: '/practice/timed',
+    builder: (_, _) => const TimedChallengeScreen(),
+  ),
+  GoRoute(path: '/coach', builder: (_, _) => const CoachChatScreen()),
+  GoRoute(path: '/call', builder: (_, _) => const VoiceCallScreen()),
+  GoRoute(
+    path: '/practice/speaking',
+    builder: (_, _) => const SpeakingPracticeScreen(),
+  ),
+  GoRoute(
+    path: '/pronunciation',
+    builder: (_, _) => const PronunciationResultsScreen(),
+  ),
+  GoRoute(
+    path: '/practice/story',
+    builder: (_, _) => const MarketStoryScreen(),
+  ),
+  GoRoute(
+    path: '/adventures',
+    builder: (_, _) => const AdventuresRoleplayScreen(),
+  ),
+  GoRoute(path: '/video', builder: (_, _) => const VideoLessonScreen()),
+  GoRoute(path: '/dictation', builder: (_, _) => const DictationScreen()),
+  GoRoute(path: '/writing', builder: (_, _) => const WritingFeedbackScreen()),
+  GoRoute(path: '/credits', builder: (_, _) => const AiCreditsScreen()),
+  GoRoute(path: '/streak-detail', builder: (_, _) => const StreakScreen()),
+  GoRoute(path: '/society', builder: (_, _) => const StreakSocietyScreen()),
+  GoRoute(path: '/quests', builder: (_, _) => const DailyQuestsScreen()),
+  GoRoute(
+    path: '/achievements',
+    builder: (_, _) => const AchievementsScreen(),
+  ),
+  GoRoute(
+    path: '/achievement',
+    builder: (_, _) => const AchievementDetailScreen(),
+  ),
+  GoRoute(path: '/shop', builder: (_, _) => const GemShopScreen()),
+  GoRoute(path: '/goal-ring', builder: (_, _) => const GoalRingScreen()),
+  GoRoute(path: '/leagues', builder: (_, _) => const LeaguesScreen()),
+  GoRoute(
+    path: '/tournament',
+    builder: (_, _) => const DiamondTournamentScreen(),
+  ),
+  GoRoute(path: '/friends', builder: (_, _) => const FriendsFeedScreen()),
+  GoRoute(path: '/friend', builder: (_, _) => const FriendProfileScreen()),
+  GoRoute(path: '/family', builder: (_, _) => const FamilyPlanScreen()),
+  GoRoute(path: '/classroom', builder: (_, _) => const ClassroomScreen()),
+  GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
+  GoRoute(
+    path: '/english-score',
+    builder: (_, _) => const EnglishScoreScreen(),
+  ),
+  GoRoute(path: '/avatar', builder: (_, _) => const AvatarBuilderScreen()),
+  GoRoute(path: '/settings', builder: (_, _) => const SettingsHubScreen()),
+  GoRoute(path: '/appearance', builder: (_, _) => const AppearanceScreen()),
+  GoRoute(
+    path: '/accessibility',
+    builder: (_, _) => const AccessibilityScreen(),
+  ),
+  GoRoute(
+    path: '/privacy-data',
+    builder: (_, _) => const PrivacyDataScreen(),
+  ),
+  GoRoute(
+    path: '/notifications',
+    builder: (_, _) => const NotificationsScreen(),
+  ),
+  GoRoute(path: '/help', builder: (_, _) => const HelpLegalScreen()),
+  GoRoute(path: '/paywall', builder: (_, _) => const PaywallScreen()),
+  GoRoute(
+    path: '/checkout',
+    builder: (_, _) => const CheckoutSuccessScreen(),
+  ),
+  GoRoute(
+    path: '/subscription',
+    builder: (_, _) => const ManageSubscriptionScreen(),
+  ),
+  GoRoute(path: '/cancel', builder: (_, _) => const CancelWinbackScreen()),
+  GoRoute(path: '/promo', builder: (_, _) => const PromoRedeemScreen()),
+  GoRoute(path: '/referral', builder: (_, _) => const ReferralHubScreen()),
+];
+
+/// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
   initialLocation: '/index',
-  routes: <RouteBase>[
-    GoRoute(path: '/index', builder: (_, _) => const ScreenIndexScreen()),
-    GoRoute(path: '/splash', builder: (_, _) => const SplashScreen()),
-    GoRoute(path: '/welcome', builder: (_, _) => const WelcomeScreen()),
-    GoRoute(path: '/login', builder: (_, _) => const LoginScreen()),
-    GoRoute(path: '/auth', builder: (_, _) => const AuthHubScreen()),
-    GoRoute(path: '/signup', builder: (_, _) => const SignupScreen()),
-    GoRoute(path: '/unlock', builder: (_, _) => const ReturningUnlockScreen()),
-    GoRoute(
-      path: '/social-consent',
-      builder: (_, _) => const SocialConsentScreen(),
-    ),
-    GoRoute(path: '/privacy', builder: (_, _) => const PrivacyChoicesScreen()),
-    GoRoute(path: '/age', builder: (_, _) => const AgeCheckScreen()),
-    GoRoute(
-      path: '/parental',
-      builder: (_, _) => const ParentalConsentScreen(),
-    ),
-    GoRoute(path: '/phone', builder: (_, _) => const PhoneVerifyScreen()),
-    GoRoute(path: '/otp', builder: (_, _) => const OtpScreen()),
-    GoRoute(path: '/forgot', builder: (_, _) => const ForgotPasswordScreen()),
-    GoRoute(path: '/reset-sent', builder: (_, _) => const ResetSentScreen()),
-    GoRoute(
-      path: '/set-password',
-      builder: (_, _) => const SetNewPasswordScreen(),
-    ),
-    GoRoute(
-      path: '/email-verify',
-      builder: (_, _) => const EmailVerifyScreen(),
-    ),
-    GoRoute(path: '/guest-save', builder: (_, _) => const GuestSaveScreen()),
-    GoRoute(path: '/logout', builder: (_, _) => const LogoutScreen()),
-    GoRoute(path: '/delete', builder: (_, _) => const DeleteAccountScreen()),
-    GoRoute(
-      path: '/onboarding/language',
-      builder: (_, _) => const LanguagePickerScreen(),
-    ),
-    GoRoute(
-      path: '/onboarding/motivation',
-      builder: (_, _) => const MotivationScreen(),
-    ),
-    GoRoute(
-      path: '/onboarding/goal',
-      builder: (_, _) => const DailyGoalScreen(),
-    ),
-    GoRoute(
-      path: '/onboarding/referral',
-      builder: (_, _) => const ReferralSourceScreen(),
-    ),
-    GoRoute(
-      path: '/onboarding/notify',
-      builder: (_, _) => const NotificationOptinScreen(),
-    ),
-    GoRoute(
-      path: '/onboarding/start',
-      builder: (_, _) => const StartPointScreen(),
-    ),
-    GoRoute(
-      path: '/onboarding/placement',
-      builder: (_, _) => const PlacementTestScreen(),
-    ),
-    GoRoute(
-      path: '/onboarding/level',
-      builder: (_, _) => const LevelResultScreen(),
-    ),
-    GoRoute(
-      path: '/onboarding/first-win',
-      builder: (_, _) => const FirstWinScreen(),
-    ),
-    GoRoute(
-      path: '/lesson/choice',
-      builder: (_, _) => const LessonChoiceScreen(),
-    ),
-    GoRoute(
-      path: '/lesson/speaking',
-      builder: (_, _) => const LessonSpeakingScreen(),
-    ),
-    GoRoute(
-      path: '/lesson/listen',
-      builder: (_, _) => const LessonListenScreen(),
-    ),
-    GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
-    GoRoute(path: '/app', builder: (_, _) => const MainShell()),
-    GoRoute(path: '/why', builder: (_, _) => const WhyCardScreen()),
-    GoRoute(path: '/wrong', builder: (_, _) => const WrongFeedbackScreen()),
-    GoRoute(path: '/roleplay', builder: (_, _) => const AiRoleplayScreen()),
-    GoRoute(path: '/complete', builder: (_, _) => const LessonCompleteScreen()),
-    GoRoute(path: '/energy', builder: (_, _) => const OutOfEnergyScreen()),
-    GoRoute(path: '/stories', builder: (_, _) => const StoriesScreen()),
-    GoRoute(path: '/streak', builder: (_, _) => const StreakHubScreen()),
-    GoRoute(path: '/courses', builder: (_, _) => const CourseSwitcherScreen()),
-    GoRoute(path: '/practice', builder: (_, _) => const PracticeHubScreen()),
-    GoRoute(
-      path: '/practice/smart',
-      builder: (_, _) => const SmartPracticeScreen(),
-    ),
-    GoRoute(
-      path: '/practice/timed',
-      builder: (_, _) => const TimedChallengeScreen(),
-    ),
-    GoRoute(path: '/coach', builder: (_, _) => const CoachChatScreen()),
-    GoRoute(path: '/call', builder: (_, _) => const VoiceCallScreen()),
-    GoRoute(
-      path: '/practice/speaking',
-      builder: (_, _) => const SpeakingPracticeScreen(),
-    ),
-    GoRoute(
-      path: '/pronunciation',
-      builder: (_, _) => const PronunciationResultsScreen(),
-    ),
-    GoRoute(
-      path: '/practice/story',
-      builder: (_, _) => const MarketStoryScreen(),
-    ),
-    GoRoute(
-      path: '/adventures',
-      builder: (_, _) => const AdventuresRoleplayScreen(),
-    ),
-    GoRoute(path: '/video', builder: (_, _) => const VideoLessonScreen()),
-    GoRoute(path: '/dictation', builder: (_, _) => const DictationScreen()),
-    GoRoute(path: '/writing', builder: (_, _) => const WritingFeedbackScreen()),
-    GoRoute(path: '/credits', builder: (_, _) => const AiCreditsScreen()),
-    GoRoute(path: '/streak-detail', builder: (_, _) => const StreakScreen()),
-    GoRoute(path: '/society', builder: (_, _) => const StreakSocietyScreen()),
-    GoRoute(path: '/quests', builder: (_, _) => const DailyQuestsScreen()),
-    GoRoute(
-      path: '/achievements',
-      builder: (_, _) => const AchievementsScreen(),
-    ),
-    GoRoute(
-      path: '/achievement',
-      builder: (_, _) => const AchievementDetailScreen(),
-    ),
-    GoRoute(path: '/shop', builder: (_, _) => const GemShopScreen()),
-    GoRoute(path: '/goal-ring', builder: (_, _) => const GoalRingScreen()),
-    GoRoute(path: '/leagues', builder: (_, _) => const LeaguesScreen()),
-    GoRoute(
-      path: '/tournament',
-      builder: (_, _) => const DiamondTournamentScreen(),
-    ),
-    GoRoute(path: '/friends', builder: (_, _) => const FriendsFeedScreen()),
-    GoRoute(path: '/friend', builder: (_, _) => const FriendProfileScreen()),
-    GoRoute(path: '/family', builder: (_, _) => const FamilyPlanScreen()),
-    GoRoute(path: '/classroom', builder: (_, _) => const ClassroomScreen()),
-    GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
-    GoRoute(
-      path: '/english-score',
-      builder: (_, _) => const EnglishScoreScreen(),
-    ),
-    GoRoute(path: '/avatar', builder: (_, _) => const AvatarBuilderScreen()),
-    GoRoute(path: '/settings', builder: (_, _) => const SettingsHubScreen()),
-    GoRoute(path: '/appearance', builder: (_, _) => const AppearanceScreen()),
-    GoRoute(
-      path: '/accessibility',
-      builder: (_, _) => const AccessibilityScreen(),
-    ),
-    GoRoute(
-      path: '/privacy-data',
-      builder: (_, _) => const PrivacyDataScreen(),
-    ),
-    GoRoute(
-      path: '/notifications',
-      builder: (_, _) => const NotificationsScreen(),
-    ),
-    GoRoute(path: '/help', builder: (_, _) => const HelpLegalScreen()),
-    GoRoute(path: '/paywall', builder: (_, _) => const PaywallScreen()),
-    GoRoute(
-      path: '/checkout',
-      builder: (_, _) => const CheckoutSuccessScreen(),
-    ),
-    GoRoute(
-      path: '/subscription',
-      builder: (_, _) => const ManageSubscriptionScreen(),
-    ),
-    GoRoute(path: '/cancel', builder: (_, _) => const CancelWinbackScreen()),
-    GoRoute(path: '/promo', builder: (_, _) => const PromoRedeemScreen()),
-    GoRoute(path: '/referral', builder: (_, _) => const ReferralHubScreen()),
-  ],
+  routes: appRoutes,
 );
