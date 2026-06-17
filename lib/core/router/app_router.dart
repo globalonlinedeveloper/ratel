@@ -32,6 +32,7 @@ import '../../features/learn/screens/lesson_choice_screen.dart';
 import '../../features/learn/screens/lesson_listen_screen.dart';
 import '../../features/learn/screens/lesson_speaking_screen.dart';
 import '../../features/learn/screens/home_screen.dart';
+import '../../features/shell/screens/main_shell.dart';
 import '../../features/learn/screens/why_card_screen.dart';
 import '../../features/learn/screens/wrong_feedback_screen.dart';
 import '../../features/learn/screens/ai_roleplay_screen.dart';
@@ -99,7 +100,10 @@ final GoRouter appRouter = GoRouter(
     ),
     GoRoute(path: '/privacy', builder: (_, _) => const PrivacyChoicesScreen()),
     GoRoute(path: '/age', builder: (_, _) => const AgeCheckScreen()),
-    GoRoute(path: '/parental', builder: (_, _) => const ParentalConsentScreen()),
+    GoRoute(
+      path: '/parental',
+      builder: (_, _) => const ParentalConsentScreen(),
+    ),
     GoRoute(path: '/phone', builder: (_, _) => const PhoneVerifyScreen()),
     GoRoute(path: '/otp', builder: (_, _) => const OtpScreen()),
     GoRoute(path: '/forgot', builder: (_, _) => const ForgotPasswordScreen()),
@@ -108,7 +112,10 @@ final GoRouter appRouter = GoRouter(
       path: '/set-password',
       builder: (_, _) => const SetNewPasswordScreen(),
     ),
-    GoRoute(path: '/email-verify', builder: (_, _) => const EmailVerifyScreen()),
+    GoRoute(
+      path: '/email-verify',
+      builder: (_, _) => const EmailVerifyScreen(),
+    ),
     GoRoute(path: '/guest-save', builder: (_, _) => const GuestSaveScreen()),
     GoRoute(path: '/logout', builder: (_, _) => const LogoutScreen()),
     GoRoute(path: '/delete', builder: (_, _) => const DeleteAccountScreen()),
@@ -148,7 +155,10 @@ final GoRouter appRouter = GoRouter(
       path: '/onboarding/first-win',
       builder: (_, _) => const FirstWinScreen(),
     ),
-    GoRoute(path: '/lesson/choice', builder: (_, _) => const LessonChoiceScreen()),
+    GoRoute(
+      path: '/lesson/choice',
+      builder: (_, _) => const LessonChoiceScreen(),
+    ),
     GoRoute(
       path: '/lesson/speaking',
       builder: (_, _) => const LessonSpeakingScreen(),
@@ -158,20 +168,15 @@ final GoRouter appRouter = GoRouter(
       builder: (_, _) => const LessonListenScreen(),
     ),
     GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+    GoRoute(path: '/app', builder: (_, _) => const MainShell()),
     GoRoute(path: '/why', builder: (_, _) => const WhyCardScreen()),
     GoRoute(path: '/wrong', builder: (_, _) => const WrongFeedbackScreen()),
     GoRoute(path: '/roleplay', builder: (_, _) => const AiRoleplayScreen()),
-    GoRoute(
-      path: '/complete',
-      builder: (_, _) => const LessonCompleteScreen(),
-    ),
+    GoRoute(path: '/complete', builder: (_, _) => const LessonCompleteScreen()),
     GoRoute(path: '/energy', builder: (_, _) => const OutOfEnergyScreen()),
     GoRoute(path: '/stories', builder: (_, _) => const StoriesScreen()),
     GoRoute(path: '/streak', builder: (_, _) => const StreakHubScreen()),
-    GoRoute(
-      path: '/courses',
-      builder: (_, _) => const CourseSwitcherScreen(),
-    ),
+    GoRoute(path: '/courses', builder: (_, _) => const CourseSwitcherScreen()),
     GoRoute(path: '/practice', builder: (_, _) => const PracticeHubScreen()),
     GoRoute(
       path: '/practice/smart',
@@ -191,7 +196,10 @@ final GoRouter appRouter = GoRouter(
       path: '/pronunciation',
       builder: (_, _) => const PronunciationResultsScreen(),
     ),
-    GoRoute(path: '/practice/story', builder: (_, _) => const MarketStoryScreen()),
+    GoRoute(
+      path: '/practice/story',
+      builder: (_, _) => const MarketStoryScreen(),
+    ),
     GoRoute(
       path: '/adventures',
       builder: (_, _) => const AdventuresRoleplayScreen(),
@@ -203,7 +211,10 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/streak-detail', builder: (_, _) => const StreakScreen()),
     GoRoute(path: '/society', builder: (_, _) => const StreakSocietyScreen()),
     GoRoute(path: '/quests', builder: (_, _) => const DailyQuestsScreen()),
-    GoRoute(path: '/achievements', builder: (_, _) => const AchievementsScreen()),
+    GoRoute(
+      path: '/achievements',
+      builder: (_, _) => const AchievementsScreen(),
+    ),
     GoRoute(
       path: '/achievement',
       builder: (_, _) => const AchievementDetailScreen(),
@@ -231,14 +242,20 @@ final GoRouter appRouter = GoRouter(
       path: '/accessibility',
       builder: (_, _) => const AccessibilityScreen(),
     ),
-    GoRoute(path: '/privacy-data', builder: (_, _) => const PrivacyDataScreen()),
+    GoRoute(
+      path: '/privacy-data',
+      builder: (_, _) => const PrivacyDataScreen(),
+    ),
     GoRoute(
       path: '/notifications',
       builder: (_, _) => const NotificationsScreen(),
     ),
     GoRoute(path: '/help', builder: (_, _) => const HelpLegalScreen()),
     GoRoute(path: '/paywall', builder: (_, _) => const PaywallScreen()),
-    GoRoute(path: '/checkout', builder: (_, _) => const CheckoutSuccessScreen()),
+    GoRoute(
+      path: '/checkout',
+      builder: (_, _) => const CheckoutSuccessScreen(),
+    ),
     GoRoute(
       path: '/subscription',
       builder: (_, _) => const ManageSubscriptionScreen(),
@@ -248,4 +265,3 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/referral', builder: (_, _) => const ReferralHubScreen()),
   ],
 );
-

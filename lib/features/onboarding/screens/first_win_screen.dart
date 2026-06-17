@@ -93,12 +93,16 @@ class FirstWinScreen extends StatelessWidget {
                       'The guaranteed early win — the dopamine that brings them back.',
                     ),
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: tk.textMuted, fontSize: 12, height: 1.5),
+                    style: TextStyle(
+                      color: tk.textMuted,
+                      fontSize: 12,
+                      height: 1.5,
+                    ),
                   ),
                   const SizedBox(height: RatelSpacing.md),
                   RatelButton.filled(
                     label: S.t('ob_firstwin_cta', 'Continue'),
-                    onPressed: () => context.go('/welcome'),
+                    onPressed: () => context.go('/app'),
                   ),
                 ],
               ),

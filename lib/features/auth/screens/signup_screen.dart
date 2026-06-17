@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/i18n/strings.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../design_system/components/ratel_button.dart';
@@ -100,7 +101,9 @@ class _SignupScreenState extends State<SignupScreen> {
                   const SizedBox(height: RatelSpacing.md),
                   RatelButton.filled(
                     label: S.t('signup_cta', 'Create account'),
-                    onPressed: _agree ? () {} : null,
+                    onPressed: _agree
+                        ? () => context.go('/onboarding/language')
+                        : null,
                   ),
                 ],
               ),
@@ -120,14 +123,14 @@ class _StrengthMeter extends StatelessWidget {
   Widget build(BuildContext context) {
     final tk = context.tokens;
     Widget bar(bool on) => Expanded(
-          child: Container(
-            height: 5,
-            decoration: BoxDecoration(
-              color: on ? tk.success : tk.border,
-              borderRadius: BorderRadius.circular(tk.radiusSm),
-            ),
-          ),
-        );
+      child: Container(
+        height: 5,
+        decoration: BoxDecoration(
+          color: on ? tk.success : tk.border,
+          borderRadius: BorderRadius.circular(tk.radiusSm),
+        ),
+      ),
+    );
     return Row(
       children: <Widget>[
         bar(true),

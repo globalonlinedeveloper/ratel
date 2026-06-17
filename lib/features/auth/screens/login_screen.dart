@@ -80,7 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: RatelSpacing.md),
                   RatelButton.filled(
                     label: S.t('login_cta', 'Log in'),
-                    onPressed: () {},
+                    onPressed: () => context.go('/app'),
                   ),
                   const SizedBox(height: RatelSpacing.lg),
                   Center(
