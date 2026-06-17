@@ -71,6 +71,9 @@ import '../../features/profile/screens/profile_screen.dart';
 import '../../features/profile/screens/accessibility_screen.dart';
 import '../../features/profile/screens/appearance_screen.dart';
 import '../../features/profile/screens/settings_hub_screen.dart';
+import '../../features/profile/screens/help_legal_screen.dart';
+import '../../features/profile/screens/notifications_screen.dart';
+import '../../features/profile/screens/privacy_data_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -220,6 +223,12 @@ final GoRouter appRouter = GoRouter(
       path: '/accessibility',
       builder: (_, _) => const AccessibilityScreen(),
     ),
+    GoRoute(path: '/privacy-data', builder: (_, _) => const PrivacyDataScreen()),
+    GoRoute(
+      path: '/notifications',
+      builder: (_, _) => const NotificationsScreen(),
+    ),
+    GoRoute(path: '/help', builder: (_, _) => const HelpLegalScreen()),
   ],
 );
 
