@@ -42,6 +42,7 @@ import '../../features/learn/screens/stories_screen.dart';
 import '../../features/learn/screens/streak_hub_screen.dart';
 import '../../features/learn/screens/listening_feed_screen.dart';
 import '../../features/learn/screens/radio_episode_screen.dart';
+import '../../features/learn/screens/search_screen.dart';
 import '../../features/practice/screens/practice_hub_screen.dart';
 import '../../features/practice/screens/smart_practice_screen.dart';
 import '../../features/practice/screens/timed_challenge_screen.dart';
@@ -189,6 +190,7 @@ final List<RouteBase> appRoutes = <RouteBase>[
     path: '/listen/episode',
     builder: (_, _) => const RadioEpisodeScreen(),
   ),
+  GoRoute(path: '/search', builder: (_, _) => const SearchScreen()),
   GoRoute(path: '/practice', builder: (_, _) => const PracticeHubScreen()),
   GoRoute(
     path: '/practice/smart',

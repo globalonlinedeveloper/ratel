@@ -115,18 +115,33 @@ class HomeScreen extends StatelessWidget {
           tk.primary,
           () => context.push('/goal-ring'),
         ),
-        Semantics(
-          button: true,
-          label: S.t('home_inbox_a11y', 'Notifications'),
-          child: GestureDetector(
-            behavior: HitTestBehavior.opaque,
-            onTap: () => context.push('/inbox'),
-            child: Icon(
-              Icons.notifications_none,
-              size: 18,
-              color: tk.textMuted,
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Semantics(
+              button: true,
+              label: S.t('home_search_a11y', 'Search'),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => context.push('/search'),
+                child: Icon(Icons.search, size: 18, color: tk.textMuted),
+              ),
             ),
-          ),
+            const SizedBox(width: RatelSpacing.md),
+            Semantics(
+              button: true,
+              label: S.t('home_inbox_a11y', 'Notifications'),
+              child: GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onTap: () => context.push('/inbox'),
+                child: Icon(
+                  Icons.notifications_none,
+                  size: 18,
+                  color: tk.textMuted,
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );

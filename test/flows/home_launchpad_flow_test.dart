@@ -106,4 +106,12 @@ void main() {
     expect(find.text('Mark all read'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('search icon -> global search', (tester) async {
+    await pumpFlow(tester, '/home');
+    await tester.tap(find.byIcon(Icons.search));
+    await tester.pumpAndSettle();
+    expect(find.text('Suggested'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
