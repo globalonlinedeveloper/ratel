@@ -61,6 +61,16 @@ class RatelColorsDark {
   static const Color border = Color(0xFF383530);
 }
 
+/// Immersive AI voice-call palette (forced dark, theme-independent). Lives in
+/// the design system — the only place these raw values are allowed (§0.3).
+class RatelCall {
+  RatelCall._();
+  static const Color bg = Color(0xFF10302A);
+  static const Color avatar = Color(0xFF1D9E75);
+  static const Color wave = Color(0xFF5DCAA5);
+  static const Color caption = Color(0xFF9FE1CB);
+}
+
 /// Spacing scale (4/8/12/16/24).
 class RatelSpacing {
   RatelSpacing._();

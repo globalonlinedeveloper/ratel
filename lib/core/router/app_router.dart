@@ -42,6 +42,9 @@ import '../../features/learn/screens/streak_hub_screen.dart';
 import '../../features/practice/screens/practice_hub_screen.dart';
 import '../../features/practice/screens/smart_practice_screen.dart';
 import '../../features/practice/screens/timed_challenge_screen.dart';
+import '../../features/practice/screens/coach_chat_screen.dart';
+import '../../features/practice/screens/speaking_practice_screen.dart';
+import '../../features/practice/screens/voice_call_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -140,6 +143,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/practice/timed',
       builder: (_, _) => const TimedChallengeScreen(),
+    ),
+    GoRoute(path: '/coach', builder: (_, _) => const CoachChatScreen()),
+    GoRoute(path: '/call', builder: (_, _) => const VoiceCallScreen()),
+    GoRoute(
+      path: '/practice/speaking',
+      builder: (_, _) => const SpeakingPracticeScreen(),
     ),
   ],
 );
