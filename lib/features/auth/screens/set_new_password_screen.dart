@@ -4,9 +4,13 @@ import '../../../core/theme/tokens.dart';
 import '../../../design_system/components/ratel_button.dart';
 import '../../../design_system/components/ratel_field.dart';
 import '../../../design_system/components/ratel_medallion.dart';
+import '../../../design_system/components/ratel_password_strength.dart';
+import '../validators.dart';
 
 /// Set new password — mock Page-1 · screen 15 (post-reset). Design-only
-/// (no backend yet).
+/// (no backend yet). The CTA stays disabled until the password is valid (>=8)
+/// and the confirm matches; field errors reveal once each field is non-empty.
+/// The strength meter is live (driven by `passwordStrength`).
 class SetNewPasswordScreen extends StatefulWidget {
   const SetNewPasswordScreen({super.key});
 
@@ -25,9 +29,16 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
     super.dispose();
   }
 
+  bool get _valid =>
+      validatePassword(_password.text) == null &&
+      validateConfirm(_password.text, _confirm.text) == null;
+
   @override
   Widget build(BuildContext context) {
     final tk = context.tokens;
+    final String? confirmError = _confirm.text.isEmpty
+        ? null
+        : validateConfirm(_password.text, _confirm.text);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -80,6 +91,10 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
                     hint: S.t('setpw_new', 'New password'),
                     obscure: true,
                     textInputAction: TextInputAction.next,
+                    onChanged: (_) => setState(() {}),
+                    errorText: _password.text.isEmpty
+                        ? null
+                        : validatePassword(_password.text),
                   ),
                   const SizedBox(height: RatelSpacing.md),
                   RatelField(
@@ -87,13 +102,17 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
                     hint: S.t('setpw_confirm', 'Confirm password'),
                     obscure: true,
                     textInputAction: TextInputAction.done,
+                    onChanged: (_) => setState(() {}),
+                    errorText: confirmError,
                   ),
                   const SizedBox(height: RatelSpacing.md),
-                  const _StrengthBars(),
+                  RatelPasswordStrength(
+                    strength: passwordStrength(_password.text),
+                  ),
                   const SizedBox(height: RatelSpacing.lg),
                   RatelButton.filled(
                     label: S.t('setpw_save', 'Save password'),
-                    onPressed: () {},
+                    onPressed: _valid ? () {} : null,
                   ),
                 ],
               ),
@@ -101,34 +120,6 @@ class _SetNewPasswordScreenState extends State<SetNewPasswordScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Static three-bar strength indicator (all filled) — design-only.
-class _StrengthBars extends StatelessWidget {
-  const _StrengthBars();
-
-  @override
-  Widget build(BuildContext context) {
-    final tk = context.tokens;
-    Widget bar() => Expanded(
-          child: Container(
-            height: 5,
-            decoration: BoxDecoration(
-              color: tk.success,
-              borderRadius: BorderRadius.circular(tk.radiusSm),
-            ),
-          ),
-        );
-    return Row(
-      children: <Widget>[
-        bar(),
-        const SizedBox(width: 4),
-        bar(),
-        const SizedBox(width: 4),
-        bar(),
-      ],
     );
   }
 }

@@ -4,11 +4,21 @@ import '../../../core/i18n/strings.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../design_system/components/ratel_button.dart';
 import '../../../design_system/components/ratel_medallion.dart';
+import '../validators.dart';
 
 /// OTP entry — mock Page-1 · screen 12 (6-digit code fallback). Design-only
-/// (no backend yet); the boxes fill as you type.
-class OtpScreen extends StatelessWidget {
+/// (no backend yet); the boxes fill as you type. Stateful so it can read the
+/// entered code and keep Verify disabled until all six digits are present
+/// (`isOtpComplete`).
+class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
+
+  @override
+  State<OtpScreen> createState() => _OtpScreenState();
+}
+
+class _OtpScreenState extends State<OtpScreen> {
+  String _code = '';
 
   @override
   Widget build(BuildContext context) {
@@ -65,7 +75,11 @@ class OtpScreen extends StatelessWidget {
                     style: TextStyle(color: tk.textMuted, fontSize: 12),
                   ),
                   const SizedBox(height: RatelSpacing.lg),
-                  const Center(child: _OtpBoxes()),
+                  Center(
+                    child: _OtpBoxes(
+                      onChanged: (String v) => setState(() => _code = v),
+                    ),
+                  ),
                   const SizedBox(height: RatelSpacing.md),
                   Text(
                     S.t('otp_resend', 'Resend in 0:24'),
@@ -75,7 +89,7 @@ class OtpScreen extends StatelessWidget {
                   const SizedBox(height: RatelSpacing.lg),
                   RatelButton.filled(
                     label: S.t('otp_verify', 'Verify'),
-                    onPressed: () {},
+                    onPressed: isOtpComplete(_code) ? () {} : null,
                   ),
                 ],
               ),
@@ -90,9 +104,12 @@ class OtpScreen extends StatelessWidget {
 const int _kOtpLength = 6;
 
 /// Six segmented code boxes backed by one hidden field; the active box is
-/// outlined in the primary colour and digits appear as you type.
+/// outlined in the primary colour and digits appear as you type. Reports the
+/// current code up via [onChanged] so the screen can gate Verify.
 class _OtpBoxes extends StatefulWidget {
-  const _OtpBoxes();
+  const _OtpBoxes({required this.onChanged});
+
+  final ValueChanged<String> onChanged;
 
   @override
   State<_OtpBoxes> createState() => _OtpBoxesState();
@@ -159,7 +176,10 @@ class _OtpBoxesState extends State<_OtpBoxes> {
                 inputFormatters: <TextInputFormatter>[
                   FilteringTextInputFormatter.digitsOnly,
                 ],
-                onChanged: (_) => setState(() {}),
+                onChanged: (String v) {
+                  setState(() {});
+                  widget.onChanged(v);
+                },
                 decoration: const InputDecoration(counterText: ''),
               ),
             ),

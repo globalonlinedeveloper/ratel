@@ -4,9 +4,12 @@ import '../../../core/theme/tokens.dart';
 import '../../../design_system/components/ratel_button.dart';
 import '../../../design_system/components/ratel_field.dart';
 import '../../../design_system/components/ratel_medallion.dart';
+import '../validators.dart';
 
 /// Phone verify — mock Page-1 · screen 11 (silent network verify first, code
-/// fallback via WhatsApp/SMS). Design-only (no backend yet).
+/// fallback via WhatsApp/SMS). Design-only (no backend yet). All three CTAs
+/// stay disabled until the phone number is valid (7–15 digits); the inline
+/// error reveals once the field is non-empty.
 class PhoneVerifyScreen extends StatefulWidget {
   const PhoneVerifyScreen({super.key});
 
@@ -22,6 +25,8 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
     _phone.dispose();
     super.dispose();
   }
+
+  bool get _valid => validatePhone(_phone.text) == null;
 
   @override
   Widget build(BuildContext context) {
@@ -76,12 +81,16 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
                     controller: _phone,
                     hint: S.t('phone_hint', '+91 · phone number'),
                     keyboardType: TextInputType.phone,
+                    onChanged: (_) => setState(() {}),
+                    errorText: _phone.text.isEmpty
+                        ? null
+                        : validatePhone(_phone.text),
                   ),
                   const SizedBox(height: RatelSpacing.md),
                   RatelButton.filled(
                     icon: Icons.verified_user_outlined,
                     label: S.t('phone_auto', 'Verify automatically'),
-                    onPressed: () {},
+                    onPressed: _valid ? () {} : null,
                   ),
                   const SizedBox(height: RatelSpacing.sm),
                   Text(
@@ -98,7 +107,7 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
                         child: RatelButton.neutral(
                           icon: Icons.chat_outlined,
                           label: S.t('phone_whatsapp', 'WhatsApp'),
-                          onPressed: () {},
+                          onPressed: _valid ? () {} : null,
                         ),
                       ),
                       const SizedBox(width: RatelSpacing.sm),
@@ -106,7 +115,7 @@ class _PhoneVerifyScreenState extends State<PhoneVerifyScreen> {
                         child: RatelButton.neutral(
                           icon: Icons.sms_outlined,
                           label: S.t('phone_sms', 'SMS'),
-                          onPressed: () {},
+                          onPressed: _valid ? () {} : null,
                         ),
                       ),
                     ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/core/theme/theme.dart';
+import 'package:ratel/design_system/components/ratel_button.dart';
 import 'package:ratel/features/auth/screens/otp_screen.dart';
 
 void main() {
@@ -28,5 +29,26 @@ void main() {
     await tester.pump();
     expect(find.text('4'), findsOneWidget);
     expect(find.text('2'), findsOneWidget);
+  });
+
+  testWidgets('Verify disabled until 6 digits entered', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(theme: ratelTheme(), home: const OtpScreen()),
+    );
+    RatelButton verify() =>
+        tester.widget<RatelButton>(find.widgetWithText(RatelButton, 'Verify'));
+    expect(verify().onPressed, isNull);
+    await tester.enterText(
+      find.byKey(const ValueKey<String>('otp_input')),
+      '1234',
+    );
+    await tester.pump();
+    expect(verify().onPressed, isNull);
+    await tester.enterText(
+      find.byKey(const ValueKey<String>('otp_input')),
+      '123456',
+    );
+    await tester.pump();
+    expect(verify().onPressed, isNotNull);
   });
 }

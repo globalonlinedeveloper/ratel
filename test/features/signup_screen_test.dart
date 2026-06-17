@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ratel/core/theme/theme.dart';
+import 'package:ratel/design_system/components/ratel_button.dart';
 import 'package:ratel/features/auth/screens/signup_screen.dart';
 
 void main() {
@@ -27,5 +28,30 @@ void main() {
     await tester.tap(find.byIcon(Icons.check_box_outline_blank));
     await tester.pump();
     expect(find.byIcon(Icons.check_box), findsOneWidget);
+  });
+
+  testWidgets('CTA disabled until fields valid AND agree ticked',
+      (tester) async {
+    await tester.pumpWidget(
+        MaterialApp(theme: ratelTheme(), home: const SignupScreen()));
+    RatelButton cta() => tester.widget<RatelButton>(
+        find.widgetWithText(RatelButton, 'Create account'));
+    expect(cta().onPressed, isNull);
+    await tester.enterText(find.byType(TextField).at(0), 'Asha');
+    await tester.enterText(find.byType(TextField).at(1), 'a@b.com');
+    await tester.enterText(find.byType(TextField).at(2), 'abcd1234');
+    await tester.pump();
+    expect(cta().onPressed, isNull); // valid fields but not agreed
+    await tester.tap(find.byIcon(Icons.check_box_outline_blank));
+    await tester.pump();
+    expect(cta().onPressed, isNotNull);
+  });
+
+  testWidgets('invalid email shows inline error', (tester) async {
+    await tester.pumpWidget(
+        MaterialApp(theme: ratelTheme(), home: const SignupScreen()));
+    await tester.enterText(find.byType(TextField).at(1), 'not-an-email');
+    await tester.pump();
+    expect(find.text('Enter a valid email'), findsOneWidget);
   });
 }

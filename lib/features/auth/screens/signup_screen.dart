@@ -5,9 +5,14 @@ import '../../../core/theme/tokens.dart';
 import '../../../design_system/components/ratel_button.dart';
 import '../../../design_system/components/ratel_field.dart';
 import '../../../design_system/components/ratel_link.dart';
+import '../../../design_system/components/ratel_password_strength.dart';
+import '../validators.dart';
 
 /// Sign-up — mock Page-1 · screen 6 (create account). Design-only (no backend
-/// until phase 3). The agree checkbox gates the Create-account CTA.
+/// until phase 3). The CTA stays disabled until name + email + password are all
+/// valid AND the agree checkbox is ticked; a field's inline error reveals once
+/// that field is non-empty (we don't shout on untouched fields). The strength
+/// meter is live (driven by `passwordStrength`).
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
 
@@ -28,6 +33,14 @@ class _SignupScreenState extends State<SignupScreen> {
     _password.dispose();
     super.dispose();
   }
+
+  bool get _valid =>
+      validateName(_name.text) == null &&
+      validateEmail(_email.text) == null &&
+      validatePassword(_password.text) == null;
+
+  String? _errorFor(String text, String? Function(String) v) =>
+      text.isEmpty ? null : v(text);
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +77,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     controller: _name,
                     hint: S.t('signup_name', 'Name'),
                     textInputAction: TextInputAction.next,
+                    onChanged: (_) => setState(() {}),
+                    errorText: _errorFor(_name.text, validateName),
                   ),
                   const SizedBox(height: RatelSpacing.md),
                   RatelField(
@@ -71,6 +86,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     hint: S.t('signup_email', 'Email'),
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
+                    onChanged: (_) => setState(() {}),
+                    errorText: _errorFor(_email.text, validateEmail),
                   ),
                   const SizedBox(height: RatelSpacing.md),
                   RatelField(
@@ -78,9 +95,13 @@ class _SignupScreenState extends State<SignupScreen> {
                     hint: S.t('signup_password', 'Password'),
                     obscure: true,
                     textInputAction: TextInputAction.done,
+                    onChanged: (_) => setState(() {}),
+                    errorText: _errorFor(_password.text, validatePassword),
                   ),
                   const SizedBox(height: RatelSpacing.sm),
-                  const _StrengthMeter(),
+                  RatelPasswordStrength(
+                    strength: passwordStrength(_password.text),
+                  ),
                   const SizedBox(height: RatelSpacing.xs),
                   Text(
                     S.t(
@@ -101,7 +122,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   const SizedBox(height: RatelSpacing.md),
                   RatelButton.filled(
                     label: S.t('signup_cta', 'Create account'),
-                    onPressed: _agree
+                    onPressed: (_agree && _valid)
                         ? () => context.go('/onboarding/language')
                         : null,
                   ),
@@ -111,43 +132,6 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Static password-strength indicator (3 bars, "Good") — design-only.
-class _StrengthMeter extends StatelessWidget {
-  const _StrengthMeter();
-
-  @override
-  Widget build(BuildContext context) {
-    final tk = context.tokens;
-    Widget bar(bool on) => Expanded(
-      child: Container(
-        height: 5,
-        decoration: BoxDecoration(
-          color: on ? tk.success : tk.border,
-          borderRadius: BorderRadius.circular(tk.radiusSm),
-        ),
-      ),
-    );
-    return Row(
-      children: <Widget>[
-        bar(true),
-        const SizedBox(width: 4),
-        bar(true),
-        const SizedBox(width: 4),
-        bar(false),
-        const SizedBox(width: RatelSpacing.sm),
-        Text(
-          S.t('signup_strength_good', 'Good'),
-          style: TextStyle(
-            color: tk.success,
-            fontSize: 11,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
     );
   }
 }

@@ -15,10 +15,14 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('signup: tick agree + Create account -> language picker', (
+  testWidgets('signup: fill valid + tick agree + Create account -> language', (
     tester,
   ) async {
     await pumpFlow(tester, '/signup');
+    await tester.enterText(find.byType(TextField).at(0), 'Asha');
+    await tester.enterText(find.byType(TextField).at(1), 'a@b.com');
+    await tester.enterText(find.byType(TextField).at(2), 'abcd1234');
+    await tester.pump();
     await tester.tap(find.byIcon(Icons.check_box_outline_blank));
     await tester.pump();
     await tester.tap(find.text('Create account'));
