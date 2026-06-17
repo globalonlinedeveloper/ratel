@@ -74,6 +74,12 @@ import '../../features/profile/screens/settings_hub_screen.dart';
 import '../../features/profile/screens/help_legal_screen.dart';
 import '../../features/profile/screens/notifications_screen.dart';
 import '../../features/profile/screens/privacy_data_screen.dart';
+import '../../features/profile/screens/checkout_success_screen.dart';
+import '../../features/profile/screens/manage_subscription_screen.dart';
+import '../../features/profile/screens/paywall_screen.dart';
+import '../../features/profile/screens/cancel_winback_screen.dart';
+import '../../features/profile/screens/promo_redeem_screen.dart';
+import '../../features/profile/screens/referral_hub_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -229,6 +235,15 @@ final GoRouter appRouter = GoRouter(
       builder: (_, _) => const NotificationsScreen(),
     ),
     GoRoute(path: '/help', builder: (_, _) => const HelpLegalScreen()),
+    GoRoute(path: '/paywall', builder: (_, _) => const PaywallScreen()),
+    GoRoute(path: '/checkout', builder: (_, _) => const CheckoutSuccessScreen()),
+    GoRoute(
+      path: '/subscription',
+      builder: (_, _) => const ManageSubscriptionScreen(),
+    ),
+    GoRoute(path: '/cancel', builder: (_, _) => const CancelWinbackScreen()),
+    GoRoute(path: '/promo', builder: (_, _) => const PromoRedeemScreen()),
+    GoRoute(path: '/referral', builder: (_, _) => const ReferralHubScreen()),
   ],
 );
 
