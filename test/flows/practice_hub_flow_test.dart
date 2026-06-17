@@ -58,4 +58,12 @@ void main() {
     expect(find.text('Timed challenge'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('tile Listening -> listening feed', (tester) async {
+    await pumpFlow(tester, '/practice');
+    await tester.tap(find.text('Listening'));
+    await tester.pumpAndSettle();
+    expect(find.text('Morning news, slowly'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }

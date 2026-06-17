@@ -40,6 +40,8 @@ import '../../features/learn/screens/out_of_energy_screen.dart';
 import '../../features/learn/screens/course_switcher_screen.dart';
 import '../../features/learn/screens/stories_screen.dart';
 import '../../features/learn/screens/streak_hub_screen.dart';
+import '../../features/learn/screens/listening_feed_screen.dart';
+import '../../features/learn/screens/radio_episode_screen.dart';
 import '../../features/practice/screens/practice_hub_screen.dart';
 import '../../features/practice/screens/smart_practice_screen.dart';
 import '../../features/practice/screens/timed_challenge_screen.dart';
@@ -182,6 +184,11 @@ final List<RouteBase> appRoutes = <RouteBase>[
   GoRoute(path: '/stories', builder: (_, _) => const StoriesScreen()),
   GoRoute(path: '/streak', builder: (_, _) => const StreakHubScreen()),
   GoRoute(path: '/courses', builder: (_, _) => const CourseSwitcherScreen()),
+  GoRoute(path: '/listen', builder: (_, _) => const ListeningFeedScreen()),
+  GoRoute(
+    path: '/listen/episode',
+    builder: (_, _) => const RadioEpisodeScreen(),
+  ),
   GoRoute(path: '/practice', builder: (_, _) => const PracticeHubScreen()),
   GoRoute(
     path: '/practice/smart',

@@ -157,6 +157,19 @@ class PracticeHubScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: RatelSpacing.sm),
+                  Row(
+                    children: <Widget>[
+                      _Tile(
+                        icon: Icons.headphones,
+                        label: S.t('practice_listening', 'Listening'),
+                        color: tk.info,
+                        onTap: () => context.push('/listen'),
+                      ),
+                      const SizedBox(width: RatelSpacing.sm),
+                      const Expanded(child: SizedBox()),
+                    ],
+                  ),
                 ],
               ),
             ),
