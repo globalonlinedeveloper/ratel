@@ -71,6 +71,16 @@ class RatelCall {
   static const Color caption = Color(0xFF9FE1CB);
 }
 
+/// Streak-Society / "kind-by-design" purple accents (gamification surfaces).
+/// Raw values allowed only here in the design system (§0.3).
+class RatelSociety {
+  RatelSociety._();
+  static const Color purple = Color(0xFF7B5EA7);
+  static const Color purpleDeep = Color(0xFF534AB7);
+  static const Color purpleText = Color(0xFF3C3489);
+  static const Color purpleBg = Color(0xFFEEEDFE);
+}
+
 /// Spacing scale (4/8/12/16/24).
 class RatelSpacing {
   RatelSpacing._();
