@@ -167,7 +167,12 @@ class PracticeHubScreen extends StatelessWidget {
                         onTap: () => context.push('/listen'),
                       ),
                       const SizedBox(width: RatelSpacing.sm),
-                      const Expanded(child: SizedBox()),
+                      _Tile(
+                        icon: Icons.spellcheck,
+                        label: S.t('practice_grammar', 'Grammar'),
+                        color: tk.info,
+                        onTap: () => context.push('/grammar'),
+                      ),
                     ],
                   ),
                 ],

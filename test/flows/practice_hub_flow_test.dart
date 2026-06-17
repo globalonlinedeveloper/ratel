@@ -66,4 +66,22 @@ void main() {
     expect(find.text('Morning news, slowly'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('tile Grammar -> grammar reference', (tester) async {
+    await pumpFlow(tester, '/practice');
+    await tester.tap(find.text('Grammar'));
+    await tester.pumpAndSettle();
+    expect(find.text('Tenses'), findsOneWidget);
+    expect(find.text('Present simple'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('grammar reference row -> topic explainer', (tester) async {
+    await pumpFlow(tester, '/grammar');
+    await tester.tap(find.text('Present simple'));
+    await tester.pumpAndSettle();
+    expect(find.text('The rule'), findsOneWidget);
+    expect(find.text('Save to notebook'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
