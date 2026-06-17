@@ -39,6 +39,9 @@ import '../../features/learn/screens/out_of_energy_screen.dart';
 import '../../features/learn/screens/course_switcher_screen.dart';
 import '../../features/learn/screens/stories_screen.dart';
 import '../../features/learn/screens/streak_hub_screen.dart';
+import '../../features/practice/screens/practice_hub_screen.dart';
+import '../../features/practice/screens/smart_practice_screen.dart';
+import '../../features/practice/screens/timed_challenge_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -128,6 +131,15 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/courses',
       builder: (_, _) => const CourseSwitcherScreen(),
+    ),
+    GoRoute(path: '/practice', builder: (_, _) => const PracticeHubScreen()),
+    GoRoute(
+      path: '/practice/smart',
+      builder: (_, _) => const SmartPracticeScreen(),
+    ),
+    GoRoute(
+      path: '/practice/timed',
+      builder: (_, _) => const TimedChallengeScreen(),
     ),
   ],
 );
