@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/i18n/strings.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../design_system/components/lesson_top_bar.dart';
@@ -50,7 +51,10 @@ class _LessonChoiceScreenState extends State<LessonChoiceScreen> {
                             children: <Widget>[
                               Expanded(
                                 child: Text(
-                                  S.t('lesson_choice_q', 'Select the translation'),
+                                  S.t(
+                                    'lesson_choice_q',
+                                    'Select the translation',
+                                  ),
                                   style: TextStyle(
                                     color: tk.text,
                                     fontSize: 14,
@@ -58,11 +62,23 @@ class _LessonChoiceScreenState extends State<LessonChoiceScreen> {
                                   ),
                                 ),
                               ),
-                              Icon(Icons.lightbulb_outline, size: 16, color: tk.textMuted),
+                              Icon(
+                                Icons.lightbulb_outline,
+                                size: 16,
+                                color: tk.textMuted,
+                              ),
                               const SizedBox(width: RatelSpacing.sm),
-                              Icon(Icons.flag_outlined, size: 16, color: tk.textMuted),
+                              Icon(
+                                Icons.flag_outlined,
+                                size: 16,
+                                color: tk.textMuted,
+                              ),
                               const SizedBox(width: RatelSpacing.sm),
-                              Icon(Icons.accessible, size: 16, color: tk.textMuted),
+                              Icon(
+                                Icons.accessible,
+                                size: 16,
+                                color: tk.textMuted,
+                              ),
                             ],
                           ),
                           const SizedBox(height: RatelSpacing.sm),
@@ -77,21 +93,38 @@ class _LessonChoiceScreenState extends State<LessonChoiceScreen> {
                             ),
                             child: Row(
                               children: <Widget>[
-                                Icon(Icons.volume_up, size: 18, color: tk.primary),
+                                Icon(
+                                  Icons.volume_up,
+                                  size: 18,
+                                  color: tk.primary,
+                                ),
                                 const SizedBox(width: RatelSpacing.sm),
                                 Expanded(
                                   child: Text(
-                                    S.t('lesson_choice_prompt', "I'd like a coffee"),
-                                    style: TextStyle(color: tk.text, fontSize: 13),
+                                    S.t(
+                                      'lesson_choice_prompt',
+                                      "I'd like a coffee",
+                                    ),
+                                    style: TextStyle(
+                                      color: tk.text,
+                                      fontSize: 13,
+                                    ),
                                   ),
                                 ),
-                                Icon(Icons.skip_next, size: 16, color: tk.textMuted),
+                                Icon(
+                                  Icons.skip_next,
+                                  size: 16,
+                                  color: tk.textMuted,
+                                ),
                               ],
                             ),
                           ),
                           const SizedBox(height: RatelSpacing.xs),
                           Text(
-                            S.t('lesson_choice_hint', 'combo ×3 · tap any word for a hint'),
+                            S.t(
+                              'lesson_choice_hint',
+                              'combo ×3 · tap any word for a hint',
+                            ),
                             style: TextStyle(color: tk.textMuted, fontSize: 9),
                           ),
                           const SizedBox(height: RatelSpacing.md),
@@ -109,7 +142,7 @@ class _LessonChoiceScreenState extends State<LessonChoiceScreen> {
                   ),
                   RatelButton.filled(
                     label: S.t('lesson_check', 'Check'),
-                    onPressed: () {},
+                    onPressed: () => context.push('/complete'),
                   ),
                 ],
               ),

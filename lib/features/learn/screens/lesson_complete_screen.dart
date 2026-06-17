@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/i18n/strings.dart';
 import '../../../core/theme/tokens.dart';
 import '../../../design_system/components/ratel_button.dart';
@@ -21,14 +22,20 @@ class LessonCompleteScreen extends StatelessWidget {
               children: <Widget>[
                 Container(
                   color: tk.win,
-                  padding: const EdgeInsets.symmetric(vertical: RatelSpacing.lg),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: RatelSpacing.lg,
+                  ),
                   child: Column(
                     children: <Widget>[
                       Icon(Icons.emoji_events, size: 28, color: tk.text),
                       const SizedBox(height: RatelSpacing.xs),
                       Text(
                         S.t('complete_title', 'Lesson complete!'),
-                        style: TextStyle(color: tk.text, fontSize: 18, fontWeight: FontWeight.w700),
+                        style: TextStyle(
+                          color: tk.text,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                        ),
                       ),
                     ],
                   ),
@@ -41,11 +48,26 @@ class LessonCompleteScreen extends StatelessWidget {
                       children: <Widget>[
                         Row(
                           children: <Widget>[
-                            _stat(tk, '+18', S.t('complete_xp', 'XP'), tk.brand),
+                            _stat(
+                              tk,
+                              '+18',
+                              S.t('complete_xp', 'XP'),
+                              tk.brand,
+                            ),
                             const SizedBox(width: RatelSpacing.sm),
-                            _stat(tk, '92%', S.t('complete_acc', 'accuracy'), tk.success),
+                            _stat(
+                              tk,
+                              '92%',
+                              S.t('complete_acc', 'accuracy'),
+                              tk.success,
+                            ),
                             const SizedBox(width: RatelSpacing.sm),
-                            _stat(tk, 'B1', S.t('complete_speak', 'speaking'), tk.info),
+                            _stat(
+                              tk,
+                              'B1',
+                              S.t('complete_speak', 'speaking'),
+                              tk.info,
+                            ),
                           ],
                         ),
                         const SizedBox(height: RatelSpacing.sm),
@@ -60,18 +82,32 @@ class LessonCompleteScreen extends StatelessWidget {
                             children: <Widget>[
                               Row(
                                 children: <Widget>[
-                                  Icon(Icons.auto_awesome, size: 15, color: tk.success),
+                                  Icon(
+                                    Icons.auto_awesome,
+                                    size: 15,
+                                    color: tk.success,
+                                  ),
                                   const SizedBox(width: RatelSpacing.xs),
                                   Text(
                                     S.t('complete_debrief', 'AI debrief'),
-                                    style: TextStyle(color: tk.success, fontSize: 11, fontWeight: FontWeight.w600),
+                                    style: TextStyle(
+                                      color: tk.success,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w600,
+                                    ),
                                   ),
                                 ],
                               ),
                               const SizedBox(height: 3),
                               Text(
-                                S.t('complete_debrief_body', 'Great ordering phrases. Practice the "வே" sound next.'),
-                                style: TextStyle(color: tk.success, fontSize: 10.5),
+                                S.t(
+                                  'complete_debrief_body',
+                                  'Great ordering phrases. Practice the "வே" sound next.',
+                                ),
+                                style: TextStyle(
+                                  color: tk.success,
+                                  fontSize: 10.5,
+                                ),
                               ),
                             ],
                           ),
@@ -88,11 +124,21 @@ class LessonCompleteScreen extends StatelessWidget {
                           ),
                           child: Row(
                             children: <Widget>[
-                              Icon(Icons.local_fire_department, size: 16, color: tk.coral),
+                              Icon(
+                                Icons.local_fire_department,
+                                size: 16,
+                                color: tk.coral,
+                              ),
                               const SizedBox(width: RatelSpacing.sm),
                               Text(
-                                S.t('complete_streak', '8-day streak · Society +1'),
-                                style: TextStyle(color: tk.warning, fontSize: 11),
+                                S.t(
+                                  'complete_streak',
+                                  '8-day streak · Society +1',
+                                ),
+                                style: TextStyle(
+                                  color: tk.warning,
+                                  fontSize: 11,
+                                ),
                               ),
                             ],
                           ),
@@ -116,7 +162,7 @@ class LessonCompleteScreen extends StatelessWidget {
                       Expanded(
                         child: RatelButton.filled(
                           label: S.t('complete_continue', 'Continue'),
-                          onPressed: () {},
+                          onPressed: () => context.go('/app'),
                         ),
                       ),
                     ],
@@ -130,7 +176,8 @@ class LessonCompleteScreen extends StatelessWidget {
     );
   }
 
-  Widget _stat(RatelTokens tk, String value, String label, Color color) => Expanded(
+  Widget _stat(RatelTokens tk, String value, String label, Color color) =>
+      Expanded(
         child: Container(
           padding: const EdgeInsets.all(RatelSpacing.sm),
           decoration: BoxDecoration(
@@ -141,7 +188,11 @@ class LessonCompleteScreen extends StatelessWidget {
             children: <Widget>[
               Text(
                 value,
-                style: TextStyle(color: color, fontSize: 16, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  color: color,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(height: 2),
               Text(label, style: TextStyle(color: tk.textMuted, fontSize: 9)),

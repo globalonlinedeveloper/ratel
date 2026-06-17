@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/i18n/strings.dart';
 import '../../../core/theme/tokens.dart';
 
 /// Home — mock Page-3 · screen 1 (packed learning hub: stats, lesson path,
-/// tune-up, bottom nav). Design-only (no backend yet).
+/// tune-up). Tiles route to their detail screens; the shell owns the nav.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -20,9 +21,9 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  _statsHeader(tk),
+                  _statsHeader(context, tk),
                   const SizedBox(height: RatelSpacing.sm),
-                  _pillsRow(tk),
+                  _pillsRow(context, tk),
                   const SizedBox(height: RatelSpacing.md),
                   Text(
                     S.t('home_unit', 'Unit 3 · Everyday phrases'),
@@ -33,11 +34,15 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: RatelSpacing.sm),
-                  _lessonPath(tk),
+                  _lessonPath(context, tk),
                   const SizedBox(height: RatelSpacing.md),
-                  _tuneUpBanner(tk),
+                  GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => context.push('/practice/smart'),
+                    child: _tuneUpBanner(tk),
+                  ),
                   const SizedBox(height: RatelSpacing.sm),
-                  _friendsSuperRow(tk),
+                  _friendsSuperRow(context, tk),
                 ],
               ),
             ),
@@ -47,70 +52,121 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _statsHeader(RatelTokens tk) {
-    Widget stat(IconData icon, String value, Color color) => Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Icon(icon, size: 15, color: color),
-        const SizedBox(width: 2),
-        Text(
-          value,
-          style: TextStyle(
-            color: color,
-            fontSize: 11.5,
-            fontWeight: FontWeight.w600,
+  Widget _statsHeader(BuildContext context, RatelTokens tk) {
+    Widget stat(IconData icon, String value, Color color, VoidCallback onTap) =>
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: onTap,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(icon, size: 15, color: color),
+              const SizedBox(width: 2),
+              Text(
+                value,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
-    );
+        );
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            stat(
-              Icons.local_fire_department,
-              S.t('home_streak', '7'),
-              tk.coral,
-            ),
-            const SizedBox(width: 2),
-            Icon(Icons.ac_unit, size: 12, color: tk.info),
-          ],
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => context.push('/streak'),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(Icons.local_fire_department, size: 15, color: tk.coral),
+              const SizedBox(width: 2),
+              Text(
+                S.t('home_streak', '7'),
+                style: TextStyle(
+                  color: tk.coral,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              const SizedBox(width: 2),
+              Icon(Icons.ac_unit, size: 12, color: tk.info),
+            ],
+          ),
         ),
-        stat(Icons.diamond_outlined, S.t('home_gems', '320'), tk.info),
-        stat(Icons.bolt, S.t('home_energy', '18/25'), tk.brand),
-        stat(Icons.track_changes, S.t('home_goal', '12/20'), tk.primary),
+        stat(
+          Icons.diamond_outlined,
+          S.t('home_gems', '320'),
+          tk.info,
+          () => context.push('/shop'),
+        ),
+        stat(
+          Icons.bolt,
+          S.t('home_energy', '18/25'),
+          tk.brand,
+          () => context.push('/energy'),
+        ),
+        stat(
+          Icons.track_changes,
+          S.t('home_goal', '12/20'),
+          tk.primary,
+          () => context.push('/goal-ring'),
+        ),
       ],
     );
   }
 
-  Widget _pillsRow(RatelTokens tk) {
-    Widget pill(String label, Color bg, Color fg) => Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 3),
-        padding: const EdgeInsets.symmetric(vertical: RatelSpacing.xs + 2),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(tk.radiusSm),
-        ),
-        child: Text(
-          label,
-          textAlign: TextAlign.center,
-          style: TextStyle(color: fg, fontSize: 10),
-        ),
-      ),
-    );
+  Widget _pillsRow(BuildContext context, RatelTokens tk) {
+    Widget pill(String label, Color bg, Color fg, VoidCallback onTap) =>
+        Expanded(
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onTap,
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 3),
+              padding: const EdgeInsets.symmetric(
+                vertical: RatelSpacing.xs + 2,
+              ),
+              decoration: BoxDecoration(
+                color: bg,
+                borderRadius: BorderRadius.circular(tk.radiusSm),
+              ),
+              child: Text(
+                label,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: fg, fontSize: 10),
+              ),
+            ),
+          ),
+        );
     return Row(
       children: <Widget>[
-        pill(S.t('home_league', 'Gold league'), tk.warningBg, tk.warning),
-        pill(S.t('home_quests', 'Quests 2/3'), tk.surface2, tk.text),
-        pill(S.t('home_chest', 'Chest'), tk.surface2, tk.text),
+        pill(
+          S.t('home_league', 'Gold league'),
+          tk.warningBg,
+          tk.warning,
+          () => context.push('/leagues'),
+        ),
+        pill(
+          S.t('home_quests', 'Quests 2/3'),
+          tk.surface2,
+          tk.text,
+          () => context.push('/quests'),
+        ),
+        pill(
+          S.t('home_chest', 'Chest'),
+          tk.surface2,
+          tk.text,
+          () => context.push('/goal-ring'),
+        ),
       ],
     );
   }
 
-  Widget _lessonPath(RatelTokens tk) {
+  Widget _lessonPath(BuildContext context, RatelTokens tk) {
     Widget node({
       required IconData icon,
       required Color bg,
@@ -134,15 +190,23 @@ class HomeScreen extends StatelessWidget {
     );
     return Column(
       children: <Widget>[
-        node(icon: Icons.check, bg: tk.primary, fg: Colors.white),
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => context.push('/lesson/choice'),
+          child: node(icon: Icons.check, bg: tk.primary, fg: Colors.white),
+        ),
         const SizedBox(height: RatelSpacing.sm),
-        node(
-          icon: Icons.star,
-          bg: tk.warningBg,
-          fg: tk.brand,
-          size: 50,
-          border: tk.win,
-          padding: const EdgeInsets.only(left: 46),
+        GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () => context.push('/lesson/choice'),
+          child: node(
+            icon: Icons.star,
+            bg: tk.warningBg,
+            fg: tk.brand,
+            size: 50,
+            border: tk.win,
+            padding: const EdgeInsets.only(left: 46),
+          ),
         ),
         const SizedBox(height: RatelSpacing.sm),
         node(
@@ -178,26 +242,35 @@ class HomeScreen extends StatelessWidget {
     ),
   );
 
-  Widget _friendsSuperRow(RatelTokens tk) {
-    Widget pill(IconData icon, String label, Color border, Color fg) =>
-        Expanded(
-          child: Container(
-            margin: const EdgeInsets.symmetric(horizontal: 3),
-            padding: const EdgeInsets.symmetric(vertical: RatelSpacing.xs + 2),
-            decoration: BoxDecoration(
-              border: Border.all(color: border, width: 0.5),
-              borderRadius: BorderRadius.circular(tk.radiusSm),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Icon(icon, size: 13, color: fg),
-                const SizedBox(width: 4),
-                Text(label, style: TextStyle(color: fg, fontSize: 10)),
-              ],
-            ),
+  Widget _friendsSuperRow(BuildContext context, RatelTokens tk) {
+    Widget pill(
+      IconData icon,
+      String label,
+      Color border,
+      Color fg,
+      VoidCallback onTap,
+    ) => Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 3),
+          padding: const EdgeInsets.symmetric(vertical: RatelSpacing.xs + 2),
+          decoration: BoxDecoration(
+            border: Border.all(color: border, width: 0.5),
+            borderRadius: BorderRadius.circular(tk.radiusSm),
           ),
-        );
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Icon(icon, size: 13, color: fg),
+              const SizedBox(width: 4),
+              Text(label, style: TextStyle(color: fg, fontSize: 10)),
+            ],
+          ),
+        ),
+      ),
+    );
     return Row(
       children: <Widget>[
         pill(
@@ -205,12 +278,14 @@ class HomeScreen extends StatelessWidget {
           S.t('home_friends', 'Friends'),
           tk.border,
           tk.text,
+          () => context.push('/friends'),
         ),
         pill(
           Icons.auto_awesome,
           S.t('home_super', 'Go Super ✦'),
           tk.win,
           tk.warning,
+          () => context.push('/paywall'),
         ),
       ],
     );
