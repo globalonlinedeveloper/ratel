@@ -51,6 +51,13 @@ class RatelSettingsRow extends StatelessWidget {
       ),
     );
     if (!interactive) return content;
-    return InkWell(onTap: onTap, child: content);
+    return Semantics(
+      button: true,
+      label: label,
+      onTap: onTap,
+      child: ExcludeSemantics(
+        child: InkWell(onTap: onTap, child: content),
+      ),
+    );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/i18n/strings.dart';
 import '../../core/theme/tokens.dart';
 
 /// App bottom navigation for the tab-root screens (home / practice / leagues /
@@ -16,6 +17,13 @@ class RatelBottomNav extends StatelessWidget {
     (Icons.person_outline, 'Profile'),
   ];
 
+  static const List<String> _labelKeys = <String>[
+    'nav_home',
+    'nav_practice',
+    'nav_leagues',
+    'nav_profile',
+  ];
+
   @override
   Widget build(BuildContext context) {
     final tk = context.tokens;
@@ -28,12 +36,17 @@ class RatelBottomNav extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           for (int i = 0; i < items.length; i++)
-            IconButton(
-              icon: Icon(items[i].$1),
-              iconSize: 22,
-              color: i == currentIndex ? tk.primary : tk.textMuted,
-              tooltip: items[i].$2,
-              onPressed: () => onTap?.call(i),
+            MergeSemantics(
+              child: Semantics(
+                selected: i == currentIndex,
+                child: IconButton(
+                  icon: Icon(items[i].$1),
+                  iconSize: 22,
+                  color: i == currentIndex ? tk.primary : tk.textMuted,
+                  tooltip: S.t(_labelKeys[i], items[i].$2),
+                  onPressed: () => onTap?.call(i),
+                ),
+              ),
             ),
         ],
       ),

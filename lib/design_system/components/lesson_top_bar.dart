@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/i18n/strings.dart';
 import '../../core/theme/tokens.dart';
 
 /// Lesson header: a close (✕), a progress bar, and the remaining energy count.
@@ -24,7 +25,7 @@ class LessonTopBar extends StatelessWidget {
         IconButton(
           icon: Icon(Icons.close, size: 20, color: tk.textMuted),
           onPressed: onClose ?? () {},
-          tooltip: 'Close',
+          tooltip: S.t('a11y_close', 'Close'),
           visualDensity: VisualDensity.compact,
         ),
         Expanded(
@@ -39,14 +40,23 @@ class LessonTopBar extends StatelessWidget {
           ),
         ),
         const SizedBox(width: RatelSpacing.sm),
-        Icon(Icons.bolt, size: 16, color: tk.brand),
-        const SizedBox(width: 2),
-        Text(
-          '$energy',
-          style: TextStyle(
-            color: tk.brand,
-            fontSize: 12,
-            fontWeight: FontWeight.w600,
+        Semantics(
+          label: '${S.t('lesson_energy_a11y', 'Energy remaining')}: $energy',
+          excludeSemantics: true,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(Icons.bolt, size: 16, color: tk.brand),
+              const SizedBox(width: 2),
+              Text(
+                '$energy',
+                style: TextStyle(
+                  color: tk.brand,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
           ),
         ),
       ],
