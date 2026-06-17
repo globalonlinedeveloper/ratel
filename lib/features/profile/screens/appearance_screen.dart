@@ -4,7 +4,6 @@ import '../../../core/state/app_settings.dart';
 import '../../../core/state/app_settings_scope.dart';
 import '../../../core/theme/theme.dart';
 import '../../../core/theme/tokens.dart';
-import '../../../design_system/components/ratel_select_field.dart';
 import '../../../design_system/components/ratel_toggle_row.dart';
 
 /// Appearance & language — mock Page-6 · screen 5. Theme / accent / reduce-motion
@@ -24,6 +23,26 @@ class AppearanceScreen extends StatelessWidget {
         child: GestureDetector(
           key: key,
           onTap: () => AppSettingsScope.read(context).setThemeMode(mode),
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 3),
+            padding: const EdgeInsets.symmetric(vertical: 9),
+            decoration: BoxDecoration(
+              color: active ? tk.successBg : Colors.transparent,
+              border: Border.all(color: active ? tk.primary : tk.border, width: active ? 1.5 : tk.hairline),
+              borderRadius: BorderRadius.circular(tk.radiusSm),
+            ),
+            child: Text(name, textAlign: TextAlign.center, style: TextStyle(color: active ? tk.success : tk.text, fontSize: 11)),
+          ),
+        ),
+      );
+    }
+
+    Widget langPill(String name, String code, Key key) {
+      final bool active = settings.localeCode == code;
+      return Expanded(
+        child: GestureDetector(
+          key: key,
+          onTap: () => AppSettingsScope.read(context).setLocaleCode(code),
           child: Container(
             margin: const EdgeInsets.symmetric(horizontal: 3),
             padding: const EdgeInsets.symmetric(vertical: 9),
@@ -61,9 +80,12 @@ class AppearanceScreen extends StatelessWidget {
                   const SizedBox(height: RatelSpacing.sm),
                   Text(S.t('appear_lang', 'App language'), style: label),
                   const SizedBox(height: RatelSpacing.xs),
-                  RatelSelectField(label: S.t('appear_lang_value', 'தமிழ் · Tamil'), onTap: () {}),
+                  Row(children: <Widget>[
+                    langPill(S.t('appear_lang_en', 'English'), 'en', const Key('appearance.lang.en')),
+                    langPill(S.t('appear_lang_ta', 'தமிழ்'), 'ta', const Key('appearance.lang.ta')),
+                  ]),
                   const SizedBox(height: RatelSpacing.xs),
-                  Text(S.t('appear_lang_hint', 'one progress record, switch UI language freely (lens model)'), style: TextStyle(color: tk.textMuted, fontSize: 9)),
+                  Text(S.t('appear_lang_note', 'Switch the app language instantly. More languages arrive later.'), style: TextStyle(color: tk.textMuted, fontSize: 9)),
                   const SizedBox(height: RatelSpacing.md),
                   Text(S.t('appear_theme', 'Theme'), style: label),
                   const SizedBox(height: RatelSpacing.xs),

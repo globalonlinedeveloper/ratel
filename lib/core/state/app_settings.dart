@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../i18n/strings.dart';
 
 /// App-wide, persisted user settings (theme, accent, accessibility).
 /// Charter §1: lightest viable state — a single ChangeNotifier, no new state dep.
@@ -20,6 +21,7 @@ class AppSettings extends ChangeNotifier {
   static const String kDyslexia = 'settings.dyslexiaFont'; // bool
   static const String kCaptions = 'settings.captions'; // bool
   static const String kNoTime = 'settings.noTimePressure'; // bool
+  static const String kLocale = 'settings.localeCode'; // 'en'|'ta' (Phase-1 bundled)
 
   // ---- defaults (owner-confirmed 2026-06-17: contrast OFF, motion OFF, captions ON) ----
   ThemeMode _themeMode = ThemeMode.system;
@@ -30,6 +32,7 @@ class AppSettings extends ChangeNotifier {
   bool _dyslexiaFont = false;
   bool _captions = true;
   bool _noTimePressure = false;
+  String _localeCode = 'en';
 
   ThemeMode get themeMode => _themeMode;
   int get accentIndex => _accentIndex;
@@ -39,6 +42,7 @@ class AppSettings extends ChangeNotifier {
   bool get dyslexiaFont => _dyslexiaFont;
   bool get captions => _captions;
   bool get noTimePressure => _noTimePressure;
+  String get localeCode => _localeCode;
 
   void _load() {
     final String? tm = _prefs.getString(kThemeMode);
@@ -54,6 +58,8 @@ class AppSettings extends ChangeNotifier {
     _dyslexiaFont = _prefs.getBool(kDyslexia) ?? _dyslexiaFont;
     _captions = _prefs.getBool(kCaptions) ?? _captions;
     _noTimePressure = _prefs.getBool(kNoTime) ?? _noTimePressure;
+    _localeCode = _prefs.getString(kLocale) ?? _localeCode;
+    S.loadLocale(_localeCode);
     // no notifyListeners(): _load runs in ctor before any listener attaches.
   }
 
@@ -115,6 +121,14 @@ class AppSettings extends ChangeNotifier {
     if (v == _noTimePressure) return;
     _noTimePressure = v;
     _prefs.setBool(kNoTime, v);
+    notifyListeners();
+  }
+
+  void setLocaleCode(String code) {
+    if (code == _localeCode) return;
+    _localeCode = code;
+    _prefs.setString(kLocale, code);
+    S.loadLocale(code);
     notifyListeners();
   }
 }
