@@ -48,6 +48,10 @@ import '../../features/practice/screens/voice_call_screen.dart';
 import '../../features/practice/screens/adventures_roleplay_screen.dart';
 import '../../features/practice/screens/market_story_screen.dart';
 import '../../features/practice/screens/pronunciation_results_screen.dart';
+import '../../features/practice/screens/ai_credits_screen.dart';
+import '../../features/practice/screens/dictation_screen.dart';
+import '../../features/practice/screens/video_lesson_screen.dart';
+import '../../features/practice/screens/writing_feedback_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -162,6 +166,10 @@ final GoRouter appRouter = GoRouter(
       path: '/adventures',
       builder: (_, _) => const AdventuresRoleplayScreen(),
     ),
+    GoRoute(path: '/video', builder: (_, _) => const VideoLessonScreen()),
+    GoRoute(path: '/dictation', builder: (_, _) => const DictationScreen()),
+    GoRoute(path: '/writing', builder: (_, _) => const WritingFeedbackScreen()),
+    GoRoute(path: '/credits', builder: (_, _) => const AiCreditsScreen()),
   ],
 );
 
