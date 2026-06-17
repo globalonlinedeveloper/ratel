@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/router/app_router.dart';
+import 'core/state/a11y_media_query.dart';
 import 'core/state/app_settings.dart';
 import 'core/state/app_settings_scope.dart';
 import 'core/theme/theme.dart';
@@ -26,12 +27,21 @@ class RatelApp extends StatelessWidget {
         builder: (_, _) => MaterialApp.router(
           title: 'Ratel',
           debugShowCheckedModeBanner: false,
-          theme: ratelTheme(accentIndex: settings.accentIndex),
-          darkTheme: ratelDarkTheme(accentIndex: settings.accentIndex),
+          theme: ratelTheme(
+            accentIndex: settings.accentIndex,
+            highContrast: settings.highContrast,
+            dyslexiaFont: settings.dyslexiaFont,
+          ),
+          darkTheme: ratelDarkTheme(
+            accentIndex: settings.accentIndex,
+            highContrast: settings.highContrast,
+            dyslexiaFont: settings.dyslexiaFont,
+          ),
           themeMode: settings.themeMode,
           routerConfig: appRouter,
-          builder: (BuildContext context, Widget? child) =>
-              MobileFrame(child: child ?? const SizedBox.shrink()),
+          builder: (BuildContext context, Widget? child) => MobileFrame(
+            child: A11yMediaQuery(child: child ?? const SizedBox.shrink()),
+          ),
         ),
       ),
     );

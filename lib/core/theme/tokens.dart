@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 const String kDisplayFont = 'Baloo2'; // headings (font assets added later; falls back)
 const String kBodyFont = 'NunitoSans'; // body copy
+const String kDyslexiaFont = 'OpenDyslexic'; // a11y dyslexia toggle (asset deferred; falls back)
 
 /// Light-mode anchors + shared accents.
 class RatelColors {

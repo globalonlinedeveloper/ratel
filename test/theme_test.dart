@@ -62,4 +62,29 @@ void main() {
     expect(ctx.tokens.primary, RatelColors.teal);
     expect(ratelAccents(false)[2], RatelSociety.purple);
   });
+
+  testWidgets('highContrast tightens border + muted to the text colour',
+      (tester) async {
+    late BuildContext ctx;
+    await tester.pumpWidget(MaterialApp(
+      theme: ratelTheme(highContrast: true),
+      home: Builder(builder: (c) {
+        ctx = c;
+        return const SizedBox();
+      }),
+    ));
+    expect(ctx.tokens.border, ctx.tokens.text);
+    expect(ctx.tokens.textMuted, ctx.tokens.text);
+  });
+
+  test('dyslexiaFont swaps the theme body font family (with fallback)', () {
+    expect(
+      ratelTheme(dyslexiaFont: true).textTheme.bodyMedium?.fontFamily,
+      kDyslexiaFont,
+    );
+    expect(
+      ratelTheme().textTheme.bodyMedium?.fontFamily,
+      kBodyFont,
+    );
+  });
 }
