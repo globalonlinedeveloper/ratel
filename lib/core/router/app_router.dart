@@ -61,6 +61,10 @@ import '../../features/social/screens/gem_shop_screen.dart';
 import '../../features/social/screens/diamond_tournament_screen.dart';
 import '../../features/social/screens/goal_ring_screen.dart';
 import '../../features/social/screens/leagues_screen.dart';
+import '../../features/social/screens/classroom_screen.dart';
+import '../../features/social/screens/family_plan_screen.dart';
+import '../../features/social/screens/friend_profile_screen.dart';
+import '../../features/social/screens/friends_feed_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -194,6 +198,10 @@ final GoRouter appRouter = GoRouter(
       path: '/tournament',
       builder: (_, _) => const DiamondTournamentScreen(),
     ),
+    GoRoute(path: '/friends', builder: (_, _) => const FriendsFeedScreen()),
+    GoRoute(path: '/friend', builder: (_, _) => const FriendProfileScreen()),
+    GoRoute(path: '/family', builder: (_, _) => const FamilyPlanScreen()),
+    GoRoute(path: '/classroom', builder: (_, _) => const ClassroomScreen()),
   ],
 );
 
