@@ -115,6 +115,19 @@ class HomeScreen extends StatelessWidget {
           tk.primary,
           () => context.push('/goal-ring'),
         ),
+        Semantics(
+          button: true,
+          label: S.t('home_inbox_a11y', 'Notifications'),
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: () => context.push('/inbox'),
+            child: Icon(
+              Icons.notifications_none,
+              size: 18,
+              color: tk.textMuted,
+            ),
+          ),
+        ),
       ],
     );
   }

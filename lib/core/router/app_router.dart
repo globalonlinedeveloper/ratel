@@ -67,6 +67,7 @@ import '../../features/social/screens/family_plan_screen.dart';
 import '../../features/social/screens/friend_profile_screen.dart';
 import '../../features/social/screens/friends_feed_screen.dart';
 import '../../features/social/screens/full_leaderboard_screen.dart';
+import '../../features/social/screens/notification_inbox_screen.dart';
 import '../../features/profile/screens/avatar_builder_screen.dart';
 import '../../features/profile/screens/english_score_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
@@ -230,6 +231,7 @@ final List<RouteBase> appRoutes = <RouteBase>[
     path: '/leaderboard',
     builder: (_, _) => const FullLeaderboardScreen(),
   ),
+  GoRoute(path: '/inbox', builder: (_, _) => const NotificationInboxScreen()),
   GoRoute(
     path: '/tournament',
     builder: (_, _) => const DiamondTournamentScreen(),

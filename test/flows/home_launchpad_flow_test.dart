@@ -98,4 +98,12 @@ void main() {
     expect(find.text('Family · 6 seats'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('inbox bell -> notification inbox', (tester) async {
+    await pumpFlow(tester, '/home');
+    await tester.tap(find.byIcon(Icons.notifications_none));
+    await tester.pumpAndSettle();
+    expect(find.text('Mark all read'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
