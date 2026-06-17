@@ -55,6 +55,9 @@ import '../../features/practice/screens/writing_feedback_screen.dart';
 import '../../features/social/screens/daily_quests_screen.dart';
 import '../../features/social/screens/streak_screen.dart';
 import '../../features/social/screens/streak_society_screen.dart';
+import '../../features/social/screens/achievement_detail_screen.dart';
+import '../../features/social/screens/achievements_screen.dart';
+import '../../features/social/screens/gem_shop_screen.dart';
 
 /// App routing (charter: go_router). Routes grow as screens land Login→Logout.
 final GoRouter appRouter = GoRouter(
@@ -176,6 +179,12 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/streak-detail', builder: (_, _) => const StreakScreen()),
     GoRoute(path: '/society', builder: (_, _) => const StreakSocietyScreen()),
     GoRoute(path: '/quests', builder: (_, _) => const DailyQuestsScreen()),
+    GoRoute(path: '/achievements', builder: (_, _) => const AchievementsScreen()),
+    GoRoute(
+      path: '/achievement',
+      builder: (_, _) => const AchievementDetailScreen(),
+    ),
+    GoRoute(path: '/shop', builder: (_, _) => const GemShopScreen()),
   ],
 );
 
