@@ -26,8 +26,8 @@ class RatelApp extends StatelessWidget {
         builder: (_, _) => MaterialApp.router(
           title: 'Ratel',
           debugShowCheckedModeBanner: false,
-          theme: ratelTheme(),
-          darkTheme: ratelDarkTheme(),
+          theme: ratelTheme(accentIndex: settings.accentIndex),
+          darkTheme: ratelDarkTheme(accentIndex: settings.accentIndex),
           themeMode: settings.themeMode,
           routerConfig: appRouter,
           builder: (BuildContext context, Widget? child) =>

@@ -34,4 +34,32 @@ void main() {
     expect(ctx.isDark, isTrue);
     expect(ctx.tokens.primary, RatelColorsDark.teal);
   });
+
+  testWidgets('accentIndex 2 overrides primary to society purple',
+      (tester) async {
+    late BuildContext ctx;
+    await tester.pumpWidget(MaterialApp(
+      theme: ratelTheme(accentIndex: 2),
+      home: Builder(builder: (c) {
+        ctx = c;
+        return const SizedBox();
+      }),
+    ));
+    expect(ctx.tokens.primary, RatelSociety.purple);
+    expect(Theme.of(ctx).colorScheme.primary, RatelSociety.purple);
+  });
+
+  testWidgets('default ratelTheme still yields teal (byte-stable)',
+      (tester) async {
+    late BuildContext ctx;
+    await tester.pumpWidget(MaterialApp(
+      theme: ratelTheme(),
+      home: Builder(builder: (c) {
+        ctx = c;
+        return const SizedBox();
+      }),
+    ));
+    expect(ctx.tokens.primary, RatelColors.teal);
+    expect(ratelAccents(false)[2], RatelSociety.purple);
+  });
 }
