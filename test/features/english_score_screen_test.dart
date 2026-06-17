@@ -17,6 +17,10 @@ void main() {
     expect(find.text('B1 · Independent'), findsOneWidget);
     expect(find.text('Reading'), findsOneWidget);
     expect(find.text('Share score card'), findsOneWidget);
+    expect(
+      find.textContaining('not an official IELTS/TOEFL/DET certificate'),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 }

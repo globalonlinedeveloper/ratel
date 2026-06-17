@@ -44,6 +44,19 @@ class EnglishScoreScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: RatelSpacing.md),
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        S.t('score_rough_guide', 'Rough guide'),
+                        style: TextStyle(
+                          color: tk.textMuted,
+                          fontSize: 9,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: RatelSpacing.md, vertical: RatelSpacing.sm),
                     decoration: BoxDecoration(color: tk.surface2, borderRadius: BorderRadius.circular(tk.radiusSm)),
@@ -52,6 +65,35 @@ class EnglishScoreScreen extends StatelessWidget {
                       children: <Widget>[
                         for (final String e in <String>['≈ IELTS 5.5', '≈ TOEFL 65', '≈ DET 95'])
                           Text(e, style: TextStyle(color: tk.textMuted, fontSize: 9)),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: RatelSpacing.sm),
+                  Container(
+                    padding: const EdgeInsets.all(RatelSpacing.sm + 2),
+                    decoration: BoxDecoration(
+                      color: tk.infoBg,
+                      borderRadius: BorderRadius.circular(tk.radiusSm),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Icon(Icons.info_outline, size: 14, color: tk.info),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            S.t(
+                              'score_disclaimer',
+                              'Internal estimate to track progress — not an '
+                              'official IELTS/TOEFL/DET certificate.',
+                            ),
+                            style: TextStyle(
+                              color: tk.info,
+                              fontSize: 10,
+                              height: 1.4,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
