@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import '../../core/theme/tokens.dart';
 
 /// A settings/list row: leading icon + label + trailing affordance, with an
-/// optional hairline divider. Composes tokens only. (Settings hub, Help & about.)
+/// optional hairline divider. When [onTap] is null the row is non-interactive —
+/// it renders WITHOUT the trailing chevron and without an InkWell ripple, so a
+/// placeholder row never masquerades as working navigation. Composes tokens only.
 class RatelSettingsRow extends StatelessWidget {
   const RatelSettingsRow({
     super.key,
@@ -24,24 +26,31 @@ class RatelSettingsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tk = context.tokens;
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: RatelSpacing.md - 1),
-        decoration: divider
-            ? BoxDecoration(
-                border: Border(bottom: BorderSide(color: tk.border, width: tk.hairline)),
-              )
-            : null,
-        child: Row(
-          children: <Widget>[
-            Icon(icon, size: 19, color: iconColor),
-            const SizedBox(width: RatelSpacing.md - 1),
-            Expanded(child: Text(label, style: TextStyle(color: tk.text, fontSize: 13))),
-            Icon(trailing, size: 16, color: tk.textMuted),
-          ],
-        ),
+    final bool interactive = onTap != null;
+    final Widget content = Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 4,
+        vertical: RatelSpacing.md - 1,
+      ),
+      decoration: divider
+          ? BoxDecoration(
+              border: Border(
+                bottom: BorderSide(color: tk.border, width: tk.hairline),
+              ),
+            )
+          : null,
+      child: Row(
+        children: <Widget>[
+          Icon(icon, size: 19, color: iconColor),
+          const SizedBox(width: RatelSpacing.md - 1),
+          Expanded(
+            child: Text(label, style: TextStyle(color: tk.text, fontSize: 13)),
+          ),
+          if (interactive) Icon(trailing, size: 16, color: tk.textMuted),
+        ],
       ),
     );
+    if (!interactive) return content;
+    return InkWell(onTap: onTap, child: content);
   }
 }
