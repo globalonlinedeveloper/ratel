@@ -38,7 +38,7 @@ class SettingsHubScreen extends StatelessWidget {
                   RatelSettingsRow(icon: Icons.shield_outlined, iconColor: tk.primary, label: S.t('settings_privacy', 'Privacy & data'), onTap: () => context.push('/privacy-data')),
                   RatelSettingsRow(icon: Icons.notifications_none, iconColor: tk.brand, label: S.t('settings_notif', 'Notifications'), onTap: () => context.push('/notifications')),
                   RatelSettingsRow(icon: Icons.grid_view, iconColor: tk.info, label: S.t('settings_widgets', 'Widgets')),
-                  RatelSettingsRow(icon: Icons.manage_accounts_outlined, iconColor: tk.textMuted, label: S.t('settings_account', 'Account'), divider: false),
+                  RatelSettingsRow(icon: Icons.manage_accounts_outlined, iconColor: tk.textMuted, label: S.t('settings_account', 'Account'), onTap: () => context.push('/account'), divider: false),
                 ],
               ),
             ),

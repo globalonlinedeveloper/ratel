@@ -17,11 +17,11 @@ Future<void> _pump(WidgetTester tester, Widget screen) async {
 }
 
 void main() {
-  testWidgets('Settings: only the 4 wired rows show a chevron', (tester) async {
+  testWidgets('Settings: only the 5 wired rows show a chevron', (tester) async {
     await _pump(tester, const SettingsHubScreen());
-    // Appearance / Accessibility / Privacy & data / Notifications are wired.
-    expect(find.byIcon(Icons.chevron_right), findsNWidgets(4));
-    // Placeholder rows still render their labels (just not as navigation).
+    // Appearance / Accessibility / Privacy & data / Notifications / Account
+    // are wired; Audio / Learning / Widgets remain non-interactive labels.
+    expect(find.byIcon(Icons.chevron_right), findsNWidgets(5));
     expect(find.text('Audio'), findsOneWidget);
     expect(find.text('Account'), findsOneWidget);
     expect(tester.takeException(), isNull);

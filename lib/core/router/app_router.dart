@@ -69,6 +69,7 @@ import '../../features/social/screens/friends_feed_screen.dart';
 import '../../features/profile/screens/avatar_builder_screen.dart';
 import '../../features/profile/screens/english_score_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
+import '../../features/profile/screens/account_screen.dart';
 import '../../features/profile/screens/accessibility_screen.dart';
 import '../../features/profile/screens/appearance_screen.dart';
 import '../../features/profile/screens/settings_hub_screen.dart';
@@ -235,6 +236,7 @@ final List<RouteBase> appRoutes = <RouteBase>[
   ),
   GoRoute(path: '/avatar', builder: (_, _) => const AvatarBuilderScreen()),
   GoRoute(path: '/settings', builder: (_, _) => const SettingsHubScreen()),
+  GoRoute(path: '/account', builder: (_, _) => const AccountScreen()),
   GoRoute(path: '/appearance', builder: (_, _) => const AppearanceScreen()),
   GoRoute(
     path: '/accessibility',
